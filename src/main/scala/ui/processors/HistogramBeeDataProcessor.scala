@@ -1,0 +1,22 @@
+package beesimulator.ui.processors
+
+import beesimulator.bees._
+
+/**
+ * This processor summarizes the collection of bees provided into a histogram
+ * where each bin is a temperature range and the value of each bin is the number
+ * of bees with a threshold in that range. This is a good tool for viewing the
+ * distribution of the bee thresholds.
+ */
+object HistogramBeeDataProcessor extends BeeDataProcessor {
+  override def transform(minimumTemperature: Double, maximumTemperature: Double, numberOfBins: Int, bees: Seq[Bee]): Seq[Int] = {
+    val binRange = (numberOfBins) / (maximumTemperature - minimumTemperature)
+    val histogramData = new Array[Int](numberOfBins)
+    bees.foreach(bee => {
+      val index = math.floor((bee.threshold - minimumTemperature) * binRange).toInt
+      histogramData(if (index < numberOfBins) index else numberOfBins - 1) = histogramData(if (index < numberOfBins) index else numberOfBins - 1) + 1
+    })
+
+    histogramData
+  }
+}
