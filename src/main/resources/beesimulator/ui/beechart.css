@@ -1,0 +1,115 @@
+/**
+ * The important thing here is that the colors match between seriesx in the
+ * temperature chart and #beechart-x in the bee charts.
+ *
+ * "stroke" was added to make a bunch of warnings go away.
+ */
+#borderPane {
+  -fx-background-color: linear-gradient(to left bottom, reflect, #cccccc, #aaaaaa)
+}
+.chart {
+  -fx-effect: dropshadow(gaussian, #888888, 20, 0, 5, 5)
+}
+#temperatureChartDelegate {
+  -fx-create-symbols: false
+}
+.chart-series-line.series0 {
+  -fx-stroke: #f9d900;
+  stroke: #f9d900;
+}
+#beechart-0 .chart-series-line.series0 {
+  -fx-stroke: #f9d900;
+  stroke: #f9d900;
+}
+#beechart-0 .temperature-indicator {
+  -fx-stroke: #f9d900;
+  stroke: #f9d900;
+}
+.chart-series-line.series1 {
+  -fx-stroke: #a9e200;
+  stroke: #a9e200;
+}
+#beechart-1 .chart-series-line.series0 {
+  -fx-stroke: #a9e200;
+  stroke: #a9e200;
+}
+#beechart-1 .temperature-indicator {
+  -fx-stroke: #a9e200;
+  stroke: #a9e200;
+}
+.chart-series-line.series2 {
+  -fx-stroke: #22bad9;
+  stroke: #22bad9;
+}
+#beechart-2 .chart-series-line.series0 {
+  -fx-stroke: #22bad9;
+  stroke: #22bad9;
+}
+#beechart-2 .temperature-indicator {
+  -fx-stroke: #22bad9;
+  stroke: #22bad9;
+}
+.chart-series-line.series3 {
+  -fx-stroke: #0181e2;
+  stroke: #0181e2;
+}
+#beechart-3 .chart-series-line.series0 {
+  -fx-stroke: #0181e2;
+  stroke: #0181e2;
+}
+#beechart-3 .temperature-indicator {
+  -fx-stroke: #0181e2;
+  stroke: #0181e2;
+}
+.chart-series-line.series4 {
+  -fx-stroke: #2f357f;
+  stroke: #2f357f;
+}
+#beechart-4 .chart-series-line.series0 {
+  -fx-stroke: #2f357f;
+  stroke: #2f357f;
+}
+#beechart-4 .temperature-indicator {
+  -fx-stroke: #2f357f;
+  stroke: #2f357f;
+}
+.chart-series-line.series5 {
+  -fx-stroke: #860061;
+  stroke: #860061;
+}
+.chart-series-line.series0 #beechart-5 {
+  -fx-stroke: #860061;
+  stroke: #860061;
+}
+#beechart-5 .chart-series-line.series0 {
+  -fx-stroke: #860061;
+  stroke: #860061;
+}
+#beechart-5 .temperature-indicator {
+  -fx-stroke: #860061;
+  stroke: #860061;
+}
+.chart-series-line.series6 {
+  -fx-stroke: #c62b00;
+  stroke: #c62b00;
+}
+#beechart-6 .chart-series-line.series0 {
+  -fx-stroke: #c62b00;
+  stroke: #c62b00;
+}
+#beechart-6 .temperature-indicator {
+  -fx-stroke: #c62b00;
+  stroke: #c62b00;
+}
+.chart-series-line.series7 {
+  -fx-stroke: #ff5700;
+  stroke: #ff5700;
+}
+#beechart-7 .chart-series-line.series0 {
+  -fx-stroke: #ff5700;
+  stroke: #ff5700;
+}
+#beechart-7 .temperature-indicator {
+  -fx-stroke: #ff5700;
+  stroke: #ff5700;
+}

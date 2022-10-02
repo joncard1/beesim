@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.collections.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.scene.chart.*?>
+<?import java.lang.*?>
+<?import beesimulator.ui.MainController.ComboSelections?>
+<?import beesimulator.ui.MainController.ComboSelections.*?>
+
+<StackPane fx:controller="beesimulator.ui.MainController" xmlns:fx="http://javafx.com/fxml" xmlns="http://javafx.com/javafx/2.2" prefHeight="500.0" prefWidth="400.0" >
+  <children>
+    <BorderPane fx:id="borderPane">
+      <padding><Insets top="20" bottom="20" right="20" left="20" /></padding>
+      <top>
+        <VBox>
+          <ComboBox fx:id="processorSelectionComboBoxDelegate" editable="false">
+            <items>
+              <FXCollections fx:factory="observableArrayList">
+                <MainController.ComboSelections fx:factory="valueOf" fx:value="Histogram" />
+                <MainController.ComboSelections fx:factory="valueOf" fx:value="Cumulative" />
+              </FXCollections>
+            </items>
+          </ComboBox>
+          <HBox fx:id="beeChartsBoxDelegate" />
+        </VBox>
+      </top>
+      <right>
+        <VBox>
+          <Slider fx:id="heatFlowSliderDelegate" orientation="VERTICAL" VBox.vgrow="ALWAYS" max="3.0" blockIncrement="0.01" />
+          <Text fx:id="heatFlowTextDelegate" />
+        </VBox>
+      </right>
+      <center>
+        <LineChart fx:id="temperatureChartDelegate" layoutX="-2.0" prefHeight="500.0" prefWidth="500.0">
+          <xAxis>
+            <NumberAxis label="Time" side="BOTTOM" fx:id="xAxisDelegate" />
+          </xAxis>
+          <yAxis>
+            <NumberAxis fx:id="yAxisDelegate" label="Temperature" side="LEFT" tickUnit="0.1" animated="false" autoRanging="false" forceZeroInRange="false" />
+          </yAxis>
+        </LineChart>
+      </center>
+    </BorderPane>
+  </children>
+</StackPane>
