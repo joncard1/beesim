@@ -7,7 +7,7 @@ package beesimulator.bees
   * bearding if it is not currently part of it. Finally, each bee is given a
   * chance to update itself with respect to the temperature. This updating
   * provides a means for the Bee to remember states, like prior temperatures.
-  * 
+  *
   * The join and leave methods are separated in case the Bee wants to implement
   * hysteresis (the Bee wants to leave at a lower temperature than it wants to
   * join).

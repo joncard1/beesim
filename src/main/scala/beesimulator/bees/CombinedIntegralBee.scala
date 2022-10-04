@@ -12,7 +12,7 @@ package beesimulator.bees
   * was disappointing to find that a distributed system cannot seem to eliminate
   * steady state error. It may even be provable, though I don't think I've done
   * that strictly.
-  * 
+  *
   * TODO: It might be cool to see what happens if half the population has one
   * control point and half has another.
   *

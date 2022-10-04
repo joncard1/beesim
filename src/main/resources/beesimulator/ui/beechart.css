@@ -1,15 +1,16 @@
 /**
  * The important thing here is that the colors match between seriesx in the
  * temperature chart and #beechart-x in the bee charts.
- *
- * "stroke" was added to make a bunch of warnings go away.
  */
 #borderPane {
-  -fx-background-color: linear-gradient(to left bottom, reflect, #cccccc, #aaaaaa)
+  -fx-background-color: linear-gradient(to left bottom, reflect, #cccccc, #aaaaaa);
+  background-color: linear-gradient(to left bottom, reflect, #cccccc, #aaaaaa);
 }
+/** TODO: This looks nice, but it seems to make mouse clicks stop working.
 .chart {
   -fx-effect: dropshadow(gaussian, #888888, 20, 0, 5, 5)
 }
+*/
 #temperatureChartDelegate {
   -fx-create-symbols: false
 }

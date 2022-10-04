@@ -20,6 +20,7 @@ import scalafx.scene.chart.XYChart
 import scalafx.collections.ObservableBuffer
 import math.BigDecimal.double2bigDecimal
 import scalafx.scene.chart.NumberAxis
+import javafx.collections.FXCollections
 
 class BeeChartControl() extends Initializable {
   val loader = new FXMLLoader(getClass.getResource("beechart.fxml"))
@@ -45,6 +46,7 @@ class BeeChartControl() extends Initializable {
   override def initialize(x$0: URL, x$1: ju.ResourceBundle): Unit = {
     xAxis.lowerBound <== minimumTemperature
     xAxis.upperBound <== maximumTemperature
+    chart.data() = FXCollections.observableArrayList()
 
     minimumTemperature.onChange((_, _, newTemperature) =>
       regenerateCharts(

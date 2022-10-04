@@ -5,7 +5,7 @@ package beesimulator.bees
   * temperature and tries to anticipate whether it should react more quickly or
   * more slowly depending on how quickly the temperature changing from the
   * threshold.
-  * 
+  *
   * The lookahead is in steps, meaning how many steps the Bee is looking ahead
   * based on the current rate of change and adjusting its reaction according to
   * what temperature it anticipates the hive being that many steps ahead. It is
@@ -16,7 +16,7 @@ package beesimulator.bees
   * raw temperature provided to join, leave, and update as processed in a
   * complex way (see @see{SimpleBee}), and de(t)/dt is discretized as the
   * difference between the current temperature and the prior temperature.
-  * 
+  *
   * See [[SimpleBee]] for a discussion of Kp.
   *
   * @param threshold        This bee's threshold for joining or leaving the bearding.

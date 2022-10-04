@@ -6,7 +6,7 @@ import beesimulator.bees._
   * The simulator itself. Every step, the simulator iterates over all of the
   * bees in the hive, sees which bees are participating in the bearding, and
   * changes the total heat in the hive by the net heat flow.
-  * 
+  *
   * @param attributes   A [[beesimulator.controller.SimAttributes]] object containing the attributes of this simulator
   * @param inactiveBees A collection of bees that are not currently part of the bearding. This is initially all of the bees in the hive
   * @param activeBees   A collection of bees that were are part of the prior bearding. When starting fresh, just leave the default
@@ -23,7 +23,7 @@ case class Sim(attributes: SimAttributes, inactiveBees: Seq[Bee], activeBees: Se
       * @return         A simulator ready to iterate the next step
       */
     def step(heatIn: Double): Sim = {
-    
+
         var newActiveBees = Seq[Bee]()
         var newInactiveBees = Seq[Bee]()
         for (bee <- activeBees) {
