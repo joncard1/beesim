@@ -32,8 +32,4 @@ final case class DerivativeBee(threshold: Double, priorTemperature: Double, look
     override def leave(temperature: Double): Boolean = {
         !join(temperature)
     }
-
-    override def update(temperature: Double): Bee = {
-        return DerivativeBee(threshold, temperature, lookahead)
-    }
 }

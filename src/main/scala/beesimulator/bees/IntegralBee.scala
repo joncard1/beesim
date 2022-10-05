@@ -15,7 +15,7 @@ package beesimulator.bees
   * time, resulting in excessive cooling. A cap on the size of the error is
   * probably required, but that point is moot because actual bees must have some
   * form of integral control, because they do not show steady-state error.
-  * 
+  *
   * The accumulated error is scaled according to the standard form, which would
   * be expressed u(t) = Kp * e(t) + Ki/Ti * e(t). The time constant here has a
   * less straight-forward meaning than in the derivative controller, but which
@@ -24,7 +24,7 @@ package beesimulator.bees
   *
   * @param threshold    The temperature threshold of this bee.
   * @param timeConstant The time constant controlling the impact of the integral control
-  * @param accumulator  The acculuated error 
+  * @param accumulator  The acculuated error
   */
 final case class IntegralBee(threshold: Double, timeConstant: Int, accumulator: Double = 0) extends Bee {
 
@@ -34,9 +34,5 @@ final case class IntegralBee(threshold: Double, timeConstant: Int, accumulator: 
 
     override def leave(temperature: Double): Boolean = {
         !join(temperature)
-    }
-    
-    override def update(temperature: Double): Bee = {
-        return IntegralBee(threshold, timeConstant, accumulator + temperature - threshold)
     }
 }

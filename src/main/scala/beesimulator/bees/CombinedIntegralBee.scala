@@ -30,8 +30,4 @@ final case class CombinedIntegralBee(threshold: Double, controlPoint: Double, ti
   def leave(temperature: Double) : Boolean = {
     !join(temperature)
   }
-
-  def update(temperature: Double) : Bee = {
-    CombinedIntegralBee(threshold, controlPoint, timeConstant, accumulatedError + temperature - controlPoint)
-  }
 }

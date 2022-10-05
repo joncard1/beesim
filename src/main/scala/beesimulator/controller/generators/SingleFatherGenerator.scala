@@ -29,7 +29,7 @@ class SingleFatherGenerator(
     startingTemperture: Double,
     simAttributes: SimAttributes) extends AbstractDataGenerator(name, numberOfIterations, simAttributes) {
   def numberOfFamilies: Int = 1
-  
+
   def generatePoints(heatInflux: Double): List[BeeDataset] = {
     val bees: Seq[Bee] = for {
       i: Int <- 0.asInstanceOf[Int] to ((numberOfFathers + 1) * (numberOfDaughters + 1))

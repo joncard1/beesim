@@ -1,4 +1,4 @@
-package beesimulator.controller
+package beesimulator.bees
 
 /**
   * A DTO object that holds the initialization variables for the simulator. The
@@ -15,9 +15,9 @@ package beesimulator.controller
   * reaction time of these bees is truly amazing, or the hive is at the bottom
   * of the ocean.
   *
-  * @param mass           The mass of the hive
-  * @param initialHeat    The initial heat (energy) in the hive
-  * @param specificHeat   The specific heat of the hive
-  * @param heatFlowPerBee The amount of heat flow each active bee is contributing
+  * @param mass                 The mass of the hive
+  * @param initialTemperature   The initial temperature in the hive
+  * @param specificHeat         The specific heat of the hive
+  * @param heatFlowPerBee       The amount of heat flow each active bee is contributing
   */
-final case class SimAttributes(mass: Double, initialHeat: Double, specificHeat: Double, heatFlowPerBee: Double)
+final case class SimAttributes(mass: Double, initialTemperature: Double, specificHeat: Double, heatFlowPerBee: Double)

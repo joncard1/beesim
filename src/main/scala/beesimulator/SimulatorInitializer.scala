@@ -1,7 +1,6 @@
 package beesimulator
 
 import beesimulator.bees._
-import beesimulator.controller.SimAttributes
 import beesimulator.controller.generators._
 import beesimulator.ui.DataGenerator
 
@@ -12,7 +11,7 @@ object SimulatorInitializer {
   ): DataGenerator = {
     val numberOfIterations = 250
     val mass = 5
-    val initialHeat = 50
+    val initialTemperature = 20
     val specificHeat = 0.5
     val heatFlowPerBeeLow = 0.001
     val heatFlowPerBeeHigh = 0.002
@@ -26,12 +25,13 @@ object SimulatorInitializer {
     val derivativeLookAhead = 2
     val integralLookAhead = 20
 
-    // Use teh heatFlowPerBeeLow or heatFlowPerBeeHigh to see less and more
+    // Use the heatFlowPerBeeLow or heatFlowPerBeeHigh to see less and more
     // instability. The "fish tail" shapes when using heatFlowPerBeeHigh is
     // actually decreasing oscillations above and below the equilibrium.
     val simAttributes =
-      SimAttributes(mass, initialHeat, specificHeat, heatFlowPerBeeLow)
-
+      SimAttributes(mass, initialTemperature, specificHeat, heatFlowPerBeeLow)
+    val aggregateGenerator = new AggregateDataGenerator()
+/*
     val mixedFathersGenerator = new MixedFathersGenerator(
       "Mixed Fathers",
       startTemperature,
@@ -42,6 +42,7 @@ object SimulatorInitializer {
       fatherWindow,
       simAttributes
     )
+    aggregateGenerator.addDataGenerator(mixedFathersGenerator)
     val mixedFathersDerivativeGenerator = new MixedFathersGenerator(
       "Mixed Fathers with derivative",
       startTemperature,
@@ -53,6 +54,7 @@ object SimulatorInitializer {
       simAttributes,
       DerivativeBee.apply(_, startTemperature, derivativeLookAhead)
     )
+    aggregateGenerator.addDataGenerator(mixedFathersDerivativeGenerator)
     val bimodalGenerator = new BimodalGenerator(
       "Bimodal bee set",
       startTemperature,
@@ -62,6 +64,7 @@ object SimulatorInitializer {
       temperatureRange,
       simAttributes
     )
+    aggregateGenerator.addDataGenerator(bimodalGenerator)
     val singleFatherInMiddleGenerator = new SingleFatherGenerator(
       "Single Father with medium thresholds",
       startTemperature,
@@ -72,6 +75,7 @@ object SimulatorInitializer {
       startTemperature + (fatherDifference / 2),
       simAttributes
     )
+    aggregateGenerator.addDataGenerator(singleFatherInMiddleGenerator)
     val singleFatherAtBottomGenerator = new SingleFatherGenerator(
       "Single Father with low thresholds",
       startTemperature,
@@ -82,6 +86,7 @@ object SimulatorInitializer {
       startTemperature,
       simAttributes
     )
+    aggregateGenerator.addDataGenerator(singleFatherAtBottomGenerator)
     val focusedGroups = new FocusedGenerator(
       "Multiple fathers that cluster",
       startTemperature,
@@ -91,6 +96,7 @@ object SimulatorInitializer {
       temperatureRange,
       simAttributes
     )
+    aggregateGenerator.addDataGenerator(focusedGroups)
     val mixedFathersIntegralGenerator = new MixedFathersGenerator(
       "Mixed Fathers with integrals",
       startTemperature,
@@ -102,6 +108,8 @@ object SimulatorInitializer {
       simAttributes,
       IntegralBee.apply(_, integralLookAhead)
     )
+    aggregateGenerator.addDataGenerator(mixedFathersIntegralGenerator)
+    */
     val improvedIntegralGenerator = new MixedFathersGenerator(
       "Mixed fathers with improved integrals",
       startTemperature,
@@ -113,14 +121,6 @@ object SimulatorInitializer {
       simAttributes,
       CombinedIntegralBee(_, 22, integralLookAhead)
     )
-    val aggregateGenerator = new AggregateDataGenerator()
-    aggregateGenerator.addDataGenerator(mixedFathersGenerator)
-    aggregateGenerator.addDataGenerator(mixedFathersDerivativeGenerator)
-    aggregateGenerator.addDataGenerator(bimodalGenerator)
-    aggregateGenerator.addDataGenerator(singleFatherInMiddleGenerator)
-    aggregateGenerator.addDataGenerator(singleFatherAtBottomGenerator)
-    aggregateGenerator.addDataGenerator(focusedGroups)
-    aggregateGenerator.addDataGenerator(mixedFathersIntegralGenerator)
     aggregateGenerator.addDataGenerator(improvedIntegralGenerator)
 
     return aggregateGenerator

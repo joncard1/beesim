@@ -8,7 +8,7 @@ import beesimulator.controller._
 /**
   * This generates a distribution with 2 bell-curve shaped concentrations of
   * [[beesimulator.bees.SimpleBee]] objects.
-  * 
+  *
   * This was done to see what would happen. On observing the data in the paper
   * TODO: LOOK UP REFERENCE, it appeared that there were bee families that
   * stopped participating in the bearding when the temperature got too high.
@@ -34,7 +34,7 @@ class BimodalGenerator(
     temperatureRange: Double,
     simAttributes: SimAttributes) extends AbstractDataGenerator(name, numberOfIterations, simAttributes) {
   override val numberOfFamilies: Int = 1
-  
+
   override def generatePoints(heatInflux: Double): List[BeeDataset] = {
     // Bimodal distribution
     // Equation for the bell curve: y = (1 / (sigma*sqrt(2*pi))) * e ^((x - u)^2/(2 * sigma^2)
@@ -60,7 +60,7 @@ class BimodalGenerator(
       val exponent2 = -1 * (secondNumerator/denominator).doubleValue
       val numberOfBeesAtStep = scale * (math.exp(exponent1) + math.exp(exponent2))
       for (i <- 0.asInstanceOf[Int] until math.round(numberOfBeesAtStep).toInt ) {
-        bimodalBees = bimodalBees :+ new SimpleBee(setPoint + x.toDouble) 
+        bimodalBees = bimodalBees :+ new SimpleBee(setPoint + x.toDouble)
       }
     }
 

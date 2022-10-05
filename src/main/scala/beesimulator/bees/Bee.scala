@@ -1,5 +1,7 @@
 package beesimulator.bees
 
+import beesimulator.controller._
+
 /**
   * This represents the main "experimental" framework for the simulator. When
   * generating the simulator data, the simulator gives each Bee a chance to
@@ -12,7 +14,7 @@ package beesimulator.bees
   * hysteresis (the Bee wants to leave at a lower temperature than it wants to
   * join).
   */
-trait Bee {
+trait Bee extends SimActor[Double] {
   /**
     * The temperature above which the Bee will join and below which the Bee will
     * leave. The implementation doesn't have to be this straightforward, but all
@@ -37,16 +39,6 @@ trait Bee {
     * @return             Whether to remove the Bee to the bearding.
     */
   def leave(temperature: Double) : Boolean
-  /**
-    * Called after the Bee has either joined, left, or remained where in
-    * whatever state it is in, giving the Bee a chance to update itself with the
-    * state of the hive. Returning "this" won't break anything, but the return value is
-    * Bee to give options for functional programming methods.
-    *
-    * @param temperature  The temperature currently reported by the Sim. This will always be the same temperature as was given to join and leave.
-    * @return             The updated Bee.
-    */
-  def update(temperature: Double) : Bee
 }
 
 /**
@@ -59,4 +51,19 @@ object Bee {
     * @return An Ordering object that can be used to sort Bee objects.
     */
   implicit def simpleBeeOrdering: Ordering[SimpleBee] = Ordering.by(bee => bee.threshold)
+
+  implicit object BeeSimActorProvider extends SimActorProvider[Double, Bee] {
+    override def update(actor: Bee, newState: Double) = {
+      actor match {
+        case CombinedIntegralBee(threshold, controlPoint, timeConstant, accumulatedError) =>
+          CombinedIntegralBee(threshold, controlPoint, timeConstant, accumulatedError + newState - controlPoint)
+        case DerivativeBee(threshold, priorTemperature, lookahead) =>
+          DerivativeBee(threshold, newState, lookahead)
+        case IntegralBee(threshold, timeConstant, accumulator) =>
+          IntegralBee(threshold, timeConstant, accumulator + newState - threshold)
+        case e @ SimpleBee(threshold) =>
+          e
+      }
+    }
+  }
 }

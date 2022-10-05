@@ -36,7 +36,7 @@ class MixedFathersGenerator(
     simAttributes: SimAttributes,
     constructor: (threshold: Double) => Bee = (SimpleBee.apply _)) extends AbstractDataGenerator(name, numberOfIterations, simAttributes) {
   val numberOfFamilies = 1
-  
+
   override def generatePoints(heatInflux: Double): List[BeeDataset] = {
     val mixedFatherBees: Seq[Bee] = for {
       i <- 0.asInstanceOf[Int] to numberOfFathers

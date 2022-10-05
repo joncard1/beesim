@@ -41,7 +41,7 @@ class FocusedGenerator(
     val mean = temperatureRange / (numberOfFathers + 1)
     val bees = for  {
       startTemperatureOfStep <- (0 to (4 * 2 * sigma) by step)
-      indexOfFather <- 0.asInstanceOf[Int] until numberOfFathers 
+      indexOfFather <- 0.asInstanceOf[Int] until numberOfFathers
       bee <- {
         val numerator = math.pow(startTemperatureOfStep.toDouble - mean, 2)
         val exponent = -1 * numerator / denominator

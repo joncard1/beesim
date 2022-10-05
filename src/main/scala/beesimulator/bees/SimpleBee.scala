@@ -3,7 +3,7 @@ package beesimulator.bees
 /**
   * This is the simplest Bee. The Bee will join when the temperature is above
   * its threshold, and leave when the Bee is below its threshold.
-  * 
+  *
   * This represents a pure P controller (proportional controller), but whereas
   * the standard form of the PID controller is u(t) = Kp*e(t), where
   * e(t) = cp - t(t) (control point minus temperature at time t) and Kp's
@@ -28,9 +28,5 @@ final case class SimpleBee(threshold: Double) extends Bee {
 
     override def leave(temperature: Double): Boolean = {
         return !join(temperature)
-    }
-
-    override def update(temperature: Double): Bee = {
-        return this   
     }
 }
