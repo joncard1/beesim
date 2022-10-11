@@ -5,7 +5,7 @@ import org.scalatest.matchers.should.Matchers
 import beesimulator.controller._
 import beesimulator.simulator._
 
-class BeeSimSpec extends AnyWordSpec with Matchers {
+class InternalBeeSimSpec extends AnyWordSpec with Matchers {
   "MySim" when {
     "asked to run 2 steps" should {
       "stabilize at 2 bees and 1.5 degrees" in {
@@ -15,8 +15,8 @@ class BeeSimSpec extends AnyWordSpec with Matchers {
         val actor4 = SimpleBee(3)
         val actors = Seq(actor1, actor2, actor3, actor4)
         val attributes = new SimState(1, 1, 1, 0.5)
-        implicit val provider: SimProvider[Double, SimState, Bee, BeeSim] = new InternalSimProvider(attributes)
-        val sim1 = BeeSim(actors, Seq(), attributes)
+        implicit val provider: SimProvider[Double, SimState, Bee, InternalBeeSim] = new InternalBeeSimProvider(attributes)
+        val sim1 = InternalBeeSim(actors, Seq(), attributes)
         import sim1._
 
         val sim2 = sim1.step(1.0)
@@ -36,8 +36,8 @@ class BeeSimSpec extends AnyWordSpec with Matchers {
         val actor4 = SimpleBee(3)
         val actors = Seq(actor1, actor2, actor3, actor4)
         val attributes = new SimState(2, 1, 1, 0.5)
-        implicit val provider: SimProvider[Double, SimState, Bee, BeeSim] = new InternalSimProvider(attributes)
-        val sim1 = BeeSim(actors, Seq(), attributes)
+        implicit val provider: SimProvider[Double, SimState, Bee, InternalBeeSim] = new InternalBeeSimProvider(attributes)
+        val sim1 = InternalBeeSim(actors, Seq(), attributes)
         import sim1._
 
         val sim2 = sim1.step(1)
@@ -57,8 +57,8 @@ class BeeSimSpec extends AnyWordSpec with Matchers {
         val actor4 = SimpleBee(3)
         val actors = Seq(actor1, actor2, actor3, actor4)
         val attributes = new SimState(1, 1, 2, 0.5)
-        implicit val provider: SimProvider[Double, SimState, Bee, BeeSim] = new InternalSimProvider(attributes)
-        val sim1 = BeeSim(actors, Seq(), attributes)
+        implicit val provider: SimProvider[Double, SimState, Bee, InternalBeeSim] = new InternalBeeSimProvider(attributes)
+        val sim1 = InternalBeeSim(actors, Seq(), attributes)
         import sim1._
 
         val sim2 = sim1.step(1)
@@ -78,8 +78,8 @@ class BeeSimSpec extends AnyWordSpec with Matchers {
         val actor4 = SimpleBee(3)
         val actors = Seq(actor1, actor2, actor3, actor4)
         val attributes = new SimState(1, 2, 1, 0.5)
-        implicit val provider: SimProvider[Double, SimState, Bee, BeeSim] = new InternalSimProvider(attributes)
-        val sim1 = BeeSim(actors, Seq(), attributes)
+        implicit val provider: SimProvider[Double, SimState, Bee, InternalBeeSim] = new InternalBeeSimProvider(attributes)
+        val sim1 = InternalBeeSim(actors, Seq(), attributes)
         import sim1._
 
         val sim2 = sim1.step(1)
@@ -99,8 +99,8 @@ class BeeSimSpec extends AnyWordSpec with Matchers {
         val actor4 = SimpleBee(3)
         val actors = Seq(actor1, actor2, actor3, actor4)
         val attributes = new SimState(1, 3, 1, 0.5)
-        implicit val provider: SimProvider[Double, SimState, Bee, BeeSim] = new InternalSimProvider(attributes)
-        val sim1 = BeeSim(actors, Seq(), attributes)
+        implicit val provider: SimProvider[Double, SimState, Bee, InternalBeeSim] = new InternalBeeSimProvider(attributes)
+        val sim1 = InternalBeeSim(actors, Seq(), attributes)
         import sim1._
 
         val sim2 = sim1.step(1)
@@ -123,8 +123,8 @@ class BeeSimSpec extends AnyWordSpec with Matchers {
         val actor4 = SimpleBee(3)
         val actors = Seq(actor1, actor2, actor3, actor4)
         val attributes = new SimState(1, 4, 1, 0.5)
-        implicit val provider: SimProvider[Double, SimState, Bee, BeeSim] = new InternalSimProvider(attributes)
-        val sim1 = BeeSim(actors, Seq(), attributes)
+        implicit val provider: SimProvider[Double, SimState, Bee, InternalBeeSim] = new InternalBeeSimProvider(attributes)
+        val sim1 = InternalBeeSim(actors, Seq(), attributes)
         import sim1._
 
         val sim2 = sim1.step(1)
@@ -150,8 +150,8 @@ class BeeSimSpec extends AnyWordSpec with Matchers {
         val actor4 = SimpleBee(3)
         val actors = Seq(actor1, actor2, actor3, actor4)
         val attributes = new SimState(1, 1, 1, 0.5)
-        implicit val provider: SimProvider[Double, SimState, Bee, BeeSim] = new InternalSimProvider(attributes)
-        val sim1 = BeeSim(actors, Seq(), attributes)
+        implicit val provider: SimProvider[Double, SimState, Bee, InternalBeeSim] = new InternalBeeSimProvider(attributes)
+        val sim1 = InternalBeeSim(actors, Seq(), attributes)
         import sim1._
 
         val sim2 = sim1.step(2)
@@ -197,8 +197,8 @@ class BeeSimSpec extends AnyWordSpec with Matchers {
           actor11
         )
         val attributes = new SimState(1, 1, 1, 0.5)
-        implicit val provider: SimProvider[Double, SimState, Bee, BeeSim] = new InternalSimProvider(attributes)
-        val sim1 = BeeSim(actors, Seq(), attributes)
+        implicit val provider: SimProvider[Double, SimState, Bee, InternalBeeSim] = new InternalBeeSimProvider(attributes)
+        val sim1 = InternalBeeSim(actors, Seq(), attributes)
         import sim1._
 
         val sim2 = sim1.step(2)
@@ -272,8 +272,8 @@ class BeeSimSpec extends AnyWordSpec with Matchers {
           actor28
         )
         val attributes = new SimState(1, 1, 1, 0.5)
-        implicit val provider: SimProvider[Double, SimState, Bee, BeeSim] = new InternalSimProvider(attributes)
-        val sim1 = BeeSim(actors, Seq(), attributes)
+        implicit val provider: SimProvider[Double, SimState, Bee, InternalBeeSim] = new InternalBeeSimProvider(attributes)
+        val sim1 = InternalBeeSim(actors, Seq(), attributes)
         import sim1._
 
         val sim2 = sim1.step(3)
@@ -353,8 +353,8 @@ class BeeSimSpec extends AnyWordSpec with Matchers {
           actor28
         )
         val attributes = new SimState(1, 1, 1, 0.5)
-        implicit val provider: SimProvider[Double, SimState, Bee, BeeSim] = new InternalSimProvider(attributes)
-        val sim1 = BeeSim(actors, Seq(), attributes)
+        implicit val provider: SimProvider[Double, SimState, Bee, InternalBeeSim] = new InternalBeeSimProvider(attributes)
+        val sim1 = InternalBeeSim(actors, Seq(), attributes)
         import sim1._
 
         val sim2 = sim1.step(2.9)
