@@ -2,8 +2,9 @@ package beesimulator.controller.generators
 
 import beesimulator.bees._
 import beesimulator.ui._
-import beesimulator.controller.SimOps
+import beesimulator.controller._
 import scala.annotation.tailrec
+import beesimulator.simulator._
 
 /**
   * The parent class of all of most of the data generators. The method
@@ -13,21 +14,21 @@ import scala.annotation.tailrec
   *
   * @param name
   * @param numberOfIterations
-  * @param attributes
+  * @param currentState
   */
-abstract class AbstractDataGenerator(name: String, numberOfIterations: Int, attributes: SimAttributes) extends DataGenerator{
-  import Bee._
+abstract class AbstractDataGenerator(name: String, numberOfIterations: Int, currentState: SimState)(implicit provider: SimProvider[Double, SimState, Bee, InternalBeeSim]) extends DataGenerator{
 
   protected def runSimulator(heatInflux: Double, bees: Seq[Bee]): List[BeeDataset] = {
-    val sim = BeeSim(attributes, bees, Seq())
+    val sim = InternalBeeSim(bees, Seq(), currentState)
     import sim._
 
     @tailrec
-    def iterate(iteration: Int, sim: BeeSim, temperatures: List[Double]): List[Double] = {
+    def iterate(iteration: Int, sim: InternalBeeSim, temperatures: List[Double]): List[Double] = {
       if (iteration == numberOfIterations) {
         temperatures
       } else {
-        iterate(iteration + 1, sim.step(heatInflux), sim.currentTemperature.getOrElse(sim.attributes.initialTemperature) :: temperatures)
+        val t = new sim.SimOps(sim)
+        iterate(iteration + 1, sim.step(heatInflux), sim.currentState.currentTemperature :: temperatures)
       }
     }
     val temperatures = iterate(0, sim, List())

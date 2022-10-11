@@ -3,6 +3,7 @@ package beesimulator.controller.generators
 import beesimulator.bees._
 import beesimulator.controller._
 import beesimulator.ui._
+import beesimulator.simulator._
 
 /**
   * A simple generator that creates daughters from one father whose distribution
@@ -27,7 +28,7 @@ class SingleFatherGenerator(
     numberOfDaughters: Int,
     fatherWindow: Double,
     startingTemperture: Double,
-    simAttributes: SimAttributes) extends AbstractDataGenerator(name, numberOfIterations, simAttributes) {
+    simAttributes: SimState)(implicit provider: SimProvider[Double, SimState, Bee, InternalBeeSim]) extends AbstractDataGenerator(name, numberOfIterations, simAttributes) {
   def numberOfFamilies: Int = 1
 
   def generatePoints(heatInflux: Double): List[BeeDataset] = {

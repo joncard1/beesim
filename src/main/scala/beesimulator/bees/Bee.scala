@@ -1,6 +1,7 @@
 package beesimulator.bees
 
 import beesimulator.controller._
+import beesimulator.simulator._
 
 /**
   * This represents the main "experimental" framework for the simulator. When
@@ -14,7 +15,7 @@ import beesimulator.controller._
   * hysteresis (the Bee wants to leave at a lower temperature than it wants to
   * join).
   */
-trait Bee extends SimActor[Double] {
+trait Bee extends SimActor[SimState] {
   /**
     * The temperature above which the Bee will join and below which the Bee will
     * leave. The implementation doesn't have to be this straightforward, but all
@@ -30,7 +31,7 @@ trait Bee extends SimActor[Double] {
     * @param temperature  The temperature currently reported by the Sim.
     * @return             Whether to add the Bee to the bearding.
     */
-  def join(temperature: Double) : Boolean
+  def join(temperature: SimState) : Boolean
   /**
     * Called when a Bee is a member of a bearding to determine if it wants to
     * leave.
@@ -38,7 +39,7 @@ trait Bee extends SimActor[Double] {
     * @param temperature  The temperature currently reported by the Sim.
     * @return             Whether to remove the Bee to the bearding.
     */
-  def leave(temperature: Double) : Boolean
+  def leave(temperature: SimState) : Boolean
 }
 
 /**
@@ -52,15 +53,15 @@ object Bee {
     */
   implicit def simpleBeeOrdering: Ordering[SimpleBee] = Ordering.by(bee => bee.threshold)
 
-  implicit object BeeSimActorProvider extends SimActorProvider[Double, Bee] {
-    override def update(actor: Bee, newState: Double) = {
+  implicit object BeeSimActorProvider extends SimActorProvider[SimState, Bee] {
+    override def update(actor: Bee, newState: SimState) = {
       actor match {
         case CombinedIntegralBee(threshold, controlPoint, timeConstant, accumulatedError) =>
-          CombinedIntegralBee(threshold, controlPoint, timeConstant, accumulatedError + newState - controlPoint)
+          CombinedIntegralBee(threshold, controlPoint, timeConstant, accumulatedError + newState.currentTemperature - controlPoint)
         case DerivativeBee(threshold, priorTemperature, lookahead) =>
-          DerivativeBee(threshold, newState, lookahead)
+          DerivativeBee(threshold, newState.currentTemperature, lookahead)
         case IntegralBee(threshold, timeConstant, accumulator) =>
-          IntegralBee(threshold, timeConstant, accumulator + newState - threshold)
+          IntegralBee(threshold, timeConstant, accumulator + newState.currentTemperature - threshold)
         case e @ SimpleBee(threshold) =>
           e
       }

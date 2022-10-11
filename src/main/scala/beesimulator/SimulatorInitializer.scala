@@ -3,6 +3,8 @@ package beesimulator
 import beesimulator.bees._
 import beesimulator.controller.generators._
 import beesimulator.ui.DataGenerator
+import beesimulator.controller._
+import beesimulator.simulator._
 
 object SimulatorInitializer {
   def getGenerator(
@@ -29,7 +31,8 @@ object SimulatorInitializer {
     // instability. The "fish tail" shapes when using heatFlowPerBeeHigh is
     // actually decreasing oscillations above and below the equilibrium.
     val simAttributes =
-      SimAttributes(mass, initialTemperature, specificHeat, heatFlowPerBeeLow)
+      SimState(mass, initialTemperature, specificHeat, heatFlowPerBeeLow)
+    implicit val provider: SimProvider[Double, SimState, Bee, InternalBeeSim] = new InternalBeeSimProvider(simAttributes)
     val aggregateGenerator = new AggregateDataGenerator()
 /*
     val mixedFathersGenerator = new MixedFathersGenerator(
@@ -110,6 +113,7 @@ object SimulatorInitializer {
     )
     aggregateGenerator.addDataGenerator(mixedFathersIntegralGenerator)
     */
+
     val improvedIntegralGenerator = new MixedFathersGenerator(
       "Mixed fathers with improved integrals",
       startTemperature,

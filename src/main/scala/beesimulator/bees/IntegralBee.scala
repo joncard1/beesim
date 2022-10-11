@@ -28,11 +28,11 @@ package beesimulator.bees
   */
 final case class IntegralBee(threshold: Double, timeConstant: Int, accumulator: Double = 0) extends Bee {
 
-    override def join(temperature: Double): Boolean = {
-        (temperature + (accumulator + temperature - threshold) / timeConstant) > threshold
+    override def join(currentState: SimState): Boolean = {
+        (currentState.currentTemperature + (accumulator + currentState.currentTemperature - threshold) / timeConstant) > threshold
     }
 
-    override def leave(temperature: Double): Boolean = {
-        !join(temperature)
+    override def leave(currentState: SimState): Boolean = {
+        !join(currentState)
     }
 }

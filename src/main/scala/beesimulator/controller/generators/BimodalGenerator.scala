@@ -4,6 +4,7 @@ import math.BigDecimal.double2bigDecimal
 import beesimulator.bees._
 import beesimulator.ui._
 import beesimulator.controller._
+import beesimulator.simulator._
 
 /**
   * This generates a distribution with 2 bell-curve shaped concentrations of
@@ -32,7 +33,7 @@ class BimodalGenerator(
     numberOfFathers: Int,
     numberOfDaughters: Int,
     temperatureRange: Double,
-    simAttributes: SimAttributes) extends AbstractDataGenerator(name, numberOfIterations, simAttributes) {
+    simAttributes: SimState)(implicit provider: SimProvider[Double, SimState, Bee, InternalBeeSim]) extends AbstractDataGenerator(name, numberOfIterations, simAttributes) {
   override val numberOfFamilies: Int = 1
 
   override def generatePoints(heatInflux: Double): List[BeeDataset] = {

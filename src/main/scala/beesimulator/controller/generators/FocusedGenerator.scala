@@ -4,6 +4,7 @@ import math.BigDecimal.double2bigDecimal
 import beesimulator.bees._
 import beesimulator.controller._
 import beesimulator.ui._
+import beesimulator.simulator._
 
 /**
   * This generator creates multiple bell-curves, one for each father, in an even
@@ -25,7 +26,7 @@ class FocusedGenerator(
     numberOfFathers: Int,
     numberOfDaughters: Int,
     temperatureRange: Double,
-    simAttributes: SimAttributes) extends AbstractDataGenerator(name, numberOfIterations, simAttributes) {
+    simAttributes: SimState)(implicit provider: SimProvider[Double, SimState, Bee, InternalBeeSim]) extends AbstractDataGenerator(name, numberOfIterations, simAttributes) {
   override def numberOfFamilies: Int = 1
 
   override def generatePoints(heatInflux: Double): List[BeeDataset] = {

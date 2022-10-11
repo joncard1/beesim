@@ -24,12 +24,12 @@ package beesimulator.bees
   * @param lookahead        A time constant representing how many simulator steps to look head.
   */
 final case class DerivativeBee(threshold: Double, priorTemperature: Double, lookahead: Double) extends Bee {
-    override def join(temperature: Double): Boolean = {
-        val adjustedTemperature = (temperature + (lookahead * (temperature - priorTemperature)))
+    override def join(currentState: SimState): Boolean = {
+        val adjustedTemperature = (currentState.currentTemperature + (lookahead * (currentState.currentTemperature - priorTemperature)))
         (adjustedTemperature > threshold)
     }
 
-    override def leave(temperature: Double): Boolean = {
-        !join(temperature)
+    override def leave(currentState: SimState): Boolean = {
+        !join(currentState)
     }
 }

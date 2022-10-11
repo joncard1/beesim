@@ -22,12 +22,12 @@ package beesimulator.bees
   * @param accumulatedError The accumulated error across time over the life of the simulation, collected in each bee according to its experiences. On first creation, just use the default
   */
 final case class CombinedIntegralBee(threshold: Double, controlPoint: Double, timeConstant: Double, accumulatedError: Double = 0) extends Bee {
-  def join(temperature: Double) : Boolean = {
-    val adjustedTemperature = temperature + ((accumulatedError + temperature - controlPoint) / timeConstant)
+  def join(currentState: SimState) : Boolean = {
+    val adjustedTemperature = currentState.currentTemperature + ((accumulatedError + currentState.currentTemperature - controlPoint) / timeConstant)
     adjustedTemperature > threshold
   }
 
-  def leave(temperature: Double) : Boolean = {
-    !join(temperature)
+  def leave(currentState: SimState) : Boolean = {
+    !join(currentState)
   }
 }

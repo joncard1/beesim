@@ -16,8 +16,8 @@ package beesimulator.bees
   * of the ocean.
   *
   * @param mass                 The mass of the hive
-  * @param initialTemperature   The initial temperature in the hive
+  * @param currentTemperature   The initial temperature in the hive
   * @param specificHeat         The specific heat of the hive
   * @param heatFlowPerBee       The amount of heat flow each active bee is contributing
   */
-final case class SimAttributes(mass: Double, initialTemperature: Double, specificHeat: Double, heatFlowPerBee: Double)
+final case class SimState(mass: Double, currentTemperature: Double, specificHeat: Double, heatFlowPerBee: Double)

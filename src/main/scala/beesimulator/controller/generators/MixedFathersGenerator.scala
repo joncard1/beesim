@@ -3,6 +3,7 @@ package beesimulator.controller.generators
 import beesimulator.bees._
 import beesimulator.controller._
 import beesimulator.ui._
+import beesimulator.simulator._
 
 /**
   * This generates the combination of multiple fathers, evenly spaced across the
@@ -33,8 +34,8 @@ class MixedFathersGenerator(
     numberOfDaughters: Int,
     fatherDifference: Double,
     fatherWindow: Double,
-    simAttributes: SimAttributes,
-    constructor: (threshold: Double) => Bee = (SimpleBee.apply _)) extends AbstractDataGenerator(name, numberOfIterations, simAttributes) {
+    simAttributes: SimState,
+    constructor: (threshold: Double) => Bee = (SimpleBee.apply _))(implicit provider: SimProvider[Double, SimState, Bee, InternalBeeSim]) extends AbstractDataGenerator(name, numberOfIterations, simAttributes) {
   val numberOfFamilies = 1
 
   override def generatePoints(heatInflux: Double): List[BeeDataset] = {
