@@ -1,14 +1,14 @@
 package beesimulator.ui.processors
 
-import beesimulator.bees._
+import beesimulator.ui._
 
 /**
  * This processor takes the output of the HistogramBeeDataProcessor and re-
  * configures each column to be the cumulative count of all bees with a
  * threshold below the temperature value of each bin.
  */
-object CumulativeCountBeeDataProcessor extends BeeDataProcessor {
-  override def transform(minimumYBoundary: Double, maximumYBoundary: Double, width: Int, input: Seq[Bee]): Seq[Int] = {
+object CumulativeCountBeeDataProcessor extends DataProcessor {
+  override def transform(minimumYBoundary: Double, maximumYBoundary: Double, width: Int, input: Seq[HistogramItem]): Seq[Int] = {
     val histogramResults = HistogramBeeDataProcessor.transform(minimumYBoundary, maximumYBoundary, width, input)
     assert(histogramResults.length == width)
 
@@ -18,7 +18,7 @@ object CumulativeCountBeeDataProcessor extends BeeDataProcessor {
       total = total + histogramResults(i)
       cumulativeTotals(i) = total
     }
-   
+
     cumulativeTotals
   }
 }

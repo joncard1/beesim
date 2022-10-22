@@ -1,6 +1,6 @@
 package beesimulator.ui.processors
 
-import beesimulator.bees._
+import beesimulator.ui._
 
 // TODO: The calculation of the histogram needs to be looked at. I'm not sure
 // where those peaks come from.
@@ -11,12 +11,12 @@ import beesimulator.bees._
  * of bees with a threshold in that range. This is a good tool for viewing the
  * distribution of the bee thresholds.
  */
-object HistogramBeeDataProcessor extends BeeDataProcessor {
-  override def transform(minimumTemperature: Double, maximumTemperature: Double, numberOfBins: Int, bees: Seq[Bee]): Seq[Int] = {
+object HistogramBeeDataProcessor extends DataProcessor {
+  override def transform(minimumTemperature: Double, maximumTemperature: Double, numberOfBins: Int, bees: Seq[HistogramItem]): Seq[Int] = {
     val binRange = (numberOfBins) / (maximumTemperature - minimumTemperature)
     val histogramData = new Array[Int](numberOfBins)
     bees.foreach(bee => {
-      val index = math.floor((bee.threshold - minimumTemperature) * binRange).toInt
+      val index = math.floor((bee.value() - minimumTemperature) * binRange).toInt
       histogramData(if (index < numberOfBins) index else numberOfBins - 1) = histogramData(if (index < numberOfBins) index else numberOfBins - 1) + 1
     })
 

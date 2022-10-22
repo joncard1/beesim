@@ -25,7 +25,7 @@ abstract class Sim[T, U, V <: SimActor[U]](
     val currentState: U
 )(implicit provider: SimActorProvider[U, V]) {
 
-  implicit class SimOps[T, U, V <: SimActor[U], W <: Sim[T, U, V]](sim: W)(
+  implicit class SimOps[-T, +U, +V <: SimActor[U], +W <: Sim[T, U, V]](sim: W)(
       implicit provider: SimProvider[T, U, V, W]
   ) {
     def step(inForcing: T): W = {

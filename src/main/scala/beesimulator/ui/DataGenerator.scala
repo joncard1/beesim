@@ -15,11 +15,11 @@ trait DataGenerator {
     * @param heatInflux The amount of heat energy being added to the bee hive each step
     * @return           The list of data series to display.
     */
-  def generatePoints(heatInflux: Double): List[BeeDataset]
+  def generatePoints(heatInflux: Double): List[Dataset]
   /**
     * The number of different families expected to be returned by the data
     * generator. Mostly a convenience so that we don't have to generate the data
-    * and get the length of the list of data series when initializing the UI. 
+    * and get the length of the list of data series when initializing the UI.
     *
     * @return The number of families of bees that the generator will provide data for
     */

@@ -26,6 +26,7 @@ import javafx.collections.FXCollections
 import scala.util._
 import scala.concurrent.Promise
 import java.util.ArrayList
+import scalafx.util.StringConverter
 
 // TODO: It occurs to me that this needs to be much more defensive if I'm
 // expecting people to potentially write their own bees or generators.
@@ -78,25 +79,15 @@ class MainController {
   val NumberOfBins = 50
 
   /**
-   * The initial amount of heat flow into the simulator at each step. This is
-   * the amount of heat the bees must expel to keep a consistent temperature.
-   *
-   * Strictly speaking, this is dependent on the external temperature and the
-   * temperature in the hive, and there will be no flow when the ambient
-   * temperature is the same as the temperature in the hive. This may make a
-   * difference. This is modeled like the hive is on a stove, not like the hiv
-   * is in the open. Perhaps that makes a difference?
-   */
-  val InitialHeatFlow = 0.5
-
-  /**
    * The initial type of processor to use to summarize the bee populations.
    */
-  val InitialComboBoxValue = MainController.ComboSelections.Histogram
+  val InitialProcessorSelection = MainController.ComboSelections.Histogram
 
   @FXML var borderPaneDelegate: jfxs.layout.BorderPane = _
   private lazy val borderPane = new BorderPane(borderPaneDelegate)
 
+  @FXML var simulatorSelectionComboBoxDelegate: jfxsc.ComboBox[Simulation] = _
+  private lazy val simulatorSelectionComboBox: ComboBox[Simulation] = new ComboBox(simulatorSelectionComboBoxDelegate)
   /**
    * The combo box that allows users to select the style of summary used to
    * summarize the bee populations in the charts across the top. It uses the
@@ -176,7 +167,7 @@ class MainController {
    * a change event, so elements of the GUI can subscribe to this object and be
    * updated automatically.
    */
-  val simulatorData: BufferProperty[BeeDataset] = new BufferProperty(
+  val simulatorData: BufferProperty[Dataset] = new BufferProperty(
     ObservableBuffer()
   )
 
@@ -197,7 +188,7 @@ class MainController {
    * changing the [[processorSelectionComboBoxDelegate]] triggers the entire
    * processing pipeline without necessarily re-running the simulator.
    */
-  val processor = ObjectProperty[Option[BeeDataProcessor]](None)
+  val processor = ObjectProperty[Option[DataProcessor]](None)
 
   /**
    * A special class of exception to distinguish cancelled simulator runs from
@@ -205,11 +196,20 @@ class MainController {
    */
   final case class CancelledOperation() extends Exception
 
+  /**
+    *
+    * @param newSimulation
+    * @return
+    */
+  // If this is to be called after setData, this needs to be more complex.
+  def addSimulation(newSimulation: Simulation) = {
+    simulatorSelectionComboBox.items().add(newSimulation)
+  }
+
   def setData(
       newMinimumYValue: Double,
       newMinimumYBoundary: Double,
-      newMaximumYBoundary: Double,
-      generator: DataGenerator
+      newMaximumYBoundary: Double
   ) = {
     // Inialize the various properties with either a default value or the provided values.
     temperatureChart.data() = FXCollections.observableArrayList()
@@ -229,69 +229,7 @@ class MainController {
         case MainController.ComboSelections.Cumulative => processor() = Some(CumulativeCountBeeDataProcessor)
       }
     })
-    processorSelectionComboBox.value() = InitialComboBoxValue
-
-    // For each of the families in the generator, creat a chart to summarize the
-    // bee population and subscribe it to the processor property, to recalculate
-    //the histograms when the processor changes, and to the various constants
-    /// that don't need to be properties because they never change, and
-    // initialize the data in the bee chart, because moving the simulator
-    // computation to a background thread means that the data is not populated
-    // when the UI first displays. The, subscribe the data to the simulatorData
-    // property.
-    beeCharts = new Array[BeeChartControl](generator.numberOfFamilies)
-    for (i <- 0 until generator.numberOfFamilies) {
-      val newBeeChartController = new BeeChartControl()
-      newBeeChartController.processor <== processor
-      newBeeChartController.minimumTemperature <== minimumYBoundary
-      newBeeChartController.maximumTemperature <== maximumYBoundary
-      newBeeChartController.numberOfBins() = NumberOfBins
-      newBeeChartController.simulatorData() = None
-
-      simulatorData.onChange((_, _, newDatasets) => {
-        newBeeChartController.simulatorData() = Option(newDatasets.get(i))
-      })
-
-      val view = newBeeChartController.view
-      view.idProperty.set(s"beechart-${i}")
-      beeChartsBox.children.add(view)
-      beeCharts(i) = (newBeeChartController)
-    }
-
-    // Subscribes the update of simulatorData to the movement of the slider.
-    // When the slider is changed, the data is refreshed. This would really only
-    // be the two lines:
-    //   simulatorData().clear()
-    //   simulatorData().addall(datasets)
-    // except that, the simulator taking a bit long, the mouse loses track of
-    // the slider for a bit while it updates. This way, the recomputation is
-    // done in another thread, "repatriated," kind-of, to the JavaFX thread with
-    // Platform.runLater, and can be cancelled by later recomputations if the
-    // slider is being dragged.
-    // I'm conflicted about it, really; the data changing gradually is better
-    // animated without the background thread, but the slider not being able to
-    // keep up is kind-of annoying.
-    var cancel: () => Unit = {() => ()}
-    heatFlowSlider.value.onChange((_, _, newValue: Number) => {
-      cancel()
-      val f = Future(generator.generatePoints(newValue.doubleValue()))
-      val p = Promise[List[BeeDataset]]()
-      Future.firstCompletedOf(Seq(f, p.future)).andThen {
-        case Success(datasets) => {
-          Platform.runLater({
-            simulatorData() = ObservableBuffer.from(datasets)
-          })
-        }
-        case Failure(CancelledOperation()) => {}
-        case Failure(e) => {
-          // TODO: Probably some better error handling here
-        }
-      }
-      cancel = () => {
-        if (!p.isCompleted)
-        p.failure(CancelledOperation())
-      }
-    })
+    processorSelectionComboBox.value() = InitialProcessorSelection
 
     // Subscribes the temperature chart to the simulatorData
     simulatorData.onChange((_, _, newValue) => {
@@ -307,15 +245,122 @@ class MainController {
           )
         })
     })
-    // This both sets the initial value of the slider, and triggers the first
-    // data generation run.
-    heatFlowSlider.value() = InitialHeatFlow
 
-    // Sets the focus on the slider. This needs to be done "later", after the
-    // window is displayed, otherwise it will just get ignored.
-    Platform.runLater({
-      heatFlowSlider.requestFocus()
+    simulatorSelectionComboBox.setConverter(new StringConverter[Simulation] {
+
+      override def fromString(string: String): Simulation = {
+        val simulations = simulatorSelectionComboBox.items().filtered(sim => sim.simulatorName.equals(string))
+        if (simulations.size() > 0) {
+          simulations.get(0)
+        } else {
+          throw new Exception("No valid simulation found")
+        }
+      }
+
+      override def toString(t: Simulation): String = {
+        if (t != null) {
+          t.simulatorName
+        } else {
+          ""
+        }
+      }
     })
+
+    var simulatorDataSubscriptions: Option[Array[Subscription]] = None
+    var heatFlowSliderSubscription: Option[Subscription] = None
+    simulatorSelectionComboBox.value.onChange((_, _, newSimulation) => {
+      // Disconnect that previous simulation from the UI elements.
+      if (simulatorDataSubscriptions.isDefined) {
+        simulatorDataSubscriptions.get.foreach(sub => sub.cancel())
+      }
+      if (heatFlowSliderSubscription.isDefined) {
+        heatFlowSliderSubscription.get.cancel()
+      }
+
+      // For each of the families in the generator, creat a chart to summarize the
+      // bee population and subscribe it to the processor property, to recalculate
+      // the histograms when the processor changes, and to the various constants
+      // that don't need to be properties because they never change, and
+      // initialize the data in the bee chart, because moving the simulator
+      // computation to a background thread means that the data is not populated
+      // when the UI first displays. The, subscribe the data to the simulatorData
+      // property.
+      beeCharts = new Array[BeeChartControl](newSimulation.generator.numberOfFamilies)
+      simulatorDataSubscriptions = Some(new Array[Subscription](newSimulation.generator.numberOfFamilies))
+      beeChartsBox.children.clear()
+      for (i <- 0 until newSimulation.generator.numberOfFamilies) {
+        val newBeeChartController = new BeeChartControl()
+        newBeeChartController.processor <== processor
+        newBeeChartController.minimumTemperature <== minimumYBoundary
+        newBeeChartController.maximumTemperature <== maximumYBoundary
+        newBeeChartController.numberOfBins() = NumberOfBins
+        newBeeChartController.simulatorData() = None
+
+        (simulatorDataSubscriptions.get)(i) = simulatorData.onChange((_, _, newDatasets) => {
+          newBeeChartController.view.indicatorPosition() = Some(newDatasets.get(i).indicatorPosition)
+          newBeeChartController.simulatorData() = Option(newDatasets.get(i))
+        })
+
+        val view = newBeeChartController.view
+        view.idProperty.set(s"beechart-${i}")
+        beeChartsBox.children.add(view)
+        beeCharts(i) = (newBeeChartController)
+      }
+
+      // Subscribes the update of simulatorData to the movement of the slider.
+      // When the slider is changed, the data is refreshed. This would really only
+      // be the two lines:
+      //   simulatorData().clear()
+      //   simulatorData().addall(datasets)
+      // except that, the simulator taking a bit long, the mouse loses track of
+      // the slider for a bit while it updates. This way, the recomputation is
+      // done in another thread, "repatriated," kind-of, to the JavaFX thread with
+      // Platform.runLater, and can be cancelled by later recomputations if the
+      // slider is being dragged.
+      // I'm conflicted about it, really; the data changing gradually is better
+      // animated without the background thread, but the slider not being able to
+      // keep up is kind-of annoying.
+      var cancel: () => Unit = {() => ()}
+      val heatFlowTooltip = new Tooltip(newSimulation.forcingVariableName)
+      Tooltip.install(heatFlowSlider, heatFlowTooltip)
+      heatFlowSlider.min() = newSimulation.forcingVariableRange._1
+      heatFlowSlider.max() = newSimulation.forcingVariableRange._2
+      heatFlowSliderSubscription = Some(heatFlowSlider.value.onChange((_, _, newValue: Number) => {
+        cancel()
+        val f = Future(newSimulation.generator.generatePoints(newValue.doubleValue()))
+        val p = Promise[List[Dataset]]()
+        Future.firstCompletedOf(Seq(f, p.future)).andThen {
+          case Success(datasets) => {
+            Platform.runLater({
+              simulatorData() = ObservableBuffer.from(datasets)
+            })
+          }
+          case Failure(CancelledOperation()) => {}
+          case Failure(e) => {
+            // TODO: Probably some better error handling here
+          }
+        }
+        cancel = () => {
+          if (!p.isCompleted)
+          p.failure(CancelledOperation())
+        }
+      }))
+
+      // This triggers the data creation
+      heatFlowSlider.value() = newSimulation.forcingVariableInitialValue
+
+      // Sets the focus on the slider. This needs to be done "later", after the
+      // window is displayed, otherwise it will just get ignored.
+      Platform.runLater({
+        heatFlowSlider.requestFocus()
+      })
+    })
+
+    // This statement is guarded, but it is what sets everything else in motion.
+    // So, if the simulator combo box isn't initialized yet, it won't work well.
+    if (simulatorSelectionComboBox.items().size() > 0) {
+      simulatorSelectionComboBox.value() = simulatorSelectionComboBox.items().get(0)
+    }
   }
 
 }

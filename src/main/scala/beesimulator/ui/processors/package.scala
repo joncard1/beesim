@@ -6,5 +6,5 @@ package beesimulator.ui
   * defined to be included in the processing chain in [[beesimulator.ui.MainFrame]]
   */
 package object processors {
-  
+
 }

@@ -11,6 +11,13 @@
   -fx-effect: dropshadow(gaussian, #888888, 20, 0, 5, 5)
 }
 */
+
+.headerLabel {
+  -fx-min-width: 300px;
+  min-width: 300px;
+  -fx-max-width: 300px;
+  max-width: 300px;
+}
 #temperatureChartDelegate {
   -fx-create-symbols: false
 }

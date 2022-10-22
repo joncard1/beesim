@@ -42,9 +42,9 @@ class AggregateDataGenerator extends DataGenerator {
     * @param heatInFlux The heat being added to the hive at each step
     * @return           The data series the UI should display
     */
-  override def generatePoints(heatInFlux: Double): List[BeeDataset] = {
+  override def generatePoints(heatInFlux: Double): List[Dataset] = {
     @tailrec
-    def iterateDataGenerator(generators: List[DataGenerator], results: List[BeeDataset]): List[BeeDataset] = {
+    def iterateDataGenerator(generators: List[DataGenerator], results: List[Dataset]): List[Dataset] = {
       generators match {
         case Nil => results
         case x :: xs => {

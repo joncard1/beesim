@@ -1,20 +1,19 @@
-package beesimulator
+package beesimulator.controller
 
 import beesimulator.bees._
 import beesimulator.controller.generators._
-import beesimulator.ui.DataGenerator
+import beesimulator.ui._
 import beesimulator.controller._
 import beesimulator.simulator._
 
-object SimulatorInitializer {
-  def getGenerator(
+object InternalSimulationInitializer extends SimulationInitializer {
+  def getSimulation(
       startTemperature: Double,
-      temperatureRange: Double
-  ): DataGenerator = {
+      temperatureRange: Double,
+      mass: Double,
+      specificHeat: Double
+  ): Simulation = {
     val numberOfIterations = 250
-    val mass = 5
-    val initialTemperature = 20
-    val specificHeat = 0.5
     val heatFlowPerBeeLow = 0.001
     val heatFlowPerBeeHigh = 0.002
 
@@ -30,11 +29,14 @@ object SimulatorInitializer {
     // Use the heatFlowPerBeeLow or heatFlowPerBeeHigh to see less and more
     // instability. The "fish tail" shapes when using heatFlowPerBeeHigh is
     // actually decreasing oscillations above and below the equilibrium.
-    val simAttributes =
-      SimState(mass, initialTemperature, specificHeat, heatFlowPerBeeLow)
-    implicit val provider: SimProvider[Double, SimState, Bee, InternalBeeSim] = new InternalBeeSimProvider(simAttributes)
+    val internalInitialState =
+      InternalSimState(mass, specificHeat, heatFlowPerBeeLow, startTemperature)
+    implicit val internalSimProvider: SimProvider[Double, InternalSimState, Bee[InternalSimState], InternalBeeSim] = new InternalBeeSimProvider(internalInitialState)
+
     val aggregateGenerator = new AggregateDataGenerator()
-/*
+    val datasetCreator = (forcingValue: Double, lastTemperature: Double, name: String, numBees: Int, temperatures: List[Double], histogramData: Seq[BeeHistogramItem]) =>
+        Dataset(name, lastTemperature, numBees, temperatures, histogramData)
+
     val mixedFathersGenerator = new MixedFathersGenerator(
       "Mixed Fathers",
       startTemperature,
@@ -43,8 +45,9 @@ object SimulatorInitializer {
       numberOfDaughters,
       fatherDifference,
       fatherWindow,
-      simAttributes
-    )
+      internalInitialState,
+      datasetCreator
+    )(internalSimProvider)
     aggregateGenerator.addDataGenerator(mixedFathersGenerator)
     val mixedFathersDerivativeGenerator = new MixedFathersGenerator(
       "Mixed Fathers with derivative",
@@ -54,7 +57,8 @@ object SimulatorInitializer {
       numberOfDaughters,
       fatherDifference,
       fatherWindow,
-      simAttributes,
+      internalInitialState,
+      datasetCreator,
       DerivativeBee.apply(_, startTemperature, derivativeLookAhead)
     )
     aggregateGenerator.addDataGenerator(mixedFathersDerivativeGenerator)
@@ -65,7 +69,8 @@ object SimulatorInitializer {
       numberOfFathers,
       numberOfDaughters,
       temperatureRange,
-      simAttributes
+      internalInitialState,
+      datasetCreator
     )
     aggregateGenerator.addDataGenerator(bimodalGenerator)
     val singleFatherInMiddleGenerator = new SingleFatherGenerator(
@@ -76,7 +81,8 @@ object SimulatorInitializer {
       numberOfDaughters,
       fatherWindow,
       startTemperature + (fatherDifference / 2),
-      simAttributes
+      internalInitialState,
+      datasetCreator
     )
     aggregateGenerator.addDataGenerator(singleFatherInMiddleGenerator)
     val singleFatherAtBottomGenerator = new SingleFatherGenerator(
@@ -87,7 +93,8 @@ object SimulatorInitializer {
       numberOfDaughters,
       fatherWindow,
       startTemperature,
-      simAttributes
+      internalInitialState,
+      datasetCreator
     )
     aggregateGenerator.addDataGenerator(singleFatherAtBottomGenerator)
     val focusedGroups = new FocusedGenerator(
@@ -97,7 +104,8 @@ object SimulatorInitializer {
       5,
       640,
       temperatureRange,
-      simAttributes
+      internalInitialState,
+      datasetCreator
     )
     aggregateGenerator.addDataGenerator(focusedGroups)
     val mixedFathersIntegralGenerator = new MixedFathersGenerator(
@@ -108,12 +116,11 @@ object SimulatorInitializer {
       numberOfDaughters,
       fatherDifference,
       fatherWindow,
-      simAttributes,
+      internalInitialState,
+      datasetCreator,
       IntegralBee.apply(_, integralLookAhead)
     )
     aggregateGenerator.addDataGenerator(mixedFathersIntegralGenerator)
-    */
-
     val improvedIntegralGenerator = new MixedFathersGenerator(
       "Mixed fathers with improved integrals",
       startTemperature,
@@ -122,11 +129,18 @@ object SimulatorInitializer {
       numberOfDaughters,
       fatherDifference,
       fatherWindow,
-      simAttributes,
+      internalInitialState,
+      datasetCreator,
       CombinedIntegralBee(_, 22, integralLookAhead)
     )
     aggregateGenerator.addDataGenerator(improvedIntegralGenerator)
 
-    return aggregateGenerator
+    new Simulation() {
+      val forcingVariableName = "Heat In"
+      val generator = aggregateGenerator
+      val forcingVariableRange = (0.0, 3.0)
+      val forcingVariableInitialValue = 0.1
+      val simulatorName = "Internal temperature simulation"
+    }
   }
 }

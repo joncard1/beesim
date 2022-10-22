@@ -21,13 +21,13 @@ package beesimulator.bees
   * @param timeConstant     The time constant for the I controller term. See [[IntegralBee]] for a discussion of the parameter
   * @param accumulatedError The accumulated error across time over the life of the simulation, collected in each bee according to its experiences. On first creation, just use the default
   */
-final case class CombinedIntegralBee(threshold: Double, controlPoint: Double, timeConstant: Double, accumulatedError: Double = 0) extends Bee {
-  def join(currentState: SimState) : Boolean = {
+final case class CombinedIntegralBee(threshold: Double, controlPoint: Double, timeConstant: Double, accumulatedError: Double = 0) extends Bee[InternalSimState] {
+  def join(currentState: InternalSimState) : Boolean = {
     val adjustedTemperature = currentState.currentTemperature + ((accumulatedError + currentState.currentTemperature - controlPoint) / timeConstant)
     adjustedTemperature > threshold
   }
 
-  def leave(currentState: SimState) : Boolean = {
+  def leave(currentState: InternalSimState) : Boolean = {
     !join(currentState)
   }
 }

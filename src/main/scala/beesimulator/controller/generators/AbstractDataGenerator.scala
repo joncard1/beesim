@@ -16,25 +16,25 @@ import beesimulator.simulator._
   * @param numberOfIterations
   * @param currentState
   */
-abstract class AbstractDataGenerator(name: String, numberOfIterations: Int, currentState: SimState)(implicit provider: SimProvider[Double, SimState, Bee, InternalBeeSim]) extends DataGenerator{
+abstract class AbstractDataGenerator[T <: SimState](name: String, numberOfIterations: Int, currentState: T)(implicit provider: SimProvider[Double, T, Bee[T], BeeSim[T]]) extends DataGenerator{
 
-  protected def runSimulator(heatInflux: Double, bees: Seq[Bee]): List[BeeDataset] = {
-    val sim = InternalBeeSim(bees, Seq(), currentState)
+  protected def runSimulator(forcingValue: Double, bees: Seq[Bee[T]], datasetCreator: (Double, Double, String, Int, List[Double], Seq[BeeHistogramItem]) => Dataset): List[Dataset] = {
+    val sim = provider.createSim(bees, Seq(), currentState)
     import sim._
 
     @tailrec
-    def iterate(iteration: Int, sim: InternalBeeSim, temperatures: List[Double]): List[Double] = {
+    def iterate(iteration: Int, sim: BeeSim[T], temperatures: List[Double]): List[Double] = {
       if (iteration == numberOfIterations) {
         temperatures
       } else {
         val t = new sim.SimOps(sim)
-        iterate(iteration + 1, sim.step(heatInflux), sim.currentState.currentTemperature :: temperatures)
+        iterate(iteration + 1, sim.step(forcingValue), sim.currentState.currentTemperature :: temperatures)
       }
     }
     val temperatures = iterate(0, sim, List())
     val lastTemperature = temperatures.head
     val reverseTemperatures = temperatures.reverse
 
-    List(BeeDataset(name, lastTemperature, sim.activeBees.length, reverseTemperatures, bees))
+    List(datasetCreator(forcingValue, lastTemperature, name, sim.activeBees.length, reverseTemperatures, bees.map(bee => BeeHistogramItem(bee))))
   }
 }

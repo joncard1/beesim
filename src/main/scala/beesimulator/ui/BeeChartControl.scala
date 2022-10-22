@@ -14,7 +14,7 @@ import javafx.scene.{
   chart => jfxch
 }
 import scalafx.scene.chart.LineChart
-import beesimulator.ui.processors.BeeDataProcessor
+import beesimulator.ui.processors.DataProcessor
 import scalafx.beans.property._
 import scalafx.scene.chart.XYChart
 import scalafx.collections.ObservableBuffer
@@ -26,8 +26,8 @@ class BeeChartControl() extends Initializable {
   val loader = new FXMLLoader(getClass.getResource("beechart.fxml"))
   loader.setController(this)
 
-  val simulatorData = ObjectProperty[Option[BeeDataset]](None)
-  val processor = ObjectProperty[Option[BeeDataProcessor]](None)
+  val simulatorData = ObjectProperty[Option[Dataset]](None)
+  val processor = ObjectProperty[Option[DataProcessor]](None)
 
   @FXML
   var xAxisDelegate: jfxch.NumberAxis = _
@@ -92,9 +92,11 @@ class BeeChartControl() extends Initializable {
         processor(),
         newData
       )
+      /*
       if(newData.isDefined) {
         view.indicatorPosition() = Option(newData.get.finalTemperature)
       }
+      */
     )
   }
 
@@ -102,8 +104,8 @@ class BeeChartControl() extends Initializable {
       minimumTemperature: Double,
       maximumTemperature: Double,
       numberOfBins: Integer,
-      processor: Option[BeeDataProcessor],
-      dataset: Option[BeeDataset]
+      processor: Option[DataProcessor],
+      dataset: Option[Dataset]
   ) = {
     if (dataset.isDefined && processor.isDefined) {
       chart.data() = ObservableBuffer(

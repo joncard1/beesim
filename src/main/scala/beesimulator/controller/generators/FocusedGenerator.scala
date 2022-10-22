@@ -19,17 +19,20 @@ import beesimulator.simulator._
   * @param temperatureRange
   * @param simAttributes
   */
-class FocusedGenerator(
+class FocusedGenerator[T <: SimState](
     name: String,
     setPoint: Double,
     numberOfIterations: Int,
     numberOfFathers: Int,
     numberOfDaughters: Int,
     temperatureRange: Double,
-    simAttributes: SimState)(implicit provider: SimProvider[Double, SimState, Bee, InternalBeeSim]) extends AbstractDataGenerator(name, numberOfIterations, simAttributes) {
+    simAttributes: T,
+    datasetCreator: (Double, Double, String, Int, List[Double], Seq[BeeHistogramItem]) => Dataset,
+    constructor: (threshold: Double) => Bee[T] = (SimpleBee.apply _)
+  )(implicit provider: SimProvider[Double, T, Bee[T], BeeSim[T]]) extends AbstractDataGenerator(name, numberOfIterations, simAttributes) {
   override def numberOfFamilies: Int = 1
 
-  override def generatePoints(heatInflux: Double): List[BeeDataset] = {
+  override def generatePoints(heatInflux: Double): List[Dataset] = {
     val numberOfBees = (numberOfFathers * numberOfDaughters).toDouble
     // The width of a half-bell curve that I'm going to bother to generate
     val widthInSigma = 4
@@ -46,16 +49,16 @@ class FocusedGenerator(
       bee <- {
         val numerator = math.pow(startTemperatureOfStep.toDouble - mean, 2)
         val exponent = -1 * numerator / denominator
-        var bees = List[Bee]()
+        var bees = List[Bee[T]]()
         var numberOfBeesAtStep = math.round(scale * math.exp(exponent))
         for (j <- 0.asInstanceOf[Int] until numberOfBeesAtStep.toInt) {
           val threshold = setPoint + indexOfFather * mean + startTemperatureOfStep.toDouble
-          bees = SimpleBee(threshold) :: bees
+          bees = constructor(threshold) :: bees
         }
         bees
       }
     } yield bee
 
-    runSimulator(heatInflux, bees)
+    runSimulator(heatInflux, bees, datasetCreator)
   }
 }

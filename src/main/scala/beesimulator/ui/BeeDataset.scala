@@ -1,6 +1,6 @@
 package beesimulator.ui
 
-import beesimulator.bees._
+import beesimulator.ui.processors._
 
 /**
   * The package summarizing the data to display across all of the charts from
@@ -12,4 +12,4 @@ import beesimulator.bees._
   * @param temperatures     The data series of temperatures at each step of the simulator
   * @param bees             The entire set of bees to be summarized in the bee charts
   */
-final case class BeeDataset(name: String, finalTemperature: Double, finalBeeCount: Int, temperatures: Seq[Double], bees: Seq[Bee])
+final case class Dataset(name: String, indicatorPosition: Double, finalBeeCount: Int, temperatures: Seq[Double], bees: Seq[HistogramItem])

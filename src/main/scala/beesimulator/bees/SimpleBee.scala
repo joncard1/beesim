@@ -21,12 +21,12 @@ package beesimulator.bees
   *
   * @param threshold    The temperature at which the Bee will change state.
   */
-final case class SimpleBee(threshold: Double) extends Bee {
-    override def join(state: SimState): Boolean = {
+final case class SimpleBee(threshold: Double) extends Bee[InternalSimState] {
+    override def join(state: InternalSimState): Boolean = {
         return (state.currentTemperature > threshold)
     }
 
-    override def leave(state: SimState): Boolean = {
+    override def leave(state: InternalSimState): Boolean = {
         return !join(state)
     }
 }

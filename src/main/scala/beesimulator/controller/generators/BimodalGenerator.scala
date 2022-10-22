@@ -26,21 +26,24 @@ import beesimulator.simulator._
   * @param heat
   * @param specificHeat
   */
-class BimodalGenerator(
+class BimodalGenerator[T <: SimState](
     name: String,
     setPoint: Double,
     numberOfIterations: Int,
     numberOfFathers: Int,
     numberOfDaughters: Int,
     temperatureRange: Double,
-    simAttributes: SimState)(implicit provider: SimProvider[Double, SimState, Bee, InternalBeeSim]) extends AbstractDataGenerator(name, numberOfIterations, simAttributes) {
+    simAttributes: T,
+    datasetCreator: (Double, Double, String, Int, List[Double], Seq[BeeHistogramItem]) => Dataset,
+    constructor: (threshold: Double) => Bee[T] = (SimpleBee.apply _)
+    )(implicit provider: SimProvider[Double, T, Bee[T], BeeSim[T]]) extends AbstractDataGenerator(name, numberOfIterations, simAttributes) {
   override val numberOfFamilies: Int = 1
 
-  override def generatePoints(heatInflux: Double): List[BeeDataset] = {
+  override def generatePoints(heatInflux: Double): List[Dataset] = {
     // Bimodal distribution
     // Equation for the bell curve: y = (1 / (sigma*sqrt(2*pi))) * e ^((x - u)^2/(2 * sigma^2)
     // Adapted for 2 bell curves at different centers, added together.
-    var bimodalBees = Seq[Bee]()
+    var bimodalBees = Seq[Bee[T]]()
     val numberOfBees = (numberOfFathers * numberOfDaughters).toDouble
     val step = temperatureRange / (16 * 10)
     val sigma = temperatureRange / 16
@@ -61,10 +64,10 @@ class BimodalGenerator(
       val exponent2 = -1 * (secondNumerator/denominator).doubleValue
       val numberOfBeesAtStep = scale * (math.exp(exponent1) + math.exp(exponent2))
       for (i <- 0.asInstanceOf[Int] until math.round(numberOfBeesAtStep).toInt ) {
-        bimodalBees = bimodalBees :+ new SimpleBee(setPoint + x.toDouble)
+        bimodalBees = bimodalBees :+ constructor(setPoint + x.toDouble)
       }
     }
 
-    runSimulator(heatInflux, bimodalBees)
+    runSimulator(heatInflux, bimodalBees, datasetCreator)
   }
 }

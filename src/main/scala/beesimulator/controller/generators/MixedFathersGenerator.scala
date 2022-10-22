@@ -26,7 +26,7 @@ import beesimulator.simulator._
   * @param simAttributes
   * @param constructor
   */
-class MixedFathersGenerator(
+class MixedFathersGenerator[T <: SimState](
     name: String,
     setPoint: Double,
     numberOfIterations: Int,
@@ -34,16 +34,18 @@ class MixedFathersGenerator(
     numberOfDaughters: Int,
     fatherDifference: Double,
     fatherWindow: Double,
-    simAttributes: SimState,
-    constructor: (threshold: Double) => Bee = (SimpleBee.apply _))(implicit provider: SimProvider[Double, SimState, Bee, InternalBeeSim]) extends AbstractDataGenerator(name, numberOfIterations, simAttributes) {
+    simAttributes: T,
+    datasetCreator: (Double, Double, String, Int, List[Double], Seq[BeeHistogramItem]) => Dataset,
+    constructor: (threshold: Double) => Bee[T] = (SimpleBee.apply _)
+  )(implicit provider: SimProvider[Double, T, Bee[T], BeeSim[T]]) extends AbstractDataGenerator(name, numberOfIterations, simAttributes) {
   val numberOfFamilies = 1
 
-  override def generatePoints(heatInflux: Double): List[BeeDataset] = {
-    val mixedFatherBees: Seq[Bee] = for {
+  override def generatePoints(heatInflux: Double): List[Dataset] = {
+    val mixedFatherBees: Seq[Bee[T]] = for {
       i <- 0.asInstanceOf[Int] to numberOfFathers
       j <- 0.asInstanceOf[Int] to numberOfDaughters
     } yield constructor(setPoint + (fatherDifference / numberOfFathers) * i + (fatherWindow / numberOfDaughters) * j)
 
-    runSimulator(heatInflux, mixedFatherBees)
+    runSimulator(heatInflux, mixedFatherBees, datasetCreator)
   }
 }

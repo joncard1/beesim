@@ -11,26 +11,37 @@
 <?import beesimulator.ui.MainController.ComboSelections?>
 <?import beesimulator.ui.MainController.ComboSelections.*?>
 
-<StackPane fx:controller="beesimulator.ui.MainController" xmlns:fx="http://javafx.com/fxml" xmlns="http://javafx.com/javafx/2.2" prefHeight="500.0" prefWidth="400.0" >
+<StackPane fx:controller="beesimulator.ui.MainController" xmlns:fx="http://javafx.com/fxml" xmlns="http://javafx.com/javafx/2.2" prefHeight="500.0" prefWidth="400.0" stylesheets="beesimulator/ui/beechart.css" >
   <children>
     <BorderPane fx:id="borderPaneDelegate">
       <padding><Insets top="20" bottom="20" right="20" left="20" /></padding>
       <top>
         <VBox>
-          <ComboBox fx:id="processorSelectionComboBoxDelegate" editable="false">
-            <items>
-              <FXCollections fx:factory="observableArrayList">
-                <MainController.ComboSelections fx:factory="valueOf" fx:value="Histogram" />
-                <MainController.ComboSelections fx:factory="valueOf" fx:value="Cumulative" />
-              </FXCollections>
-            </items>
-          </ComboBox>
+          <GridPane vgap="5" hgap="5">
+            <children>
+              <Text text="Simulation" styleClass="headerLabel" GridPane.rowIndex="0" GridPane.columnIndex="0" />
+              <ComboBox fx:id="simulatorSelectionComboBoxDelegate" editable="false" GridPane.rowIndex="0" GridPane.columnIndex="1">
+                <items>
+                  <FXCollections fx:factory="observableArrayList" />
+                </items>
+              </ComboBox>
+              <Text text="Summary type" styleClass="headerLabel" GridPane.rowIndex="1" GridPane.columnIndex="0" />
+              <ComboBox fx:id="processorSelectionComboBoxDelegate" editable="false" GridPane.rowIndex="1" GridPane.columnIndex="1">
+                <items>
+                  <FXCollections fx:factory="observableArrayList">
+                    <MainController.ComboSelections fx:factory="valueOf" fx:value="Histogram" />
+                    <MainController.ComboSelections fx:factory="valueOf" fx:value="Cumulative" />
+                  </FXCollections>
+                </items>
+              </ComboBox>
+            </children>
+          </GridPane>
           <HBox fx:id="beeChartsBoxDelegate" />
         </VBox>
       </top>
       <right>
         <VBox>
-          <Slider fx:id="heatFlowSliderDelegate" orientation="VERTICAL" VBox.vgrow="ALWAYS" max="3.0" blockIncrement="0.1" />
+          <Slider fx:id="heatFlowSliderDelegate" orientation="VERTICAL" VBox.vgrow="ALWAYS" blockIncrement="0.1" />
           <Text fx:id="heatFlowTextDelegate" />
         </VBox>
       </right>

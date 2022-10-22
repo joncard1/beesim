@@ -1,13 +1,13 @@
 package beesimulator.ui.processors
 
-import beesimulator.bees._
+import beesimulator.ui._
 
 /**
   * This defines the interface for a variety of possible ways of displaying the
   * collection of bees. Processors of this kind can be spliced into the data
   * processing chain between the raw data generation and the charts.
   */
-trait BeeDataProcessor {
+trait DataProcessor {
 
   /**
     * This function performs the conversion from a collection of bees to a
@@ -25,5 +25,5 @@ trait BeeDataProcessor {
     *     summarizing the bee dataset. Each entry is expected to be the y-value
     *     at that x-value in a histogram-like dataset.
     */
-  def transform(minimumTemperature: Double, maximumTemperature: Double, numberOfBins: Int, bees: Seq[Bee]): Seq[Int]
+  def transform(minimumTemperature: Double, maximumTemperature: Double, numberOfBins: Int, bees: Seq[HistogramItem]): Seq[Int]
 }

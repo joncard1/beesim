@@ -15,7 +15,7 @@ import beesimulator.simulator._
   * hysteresis (the Bee wants to leave at a lower temperature than it wants to
   * join).
   */
-trait Bee extends SimActor[SimState] {
+trait Bee[-T] extends SimActor[T] {
   /**
     * The temperature above which the Bee will join and below which the Bee will
     * leave. The implementation doesn't have to be this straightforward, but all
@@ -31,7 +31,7 @@ trait Bee extends SimActor[SimState] {
     * @param temperature  The temperature currently reported by the Sim.
     * @return             Whether to add the Bee to the bearding.
     */
-  def join(temperature: SimState) : Boolean
+  def join(temperature: T) : Boolean
   /**
     * Called when a Bee is a member of a bearding to determine if it wants to
     * leave.
@@ -39,7 +39,7 @@ trait Bee extends SimActor[SimState] {
     * @param temperature  The temperature currently reported by the Sim.
     * @return             Whether to remove the Bee to the bearding.
     */
-  def leave(temperature: SimState) : Boolean
+  def leave(temperature: T) : Boolean
 }
 
 /**
@@ -53,8 +53,8 @@ object Bee {
     */
   implicit def simpleBeeOrdering: Ordering[SimpleBee] = Ordering.by(bee => bee.threshold)
 
-  implicit object BeeSimActorProvider extends SimActorProvider[SimState, Bee] {
-    override def update(actor: Bee, newState: SimState) = {
+  implicit object InternalBeeSimActorProvider extends SimActorProvider[InternalSimState, Bee[InternalSimState]] {
+    override def update(actor: Bee[InternalSimState], newState: InternalSimState) = {
       actor match {
         case CombinedIntegralBee(threshold, controlPoint, timeConstant, accumulatedError) =>
           CombinedIntegralBee(threshold, controlPoint, timeConstant, accumulatedError + newState.currentTemperature - controlPoint)
@@ -64,6 +64,14 @@ object Bee {
           IntegralBee(threshold, timeConstant, accumulator + newState.currentTemperature - threshold)
         case e @ SimpleBee(threshold) =>
           e
+      }
+    }
+  }
+
+  implicit object ExteranlBeeSimActorProvider extends SimActorProvider[ExternalSimState, Bee[ExternalSimState]] {
+    override def update(actor: Bee[ExternalSimState], newState: ExternalSimState): Bee[ExternalSimState] = {
+      actor match {
+        case e @ SimpleExternalBee(threshold) => e
       }
     }
   }

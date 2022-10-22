@@ -6,25 +6,30 @@ import scalafx.Includes._
 import scalafx.application.JFXApp3
 import scalafx.scene.Scene
 
-import beesimulator.SimulatorInitializer
+import beesimulator.controller._
 import beesimulator.ui.MainController
 
 object MainJFX extends JFXApp3 {
+  val StartTemperature = 20.0
+  val TemperatureRange: Double = 3.0
+  val Mass: Double = 5
+  val SpecificHeat: Double = 0.5
+
   override def start(): Unit = {
-    val startTemperature = 20.0
-    val temperatureRange: Double = 3.0
-    val generator = SimulatorInitializer.getGenerator(startTemperature, temperatureRange)
+    val internalSimulation = InternalSimulationInitializer.getSimulation(StartTemperature, TemperatureRange, Mass, SpecificHeat)
+    val externalSimulation = ExternalSimulationInitializer.getSimulation(StartTemperature, TemperatureRange, Mass, SpecificHeat)
 
     stage = new JFXApp3.PrimaryStage{
       title = "Bee Simulator"
 
       val viewClass = getClass.getResource("ui/beecharts.fxml")
-      val loader = new FXMLLoader(getClass.getResource("ui/beecharts.fxml"))
+      val loader = new FXMLLoader(viewClass)
       val root: jfxs.Parent = loader.load()
       val controller = loader.getController[MainController]()
-      controller.setData(startTemperature - 0.2, startTemperature, startTemperature + temperatureRange, generator)
+      controller.addSimulation(internalSimulation)
+      controller.addSimulation(externalSimulation)
+      controller.setData(StartTemperature - 0.2, StartTemperature, StartTemperature + TemperatureRange)
       scene = new Scene(root)
-      root.getStylesheets().add("beesimulator/ui/beechart.css")
     }
   }
 
