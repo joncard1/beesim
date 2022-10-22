@@ -327,12 +327,14 @@ class MainController {
       heatFlowSlider.max() = newSimulation.forcingVariableRange._2
       heatFlowSliderSubscription = Some(heatFlowSlider.value.onChange((_, _, newValue: Number) => {
         cancel()
+        borderPane.parent().setCursor(jfxs.Cursor.WAIT)
         val f = Future(newSimulation.generator.generatePoints(newValue.doubleValue()))
         val p = Promise[List[Dataset]]()
         Future.firstCompletedOf(Seq(f, p.future)).andThen {
           case Success(datasets) => {
             Platform.runLater({
               simulatorData() = ObservableBuffer.from(datasets)
+              borderPane.parent().setCursor(jfxs.Cursor.DEFAULT)
             })
           }
           case Failure(CancelledOperation()) => {}
