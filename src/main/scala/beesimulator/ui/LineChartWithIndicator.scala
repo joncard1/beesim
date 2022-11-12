@@ -34,7 +34,7 @@ class LineChartWithIndicator(
 ) extends jfxsc.LineChart[Number, Number](xAxis, yAxis, data) {
   val indicatorPosition = ObjectProperty[Option[Double]](None)
 
-  var indicatorLine: Option[Path] = None
+  private var indicatorLine: Option[Path] = None
 
   indicatorPosition.onChange((_, _, newFinalTemperature) => {
     updateIndicator(newFinalTemperature)
@@ -50,7 +50,7 @@ class LineChartWithIndicator(
     }
   })
 
-  def updateIndicator(newFinalTemperature: Option[Double]) = {
+  private def updateIndicator(newFinalTemperature: Option[Double]) = {
     if (newFinalTemperature.isDefined) {
       if (indicatorLine.isDefined) {
         this.getPlotChildren().remove(indicatorLine.get)

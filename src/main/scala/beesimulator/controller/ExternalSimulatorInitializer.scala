@@ -37,6 +37,36 @@ object ExternalSimulationInitializer extends SimulationInitializer {
       ExternalSimState
     ], ExternalBeeSim] = new ExternalBeeSimProvider(externalInitialState)
     val aggregateGenerator = new AggregateDataGenerator()
+    val datasetCreator = (forcingValue: Double, lastTemperature: Double, name: String, numBees: Int, temperatures: List[Double], histogramData: Seq[BeeHistogramItem]) =>
+        Dataset(name, forcingValue, numBees, temperatures, histogramData)
+
+    val focusedGroups = new FocusedGenerator(
+      "Multiple fathers that cluster",
+      startTemperature,
+      numberOfIterations,
+      5,
+      640,
+      temperatureRange,
+      externalInitialState,
+      datasetCreator,
+      SimpleExternalBee(_)
+    )
+    aggregateGenerator.addDataGenerator(focusedGroups)
+
+    val mixedFathersGenerator = new MixedFathersGenerator(
+      "Mixed Fathers",
+      startTemperature,
+      numberOfIterations,
+      numberOfFathers,
+      numberOfDaughters,
+      fatherDifference,
+      fatherWindow,
+      externalInitialState,
+      datasetCreator,
+      SimpleExternalBee(_)
+    )(externalSimProvider)
+    aggregateGenerator.addDataGenerator(mixedFathersGenerator)
+
     val singleFatherInMiddleGenerator = new SingleFatherGenerator(
       "Single Father with medium thresholds",
       startTemperature,
@@ -46,8 +76,7 @@ object ExternalSimulationInitializer extends SimulationInitializer {
       fatherWindow,
       startTemperature + (fatherDifference / 2),
       externalInitialState,
-      (forcingValue: Double, lastTemperature: Double, name: String, numBees: Int, temperatures: List[Double], histogramData: Seq[BeeHistogramItem]) =>
-        Dataset(name, forcingValue, numBees, temperatures, histogramData),
+      datasetCreator,
       SimpleExternalBee.apply(_)
     )(externalSimProvider)
     aggregateGenerator.addDataGenerator(singleFatherInMiddleGenerator)

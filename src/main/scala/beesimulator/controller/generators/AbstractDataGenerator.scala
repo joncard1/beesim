@@ -27,7 +27,6 @@ abstract class AbstractDataGenerator[T <: SimState](name: String, numberOfIterat
       if (iteration == numberOfIterations) {
         temperatures
       } else {
-        val t = new sim.SimOps(sim)
         iterate(iteration + 1, sim.step(forcingValue), sim.currentState.currentTemperature :: temperatures)
       }
     }
