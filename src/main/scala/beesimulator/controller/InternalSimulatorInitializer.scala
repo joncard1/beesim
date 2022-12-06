@@ -6,6 +6,9 @@ import beesimulator.ui._
 import beesimulator.controller._
 import beesimulator.simulator._
 
+/** Initializes the simulation wherein the bees react to the internal
+  * temperature of the hive.
+  */
 object InternalSimulationInitializer extends SimulationInitializer {
   def getSimulation(
       startTemperature: Double,
@@ -30,12 +33,21 @@ object InternalSimulationInitializer extends SimulationInitializer {
     // instability. The "fish tail" shapes when using heatFlowPerBeeHigh is
     // actually decreasing oscillations above and below the equilibrium.
     val internalInitialState =
-      InternalSimState(mass, specificHeat, heatFlowPerBeeLow, startTemperature)
-    implicit val internalSimProvider: SimProvider[Double, InternalSimState, Bee[InternalSimState], InternalBeeSim] = new InternalBeeSimProvider(internalInitialState)
+      InternalSimState(mass, specificHeat, startTemperature)
+    implicit val internalSimProvider: SimProvider[Double, InternalSimState, Bee[
+      InternalSimState
+    ], InternalBeeSim] = new InternalBeeSimProvider(internalInitialState)
 
     val aggregateGenerator = new AggregateDataGenerator()
-    val datasetCreator = (forcingValue: Double, lastTemperature: Double, name: String, numBees: Int, temperatures: List[Double], histogramData: Seq[BeeHistogramItem]) =>
-        Dataset(name, lastTemperature, numBees, temperatures, histogramData)
+    val datasetCreator = (
+        forcingValue1: Double,
+        forcingValue2: Double,
+        lastTemperature: Double,
+        name: String,
+        numBees: Int,
+        temperatures: List[Double],
+        histogramData: Seq[BeeHistogramItem]
+    ) => Dataset(name, lastTemperature, numBees, temperatures, histogramData)
 
     val mixedFathersGenerator = new MixedFathersGenerator(
       "Mixed Fathers",
@@ -136,10 +148,13 @@ object InternalSimulationInitializer extends SimulationInitializer {
     aggregateGenerator.addDataGenerator(improvedIntegralGenerator)
 
     new Simulation() {
-      val forcingVariableName = "Heat In"
+      val forcingVariable1Name = "Heat In"
+      val forcingVariable2Name = "Heat Flow per Bee"
       val generator = aggregateGenerator
-      val forcingVariableRange = (0.0, 3.0)
-      val forcingVariableInitialValue = 0.1
+      val forcingVariable1Range = (0.0, 3.0)
+      val forcingVariable2Range = (0.001, 0.002)
+      val forcingVariable1InitialValue = 0.1
+      val forcingVariable2InitialValue = 0.001
       val simulatorName = "Internal temperature simulation"
     }
   }

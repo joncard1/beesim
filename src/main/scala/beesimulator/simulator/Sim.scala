@@ -2,22 +2,21 @@ package beesimulator.simulator
 
 import beesimulator.bees._
 
-/** The simulator itself. Every step, the simulator iterates over all of the
-  * bees in the hive, sees which bees are participating in the bearding, and
-  * changes the total heat in the hive by the net heat flow.
-  *
-  * @param inactiveActors
-  *   A collection of bees that are not currently part of the bearding. This is
-  *   initially all of the bees in the hive
-  * @param activeActors
-  *   A collection of bees that were are part of the prior bearding. When
-  *   starting fresh, just leave the default
-  * @param temperature
-  *   The current total heat in the hive. When starting fresh, leave the default
-  *   and the simulator will use the initialHeat from the attributes
+/** A step of the simulation capable of generating the next step. Every step,
+  * the simulator iterates over all of the actors in the simulation, sees which
+  * actors are participating, and returns a simulation with a new state.
   *
   * U - the type of the force T - the type of the state V - the type of the
   * actor
+  *
+  * @param inactiveActors
+  *   A collection of actors that are not currently participating in the
+  *   simulation. This is initially all of the actors.
+  * @param activeActors
+  *   A collection of actors that are not currently participating in the
+  *   simulation. When starting fresh, just leave the default
+  * @param currentState
+  *   The current state of the simulation at this step.
   */
 abstract class Sim[T, U, V <: SimActor[U]](
     val inactiveActors: Seq[V],
@@ -25,12 +24,21 @@ abstract class Sim[T, U, V <: SimActor[U]](
     val currentState: U
 )(implicit provider: SimActorProvider[U, V]) {
 
+  /** A helper class that provides the step method to the [[Sim]].
+    *
+    * @param sim
+    *   The sim to provide the step method.
+    * @param provider
+    *   The provider used to create a new [[Sim]]
+    * @return
+    *   The next step of the simulation.
+    */
   implicit class SimOps[-T, +U, +V <: SimActor[U], +W <: Sim[T, U, V]](sim: W)(
       implicit provider: SimProvider[T, U, V, W]
   ) {
-    def step(inForcing: T): W = {
+    def step(inForcing1: T, inForcing2: T): W = {
       val (newInactiveBees, newActiveBees, newState) =
-        sim.executeStep(inForcing)
+        sim.executeStep(inForcing1, inForcing2)
       provider.createSim(newInactiveBees, newActiveBees, newState)
     }
   }
@@ -39,13 +47,18 @@ abstract class Sim[T, U, V <: SimActor[U]](
     * same simulator the method was called on; this is to enable branching of
     * the simulation in future development.
     *
-    * @param heatIn
+    * @param forcingValue1
     *   The energy added to the hive in this step, causing the bees to
     *   counteract it
+    * @param forcingValue2
+    *   The second forcing variable.
     * @return
     *   A simulator ready to iterate the next step
     */
-  protected[simulator] def executeStep(heatIn: T): (Seq[V], Seq[V], U) = {
+  protected[simulator] def executeStep(
+      forcingValue1: T,
+      forcingValue2: T
+  ): (Seq[V], Seq[V], U) = {
 
     var newActiveActors = Seq[V]()
     var newInactiveActors = Seq[V]()
@@ -65,14 +78,40 @@ abstract class Sim[T, U, V <: SimActor[U]](
       }
     }
 
-    val ns = newState(heatIn, newInactiveActors.length, newActiveActors.length, currentState)
+    val ns = newState(
+      forcingValue1,
+      forcingValue2,
+      newInactiveActors.length,
+      newActiveActors.length,
+      currentState
+    )
     val nib = newInactiveActors.map(provider.update(_, ns))
     val nab = newActiveActors.map(provider.update(_, ns))
     (nib, nab, ns)
   }
 
+  /** Creates a new state based on which actors are participating in the
+    * simulation.
+    *
+    * @param inForcing1
+    *   The first variable trying to force change in each step of the
+    *   simulation.
+    * @param inForcing2
+    *   The second variable trying to force change in each step of the
+    *   simulation.
+    * @param newInactiveBeeCount
+    *   The number of actors not currently participating in the simulation.
+    * @param newActiveBeeCount
+    *   The number of actors currently participating in the simulation.
+    * @param currentState
+    *   The current state
+    * @return
+    *   The new state as a result of the current state, the forcing variables,
+    *   and the number of participating actors.
+    */
   def newState(
-      inForcing: T,
+      inForcing1: T,
+      inForcing2: T,
       newInactiveBeeCount: Int,
       newActiveBeeCount: Int,
       currentState: U

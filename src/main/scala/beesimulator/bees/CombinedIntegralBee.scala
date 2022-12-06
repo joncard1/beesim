@@ -1,7 +1,6 @@
 package beesimulator.bees
 
-/**
-  * This bee is capable of eliminating steady state error, but it assumes that
+/** This bee is capable of eliminating steady state error, but it assumes that
   * there is a shared knowledge across the hive of the "correct" temperature.
   * This is still consistent with LOOKUP AND LOOKUP's paper, which discusses the
   * phenomenon that the daughters' <i>task switching</i> thresholds are
@@ -16,18 +15,32 @@ package beesimulator.bees
   * TODO: It might be cool to see what happens if half the population has one
   * control point and half has another.
   *
-  * @param threshold        The task switching threshold
-  * @param controlPoint     The communally shared "correct" temperature. It doesn't work if this value is not shared across the population
-  * @param timeConstant     The time constant for the I controller term. See [[IntegralBee]] for a discussion of the parameter
-  * @param accumulatedError The accumulated error across time over the life of the simulation, collected in each bee according to its experiences. On first creation, just use the default
+  * @param threshold
+  *   The task switching threshold
+  * @param controlPoint
+  *   The communally shared "correct" temperature. It doesn't work if this value
+  *   is not shared across the population
+  * @param timeConstant
+  *   The time constant for the I controller term. See [[IntegralBee]] for a
+  *   discussion of the parameter
+  * @param accumulatedError
+  *   The accumulated error across time over the life of the simulation,
+  *   collected in each bee according to its experiences. On first creation,
+  *   just use the default
   */
-final case class CombinedIntegralBee(threshold: Double, controlPoint: Double, timeConstant: Double, accumulatedError: Double = 0) extends Bee[InternalSimState] {
-  def join(currentState: InternalSimState) : Boolean = {
-    val adjustedTemperature = currentState.currentTemperature + ((accumulatedError + currentState.currentTemperature - controlPoint) / timeConstant)
+final case class CombinedIntegralBee(
+    threshold: Double,
+    controlPoint: Double,
+    timeConstant: Double,
+    accumulatedError: Double = 0
+) extends Bee[InternalSimState] {
+  def join(currentState: InternalSimState): Boolean = {
+    val adjustedTemperature =
+      currentState.currentTemperature + ((accumulatedError + currentState.currentTemperature - controlPoint) / timeConstant)
     adjustedTemperature > threshold
   }
 
-  def leave(currentState: InternalSimState) : Boolean = {
+  def leave(currentState: InternalSimState): Boolean = {
     !join(currentState)
   }
 }

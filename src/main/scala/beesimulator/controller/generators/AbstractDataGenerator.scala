@@ -18,7 +18,16 @@ import beesimulator.simulator._
   */
 abstract class AbstractDataGenerator[T <: SimState](name: String, numberOfIterations: Int, currentState: T)(implicit provider: SimProvider[Double, T, Bee[T], BeeSim[T]]) extends DataGenerator{
 
-  protected def runSimulator(forcingValue: Double, bees: Seq[Bee[T]], datasetCreator: (Double, Double, String, Int, List[Double], Seq[BeeHistogramItem]) => Dataset): List[Dataset] = {
+  /**
+   * This method iterates the simulation through [[numberOfInterations]], applying [[forcing1Value]] and [[forcing2Value]] at each step.
+   *
+    * @param forcing1Value  The first forcing value
+    * @param forcing2Value  The second forcing value
+    * @param bees           The collection of bees used by the simulator
+    * @param datasetCreator A factory method to create the [[Dataset]].
+    * @return               The dataset that resulted from the simulation.
+    */
+  protected def runSimulator(forcing1Value: Double, forcing2Value: Double, bees: Seq[Bee[T]], datasetCreator: (Double, Double, Double, String, Int, List[Double], Seq[BeeHistogramItem]) => Dataset): Dataset = {
     val sim = provider.createSim(bees, Seq(), currentState)
     import sim._
 
@@ -27,13 +36,13 @@ abstract class AbstractDataGenerator[T <: SimState](name: String, numberOfIterat
       if (iteration == numberOfIterations) {
         temperatures
       } else {
-        iterate(iteration + 1, sim.step(forcingValue), sim.currentState.currentTemperature :: temperatures)
+        iterate(iteration + 1, sim.step(forcing1Value, forcing2Value), sim.currentState.currentTemperature :: temperatures)
       }
     }
     val temperatures = iterate(0, sim, List())
     val lastTemperature = temperatures.head
     val reverseTemperatures = temperatures.reverse
 
-    List(datasetCreator(forcingValue, lastTemperature, name, sim.activeBees.length, reverseTemperatures, bees.map(bee => BeeHistogramItem(bee))))
+    datasetCreator(forcing1Value, forcing2Value, lastTemperature, name, sim.activeBees.length, reverseTemperatures, bees.map(bee => BeeHistogramItem(bee)))
   }
 }

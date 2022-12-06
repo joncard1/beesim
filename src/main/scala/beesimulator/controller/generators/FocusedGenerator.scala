@@ -27,12 +27,12 @@ class FocusedGenerator[T <: SimState](
     numberOfDaughters: Int,
     temperatureRange: Double,
     simAttributes: T,
-    datasetCreator: (Double, Double, String, Int, List[Double], Seq[BeeHistogramItem]) => Dataset,
+    datasetCreator: (Double, Double, Double, String, Int, List[Double], Seq[BeeHistogramItem]) => Dataset,
     constructor: (threshold: Double) => Bee[T] = (SimpleBee.apply _)
   )(implicit provider: SimProvider[Double, T, Bee[T], BeeSim[T]]) extends AbstractDataGenerator(name, numberOfIterations, simAttributes) {
   override def numberOfFamilies: Int = 1
 
-  override def generatePoints(heatInflux: Double): List[Dataset] = {
+  override def generatePoints(heatInflux: Double, heatPerBee: Double): List[Dataset] = {
     val numberOfBees = (numberOfFathers * numberOfDaughters).toDouble
     // The width of a half-bell curve that I'm going to bother to generate
     val widthInSigma = 4
@@ -59,6 +59,6 @@ class FocusedGenerator[T <: SimState](
       }
     } yield bee
 
-    runSimulator(heatInflux, bees, datasetCreator)
+    List(runSimulator(heatInflux, heatPerBee, bees, datasetCreator))
   }
 }

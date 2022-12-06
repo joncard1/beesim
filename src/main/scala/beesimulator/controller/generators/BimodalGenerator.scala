@@ -8,7 +8,7 @@ import beesimulator.simulator._
 
 /**
   * This generates a distribution with 2 bell-curve shaped concentrations of
-  * [[beesimulator.bees.SimpleBee]] objects.
+  * bees.
   *
   * This was done to see what would happen. On observing the data in the paper
   * TODO: LOOK UP REFERENCE, it appeared that there were bee families that
@@ -34,12 +34,12 @@ class BimodalGenerator[T <: SimState](
     numberOfDaughters: Int,
     temperatureRange: Double,
     simAttributes: T,
-    datasetCreator: (Double, Double, String, Int, List[Double], Seq[BeeHistogramItem]) => Dataset,
+    datasetCreator: (Double, Double, Double, String, Int, List[Double], Seq[BeeHistogramItem]) => Dataset,
     constructor: (threshold: Double) => Bee[T] = (SimpleBee.apply _)
     )(implicit provider: SimProvider[Double, T, Bee[T], BeeSim[T]]) extends AbstractDataGenerator(name, numberOfIterations, simAttributes) {
   override val numberOfFamilies: Int = 1
 
-  override def generatePoints(heatInflux: Double): List[Dataset] = {
+  override def generatePoints(heatInflux: Double, heatPerBee: Double): List[Dataset] = {
     // Bimodal distribution
     // Equation for the bell curve: y = (1 / (sigma*sqrt(2*pi))) * e ^((x - u)^2/(2 * sigma^2)
     // Adapted for 2 bell curves at different centers, added together.
@@ -68,6 +68,6 @@ class BimodalGenerator[T <: SimState](
       }
     }
 
-    runSimulator(heatInflux, bimodalBees, datasetCreator)
+    List(runSimulator(heatInflux, heatPerBee, bimodalBees, datasetCreator))
   }
 }

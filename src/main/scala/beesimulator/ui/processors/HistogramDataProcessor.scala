@@ -11,7 +11,7 @@ import beesimulator.ui._
  * of bees with a threshold in that range. This is a good tool for viewing the
  * distribution of the bee thresholds.
  */
-object HistogramBeeDataProcessor extends DataProcessor {
+object HistogramDataProcessor extends DataProcessor {
   override def transform(minimumTemperature: Double, maximumTemperature: Double, numberOfBins: Int, bees: Seq[HistogramItem]): Seq[Int] = {
     val binRange = (numberOfBins) / (maximumTemperature - minimumTemperature)
     val histogramData = new Array[Int](numberOfBins)

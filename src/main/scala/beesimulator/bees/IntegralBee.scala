@@ -17,7 +17,7 @@ package beesimulator.bees
   * form of integral control, because they do not show steady-state error.
   *
   * The accumulated error is scaled according to the standard form, which would
-  * be expressed u(t) = Kp * e(t) + Ki/Ti * e(t). The time constant here has a
+  * be expressed u(t) = Kp * e(t) + Kp/Ti * integral(e(t)). The time constant here has a
   * less straight-forward meaning than in the derivative controller, but which
   * roughly means the number of steps in which we would like to remove all
   * error, and so the response is adjusted to try and achieve that.

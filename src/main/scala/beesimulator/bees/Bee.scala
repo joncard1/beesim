@@ -28,22 +28,22 @@ trait Bee[-T] extends SimActor[T] {
     * Called when a Bee is not a member of a bearding to determine if it wants
     * to join.
     *
-    * @param temperature  The temperature currently reported by the Sim.
-    * @return             Whether to add the Bee to the bearding.
+    * @param state  The state to use to decide whether to join the bearding.
+    * @return       Whether to add the Bee to the bearding.
     */
-  def join(temperature: T) : Boolean
+  def join(state: T) : Boolean
   /**
     * Called when a Bee is a member of a bearding to determine if it wants to
     * leave.
     *
-    * @param temperature  The temperature currently reported by the Sim.
-    * @return             Whether to remove the Bee to the bearding.
+    * @param state  The state to use to decide whether to leave the bearding.
+    * @return       Whether to remove the Bee to the bearding.
     */
-  def leave(temperature: T) : Boolean
+  def leave(state: T) : Boolean
 }
 
 /**
-  * A companion object to the Bee trait. It isn't used for much.
+  * A companion object to the Bee trait.
   */
 object Bee {
   /**
@@ -53,6 +53,9 @@ object Bee {
     */
   implicit def simpleBeeOrdering: Ordering[SimpleBee] = Ordering.by(bee => bee.threshold)
 
+  /**
+    * The provider used to provision bees that sense the internal temperature.
+    */
   implicit object InternalBeeSimActorProvider extends SimActorProvider[InternalSimState, Bee[InternalSimState]] {
     override def update(actor: Bee[InternalSimState], newState: InternalSimState) = {
       actor match {
@@ -68,6 +71,9 @@ object Bee {
     }
   }
 
+  /**
+    * The provider used to provision bees that sense the external temperature.
+    */
   implicit object ExteranlBeeSimActorProvider extends SimActorProvider[ExternalSimState, Bee[ExternalSimState]] {
     override def update(actor: Bee[ExternalSimState], newState: ExternalSimState): Bee[ExternalSimState] = {
       actor match {

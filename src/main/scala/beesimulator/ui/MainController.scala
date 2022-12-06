@@ -1,5 +1,6 @@
 package beesimulator.ui
 
+import javafx.fxml.FXMLLoader
 import javafx.fxml.Initializable
 import java.net.URL
 import java.{util => ju}
@@ -106,12 +107,20 @@ class MainController {
   private var heatFlowTextDelegate: jfxst.Text = _
   private lazy val heatFlowText: Text = new Text(heatFlowTextDelegate)
 
+  @FXML
+  private var heatPerBeeTextDelegate: jfxst.Text = _
+  private lazy val heatPerBeeText: Text = new Text(heatPerBeeTextDelegate)
+
   /**
    * The slider that sets the amount of heat flow into the hive.
    */
   @FXML
   private var heatFlowSliderDelegate: jfxsc.Slider = _
   private lazy val heatFlowSlider: Slider = new Slider(heatFlowSliderDelegate)
+
+  @FXML
+  private var heatPerBeeSliderDelegate: jfxsc.Slider = _
+  private lazy val heatPerBeeSlider: Slider = new Slider(heatPerBeeSliderDelegate)
 
   /**
    * The chart used to display the temperature data over time as a result of
@@ -219,14 +228,15 @@ class MainController {
 
     // Initialize the simple bindings
     heatFlowText.text <== heatFlowSlider.value.asString("%#1.2f")
+    heatPerBeeText.text <== heatPerBeeSlider.value.asString("%#1.4f")
     yAxis.lowerBound <== minimumYValue
     yAxis.upperBound <== maximumYBoundary
 
     // Bind the state of the processor to the combo box and initialize it
     processorSelectionComboBox.value.onChange((_, _, newValue) => {
       newValue match {
-        case MainController.ComboSelections.Histogram => processor() = Some(HistogramBeeDataProcessor)
-        case MainController.ComboSelections.Cumulative => processor() = Some(CumulativeCountBeeDataProcessor)
+        case MainController.ComboSelections.Histogram => processor() = Some(HistogramDataProcessor)
+        case MainController.ComboSelections.Cumulative => processor() = Some(CumulativeFrequencyDataProcessor)
       }
     })
     processorSelectionComboBox.value() = InitialProcessorSelection
@@ -268,6 +278,7 @@ class MainController {
 
     var simulatorDataSubscriptions: Option[Array[Subscription]] = None
     var heatFlowSliderSubscription: Option[Subscription] = None
+    var heatPerBeeSliderSubscription: Option[Subscription] = None
     simulatorSelectionComboBox.value.onChange((_, _, newSimulation) => {
       // Disconnect that previous simulation from the UI elements.
       if (simulatorDataSubscriptions.isDefined) {
@@ -275,6 +286,9 @@ class MainController {
       }
       if (heatFlowSliderSubscription.isDefined) {
         heatFlowSliderSubscription.get.cancel()
+      }
+      if (heatPerBeeSliderSubscription.isDefined) {
+        heatPerBeeSliderSubscription.get.cancel()
       }
 
       // For each of the families in the generator, creat a chart to summarize the
@@ -289,7 +303,9 @@ class MainController {
       simulatorDataSubscriptions = Some(new Array[Subscription](newSimulation.generator.numberOfFamilies))
       beeChartsBox.children.clear()
       for (i <- 0 until newSimulation.generator.numberOfFamilies) {
-        val newBeeChartController = new BeeChartControl()
+        val loader = new FXMLLoader(getClass.getResource("beechart.fxml"))
+        val view = loader.load[LineChartWithIndicator]()
+        val newBeeChartController = loader.getController[BeeChartControl]()
         newBeeChartController.processor <== processor
         newBeeChartController.minimumTemperature <== minimumYBoundary
         newBeeChartController.maximumTemperature <== maximumYBoundary
@@ -297,11 +313,10 @@ class MainController {
         newBeeChartController.simulatorData() = None
 
         (simulatorDataSubscriptions.get)(i) = simulatorData.onChange((_, _, newDatasets) => {
-          newBeeChartController.view.indicatorPosition() = Some(newDatasets.get(i).indicatorPosition)
+          view.indicatorPosition() = Some(newDatasets.get(i).indicatorPosition)
           newBeeChartController.simulatorData() = Option(newDatasets.get(i))
         })
 
-        val view = newBeeChartController.view
         view.idProperty.set(s"beechart-${i}")
         beeChartsBox.children.add(view)
         beeCharts(i) = (newBeeChartController)
@@ -321,14 +336,18 @@ class MainController {
       // animated without the background thread, but the slider not being able to
       // keep up is kind-of annoying.
       var cancel: () => Unit = {() => ()}
-      val heatFlowTooltip = new Tooltip(newSimulation.forcingVariableName)
+      val heatFlowTooltip = new Tooltip(newSimulation.forcingVariable1Name)
+      val heatPerBeeTooltip = new Tooltip(newSimulation.forcingVariable2Name)
       Tooltip.install(heatFlowSlider, heatFlowTooltip)
-      heatFlowSlider.min() = newSimulation.forcingVariableRange._1
-      heatFlowSlider.max() = newSimulation.forcingVariableRange._2
-      heatFlowSliderSubscription = Some(heatFlowSlider.value.onChange((_, _, newValue: Number) => {
+      Tooltip.install(heatPerBeeSlider, heatPerBeeTooltip)
+      heatFlowSlider.min() = newSimulation.forcingVariable1Range._1
+      heatFlowSlider.max() = newSimulation.forcingVariable1Range._2
+      heatPerBeeSlider.min() = newSimulation.forcingVariable2Range._1
+      heatPerBeeSlider.max() = newSimulation.forcingVariable2Range._2
+      val updateData: (ObservableValue[Double, Number], Number, Number) => Unit = {(_, _, newValue) =>
         cancel()
         borderPane.parent().setCursor(jfxs.Cursor.WAIT)
-        val f = Future(newSimulation.generator.generatePoints(newValue.doubleValue()))
+        val f = Future(newSimulation.generator.generatePoints(heatFlowSlider.value().doubleValue(), heatPerBeeSlider.value().doubleValue()))
         val p = Promise[List[Dataset]]()
         Future.firstCompletedOf(Seq(f, p.future)).andThen {
           case Success(datasets) => {
@@ -346,10 +365,13 @@ class MainController {
           if (!p.isCompleted)
           p.failure(CancelledOperation())
         }
-      }))
+      }
+      heatFlowSlider.value() = newSimulation.forcingVariable1InitialValue
+      heatFlowSliderSubscription = Some(heatFlowSlider.value.onChange(updateData))
+      heatPerBeeSliderSubscription = Some(heatPerBeeSlider.value.onChange(updateData))
 
       // This triggers the data creation
-      heatFlowSlider.value() = newSimulation.forcingVariableInitialValue
+      heatPerBeeSlider.value() = newSimulation.forcingVariable2InitialValue
 
       // Sets the focus on the slider. This needs to be done "later", after the
       // window is displayed, otherwise it will just get ignored.

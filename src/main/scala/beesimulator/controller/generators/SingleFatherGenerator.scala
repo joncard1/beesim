@@ -29,16 +29,16 @@ class SingleFatherGenerator[T <: SimState](
     fatherWindow: Double,
     startingTemperture: Double,
     simAttributes: T,
-    datasetCreator: (Double, Double, String, Int, List[Double], Seq[BeeHistogramItem]) => Dataset,
+    datasetCreator: (Double, Double, Double, String, Int, List[Double], Seq[BeeHistogramItem]) => Dataset,
     constructor: (threshold: Double) => Bee[T] = (SimpleBee.apply _)
   )(implicit provider: SimProvider[Double, T, Bee[T], BeeSim[T]]) extends AbstractDataGenerator(name, numberOfIterations, simAttributes) {
   def numberOfFamilies: Int = 1
 
-  def generatePoints(heatInflux: Double): List[Dataset] = {
+  def generatePoints(heatInflux: Double, heatPerBee: Double): List[Dataset] = {
     val bees: Seq[Bee[T]] = for {
       i: Int <- 0.asInstanceOf[Int] to ((numberOfFathers + 1) * (numberOfDaughters + 1))
     } yield constructor(startingTemperture + (fatherWindow / ((numberOfFathers + 1) * (numberOfDaughters + 1))) * i)
 
-    runSimulator(heatInflux, bees, datasetCreator)
+    List(runSimulator(heatInflux, heatPerBee, bees, datasetCreator))
   }
 }

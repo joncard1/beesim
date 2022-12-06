@@ -40,10 +40,16 @@
         </VBox>
       </top>
       <right>
-        <VBox>
-          <Slider fx:id="heatFlowSliderDelegate" orientation="VERTICAL" VBox.vgrow="ALWAYS" blockIncrement="0.1" />
-          <Text fx:id="heatFlowTextDelegate" />
-        </VBox>
+        <HBox>
+          <VBox>
+            <Slider fx:id="heatFlowSliderDelegate" orientation="VERTICAL" VBox.vgrow="ALWAYS" blockIncrement="0.1" />
+            <Text fx:id="heatFlowTextDelegate" />
+          </VBox>
+          <VBox>
+            <Slider fx:id="heatPerBeeSliderDelegate" orientation="VERTICAL" VBox.vgrow="ALWAYS" blockIncrement="0.0001" />
+            <Text fx:id="heatPerBeeTextDelegate" />
+          </VBox>
+        </HBox>
       </right>
       <center>
         <LineChart fx:id="temperatureChartDelegate" layoutX="-2.0" prefHeight="500.0" prefWidth="500.0">

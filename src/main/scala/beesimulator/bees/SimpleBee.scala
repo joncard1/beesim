@@ -17,7 +17,7 @@ package beesimulator.bees
   * the response being linear, where e(t) is a constant adjustment from t(t) and
   * Kp represents a constant linear slope to u(t), the distribution of
   * thresholds of the bees provides a non-linear response to t(t), scaled by Kp
-  * (which in our case is @see{Sim#heatFlowPerBee})
+  * (which in our case is the heat flow per bee, one of the forcing variables).
   *
   * @param threshold    The temperature at which the Bee will change state.
   */

@@ -2,8 +2,15 @@ package beesimulator.bees
 
 import beesimulator.simulator._
 
-class ExternalBeeSimProvider(attributes: ExternalSimState)
-    extends SimProvider[Double, ExternalSimState, Bee[ExternalSimState], ExternalBeeSim] {
+/**
+  * The provider to instantiate new instances of the [[ExternalBeeSim]].
+  *
+  * @param state
+  */
+class ExternalBeeSimProvider(state: ExternalSimState)
+    extends SimProvider[Double, ExternalSimState, Bee[
+      ExternalSimState
+    ], ExternalBeeSim] {
 
   override def createSim(
       newInactiveBees: Seq[Bee[ExternalSimState]],
@@ -14,6 +21,15 @@ class ExternalBeeSimProvider(attributes: ExternalSimState)
   }
 }
 
+/**
+ * The subclass of [[BeeSim]] for bees that sense the external temperature
+ * rather than the internal one.
+ *
+ * @param inactiveBees The bees that are inactive.
+ * @param activeBees   The bees that are active.
+ * @param state        The current state of the simulator.
+ * @param x            A provider to instantiate new instances of the simulator.
+ */
 class ExternalBeeSim(
     inactiveBees: Seq[Bee[ExternalSimState]],
     activeBees: Seq[Bee[ExternalSimState]],
@@ -26,22 +42,24 @@ class ExternalBeeSim(
     ) {
 
   override def newState(
-      inForcing: Double,
+      externalTemperature: Double,
+      heatFlowPerBee: Double,
       newInactiveBeeCount: Int,
       newActiveBeeCount: Int,
       currentState: ExternalSimState
   ): ExternalSimState = {
-    val heatIn = currentState.thermalConductivity * (inForcing - currentState.currentTemperature)
-    val heatOut = newActiveBeeCount * currentState.heatFlowPerBee
+    val heatIn =
+      currentState.thermalConductivity * (externalTemperature - currentState.currentTemperature)
+    val heatOut = newActiveBeeCount * heatFlowPerBee
     val alpha = currentState.mass * currentState.specificHeat
-    val newInternalTemperature = ((currentState.currentTemperature * alpha) + heatIn - heatOut) / alpha
+    val newInternalTemperature =
+      ((currentState.currentTemperature * alpha) + heatIn - heatOut) / alpha
 
     ExternalSimState(
       currentState.mass,
       currentState.specificHeat,
-      currentState.heatFlowPerBee,
       newInternalTemperature,
-      inForcing,
+      externalTemperature,
       currentState.thermalConductivity
     )
   }

@@ -12,10 +12,11 @@ trait DataGenerator {
     * multiple data series per generator, as there can only be one generator for
     * the UI.
     *
-    * @param heatInflux The amount of heat energy being added to the bee hive each step
-    * @return           The list of data series to display.
+    * @param forcingVariable1 The first value that is forcing change.
+    * @param forcingVariable2 The second value that is forcing change.
+    * @return                 The list of data series to display.
     */
-  def generatePoints(heatInflux: Double): List[Dataset]
+  def generatePoints(forcingVariable1: Double, forcingVariable2: Double): List[Dataset]
   /**
     * The number of different families expected to be returned by the data
     * generator. Mostly a convenience so that we don't have to generate the data

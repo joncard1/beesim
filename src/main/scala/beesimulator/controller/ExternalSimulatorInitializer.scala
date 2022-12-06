@@ -5,6 +5,10 @@ import beesimulator.controller.generators._
 import beesimulator.ui._
 import beesimulator.simulator._
 
+/**
+ * Initializes the simulation wherein the bees react to the external
+ * temperature of the hive.
+ */
 object ExternalSimulationInitializer extends SimulationInitializer {
   val InitialExternalTemperature = 22
   val ThermalConductivity = 2.3
@@ -22,7 +26,6 @@ object ExternalSimulationInitializer extends SimulationInitializer {
       ExternalSimState(
         mass,
         specificHeat,
-        heatFlowPerBeeLow,
         startTemperature,
         InitialExternalTemperature,
         ThermalConductivity
@@ -37,8 +40,15 @@ object ExternalSimulationInitializer extends SimulationInitializer {
       ExternalSimState
     ], ExternalBeeSim] = new ExternalBeeSimProvider(externalInitialState)
     val aggregateGenerator = new AggregateDataGenerator()
-    val datasetCreator = (forcingValue: Double, lastTemperature: Double, name: String, numBees: Int, temperatures: List[Double], histogramData: Seq[BeeHistogramItem]) =>
-        Dataset(name, forcingValue, numBees, temperatures, histogramData)
+    val datasetCreator = (
+        forcingValue1: Double,
+        forcingValue2: Double,
+        lastTemperature: Double,
+        name: String,
+        numBees: Int,
+        temperatures: List[Double],
+        histogramData: Seq[BeeHistogramItem]
+    ) => Dataset(name, forcingValue1, numBees, temperatures, histogramData)
 
     val focusedGroups = new FocusedGenerator(
       "Multiple fathers that cluster",
@@ -82,10 +92,13 @@ object ExternalSimulationInitializer extends SimulationInitializer {
     aggregateGenerator.addDataGenerator(singleFatherInMiddleGenerator)
 
     new Simulation() {
-      val forcingVariableName = "External Temperature"
+      val forcingVariable1Name = "External Temperature"
+      val forcingVariable2Name = "Heat Flow per Bee"
       val generator = aggregateGenerator
-      val forcingVariableRange = (20.0, 23.0)
-      val forcingVariableInitialValue = 22.0
+      val forcingVariable1Range = (20.0, 23.0)
+      val forcingVariable2Range = (0.001, 0.002)
+      val forcingVariable1InitialValue = 22.0
+      val forcingVariable2InitialValue = heatFlowPerBeeLow
       val simulatorName = "External Temperature Simulation"
     }
   }

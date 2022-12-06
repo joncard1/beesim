@@ -1,7 +1,6 @@
 package beesimulator.ui
 
 import scalafx.scene.Node
-import javafx.fxml.FXMLLoader
 import javafx.fxml.Initializable
 import java.net.URL
 import java.{util => ju}
@@ -21,29 +20,55 @@ import scalafx.collections.ObservableBuffer
 import math.BigDecimal.double2bigDecimal
 import scalafx.scene.chart.NumberAxis
 import javafx.collections.FXCollections
+import scalafx.Includes.jfxObjectProperty2sfx
 
+/**
+  * Controller class for a chart that summarizes a population in a [[Dataset]] using a provided [[DataProcessor]]. Create an instance of this class, and then the control itself can be accessed in the property [[view]].
+  */
 class BeeChartControl() extends Initializable {
-  val loader = new FXMLLoader(getClass.getResource("beechart.fxml"))
-  loader.setController(this)
-
+  /**
+    * The simulation data to be summarized by this control.
+    */
   val simulatorData = ObjectProperty[Option[Dataset]](None)
+  /**
+    * The processor used to summarize the data.
+    */
   val processor = ObjectProperty[Option[DataProcessor]](None)
 
+  /**
+    * The X-axis of the chart contained in this control.
+    */
   @FXML
   var xAxisDelegate: jfxch.NumberAxis = _
+  /**
+    * The Scala version of the X-axis of the chart container in this control.
+    */
   lazy val xAxis: NumberAxis = new NumberAxis(xAxisDelegate)
+
+  /**
+    * The minimum temperature to display. This is the lowest value on the X-axis.
+    */
+  val minimumTemperature = DoubleProperty(0.0)
+  /**
+    * The maximum temperature to display. This is the highest value on the X-axis.
+    */
+  val maximumTemperature = DoubleProperty(0.0)
+  /**
+    * The number of bins used when calculating the histograms.
+    */
+  val numberOfBins = IntegerProperty(1)
 
   @FXML
   var chartDelegate: jfxch.LineChart[Number, Number] = _
   lazy val chart: LineChart[Number, Number] = new LineChart(chartDelegate)
 
-  val minimumTemperature = DoubleProperty(0.0)
-  val maximumTemperature = DoubleProperty(0.0)
-  val numberOfBins = IntegerProperty(1)
-
-  val view: LineChartWithIndicator = loader.load()
-
-  override def initialize(x$0: URL, x$1: ju.ResourceBundle): Unit = {
+  /**
+    * Initializes the change listeners.
+    *
+    * @param url        URL of the JFX control.
+    * @param resources  Resource bundle to use rendering the control.
+    */
+  override def initialize(url: URL, resources: ju.ResourceBundle): Unit = {
     xAxis.lowerBound <== minimumTemperature
     xAxis.upperBound <== maximumTemperature
     chart.data() = FXCollections.observableArrayList()
@@ -100,7 +125,16 @@ class BeeChartControl() extends Initializable {
     )
   }
 
-  def regenerateCharts(
+  /**
+    * Regenerates the charts in response to changes in a variety of properties.
+    *
+    * @param minimumTemperature The minimum value of the X-axis.
+    * @param maximumTemperature The maximum value of the Y-axis.
+    * @param numberOfBins       The number of bins to use to calculate the histogram.
+    * @param processor          The processor to use to calculate the histogram.
+    * @param dataset            The data set to summarize in the histogram.
+    */
+  private def regenerateCharts(
       minimumTemperature: Double,
       maximumTemperature: Double,
       numberOfBins: Integer,

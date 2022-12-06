@@ -29,7 +29,7 @@ import javafx.beans.value.ObservableValue
 class LineChartWithIndicator(
     @NamedArg("xAxis") xAxis: NumberAxis,
     @NamedArg("yAxis") yAxis: NumberAxis,
-    @NamedArg("data") data: ObservableList[Series[Number, Number]] =
+    @NamedArg("data") val data: ObservableList[Series[Number, Number]] =
       new ObservableListWrapper(new ArrayList())
 ) extends jfxsc.LineChart[Number, Number](xAxis, yAxis, data) {
   val indicatorPosition = ObjectProperty[Option[Double]](None)
