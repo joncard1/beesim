@@ -1,0 +1,17 @@
+# Bee Bearding Simulator
+
+This project simulates the behavior of a bee hive actively managing the temperature of the hive, a practice called "bearding". It is an interesting example of emergent behavior, as the activity seems to be uncoordinated by an organizing authority. The simulator allows you to adjust the rate of heat exchange per bee and the heat introduction rate, and then shows the predicted temperture behavior over time. The simulator then displays the expected temperature behavior of the hive based on the hypothesis that the emergent behavior depends on each bee being a unique individual, and the seemingly stable behavior of the hive temperature is a result of the distribution of preferences in the bee population.
+
+Various profiles of temperature preferences over the bee population are pre-built, and it is designed for different populations can be added by a programmer (There isn't good dependency injection at this time; they need to be added to this codebase).
+
+The values should not be interpreted literally; it is intended to produce realistic looking temperatures in Celsius from realistic values of heat input, but the bee population size was chosen to bee a round number and other values, such as the specific heat of the hive and the cooling ability of each bee, were chosen to match those and produce the effect on the chosen scale. This is only to demonstrate the possibility for emergent behavior to regulate temperatures, based on the findings of (find the citation).
+
+## Results
+
+The temperature regulation seems to work within the constraints of a P or PD controller. There doesn't seem to be a way to reduce steady-state error without a PI or PID controller. Without a shared knowledge of an "optimal" temperature, there is no way for individual bees to decide whether to continue participating in the bearding below their temperature preference to counter the external pressure.
+
+There was an approach that did eliminate steady-state error, but it didn't rely on negative feedback except for evolutionary pressure tuning the variables, so it may not be stable. This did not rely on the bees responding to the ambient temperature, not the temperature inside the hive. If the distribution of the temperature preferences matches other variables such as the rate of flow of heat from the outside temperature to the inside through the hive walls, then it is possible for the graduated response of the population to match the change in the flow of heat into the hive produced by the temperature difference between the outside and inside of the hive. This demonstrates that a solution that accounts for steady-state error may exist from emergent behavior, but the data from actual hives (such as I have seen; there are likely better data that I have not seen) is too noisy to determine if actual hives have steady-state error or not.
+
+## Build Instructions
+
+It should be possible to checkout this codebase and run it with SBT. However, it's possible that the JFX libraries are required to be provided externally. I have them in a folder "lib", but I am reluctant to check them in before I get feedback from another developer to try to avoid introducing dependencies that make maintenance difficult.
