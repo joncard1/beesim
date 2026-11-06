@@ -31,8 +31,8 @@ libraryDependencies += "org.scalatest" %% "scalatest" % "3.2.11" % Test
 libraryDependencies += "org.scalamock" % "scalamock_2.13" % "5.1.0" % Test
 libraryDependencies += "org.scalatestplus" %% "scalacheck-1-16" % "3.2.13.0" % Test
 libraryDependencies += "io.reactivex" % "rxscala_2.13" % "0.27.0"
-libraryDependencies += "org.scalafx" %% "scalafx" % "16.0.0-R24"
-libraryDependencies ++= {
+libraryDependencies += "org.scalafx" %% "scalafx" % "25.0.2-R37"
+/*libraryDependencies ++= {
   lazy val osName = System.getProperty("os.name") match {
     case n if n.startsWith("Linux") => "linux"
     case n if n.startsWith("Mac") => "mac"
@@ -41,7 +41,7 @@ libraryDependencies ++= {
   }
   Seq("base", "controls", "fxml", "graphics", "media", "swing", "web")
     .map(m => "org.openjfx" % s"javafx-$m" % "16" classifier osName)
-}
+}*/
 
 
 // Here, `libraryDependencies` is a set of dependencies, and by using `+=`,
