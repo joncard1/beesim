@@ -2,6 +2,7 @@ package beesimulator.ui
 
 import java.util.concurrent.Executor
 import scala.util.{Failure, Success, Try}
+import scala.util.control.NonFatal
 
 /**
   * Runs a slow computation in the background in response to a rapidly changing
@@ -31,8 +32,9 @@ import scala.util.{Failure, Success, Try}
   * @param onIdle    Called after a result is delivered when there is no more
   *     pending input, for instance to reset a busy cursor. Runs on
   *     [[deliveryExecutor]].
-  * @param onFailure Receives exceptions thrown by [[compute]]. Pending input is
-  *     still processed afterwards. Runs on [[deliveryExecutor]].
+  * @param onFailure Receives exceptions thrown by [[compute]] or [[onResult]].
+  *     Pending input is still processed afterwards. Runs on
+  *     [[deliveryExecutor]].
   * @param workExecutor     Where [[compute]] runs; a background thread pool.
   * @param deliveryExecutor Where results are delivered; for JavaFX, this would
   *     be Platform.runLater.
@@ -104,22 +106,29 @@ final class ConflatingRunner[I, O](
   }
 
   private def deliver(result: Try[O]): Unit = {
-    if (!closed) {
-      result match {
-        case Success(value) => onResult(value)
-        case Failure(e)     => onFailure(e)
+    // The bookkeeping in the finally block has to happen even if a callback
+    // throws, otherwise the runner would stay "running" and never start
+    // another computation.
+    try {
+      if (!closed) {
+        result match {
+          case Success(value) => onResult(value)
+          case Failure(e)     => onFailure(e)
+        }
       }
-    }
-
-    val next = synchronized {
-      val next = pending
-      pending = None
-      running = next.isDefined
-      next
-    }
-    next match {
-      case Some(input) => start(input)
-      case None        => if (!closed) onIdle()
+    } catch {
+      case NonFatal(e) => onFailure(e)
+    } finally {
+      val next = synchronized {
+        val next = pending
+        pending = None
+        running = next.isDefined
+        next
+      }
+      next match {
+        case Some(input) => start(input)
+        case None        => if (!closed) onIdle()
+      }
     }
   }
 }

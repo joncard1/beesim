@@ -85,6 +85,32 @@ class ConflatingRunnerSpec extends AnyWordSpec with Matchers {
       }
     }
 
+    "delivering a result throws" should {
+      "report the failure and continue with the pending input" in {
+        val work = new ManualExecutor()
+        val results = mutable.Buffer[Int]()
+        val failures = mutable.Buffer[Throwable]()
+        var idleCount = 0
+        val runner = new ConflatingRunner[Int, Int](
+          input => input,
+          result => {
+            if (result == 1) throw new IllegalStateException("display failed")
+            results += result
+          },
+          () => idleCount += 1,
+          e => failures += e
+        )(work, immediate)
+        runner.submit(1)
+        runner.submit(2)
+        work.runNext()
+        failures.map(_.getMessage) shouldBe Seq("display failed")
+        work.tasks.size shouldBe 1
+        work.runNext()
+        results shouldBe Seq(2)
+        idleCount shouldBe 1
+      }
+    }
+
     "closed while busy" should {
       "drop the running result and the pending input" in {
         val f = new Fixture()
