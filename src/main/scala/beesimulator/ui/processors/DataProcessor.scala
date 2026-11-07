@@ -26,4 +26,17 @@ trait DataProcessor {
     *     at that x-value in a histogram-like dataset.
     */
   def transform(minimumTemperature: Double, maximumTemperature: Double, numberOfBins: Int, bees: Seq[HistogramItem]): Seq[Int]
+
+  /**
+    * The x-value at which to plot the value of a bin returned by
+    * [[transform]]. This depends on what the value means; a count of the bees
+    * in a bin belongs in the middle of the bin, while a count of the bees below
+    * some temperature belongs at that temperature.
+    *
+    * @param minimumTemperature The temperature value of the least bin.
+    * @param binWidth           The width of each bin in degrees.
+    * @param bin                The index of the bin.
+    * @return                   The temperature at which to plot the bin.
+    */
+  def binPosition(minimumTemperature: Double, binWidth: Double, bin: Int): Double
 }

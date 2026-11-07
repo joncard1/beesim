@@ -25,23 +25,22 @@ class DataProcessorSpec extends AnyWordSpec with Matchers {
       }
     }
 
-    // Known issue: values above the range are piled into the last bin, which
-    // shows up as a spike at the right edge of the chart.
     "given a value above the maximum" should {
       "not count it in any bin" in {
-        pendingUntilFixed {
-          HistogramDataProcessor.transform(0, 3, 3, items(5.0)) shouldBe Seq(0, 0, 0)
-        }
+        HistogramDataProcessor.transform(0, 3, 3, items(5.0)) shouldBe Seq(0, 0, 0)
       }
     }
 
-    // Known issue: a value below the range throws an
-    // ArrayIndexOutOfBoundsException.
     "given a value below the minimum" should {
       "not count it in any bin" in {
-        pendingUntilFixed {
-          HistogramDataProcessor.transform(0, 3, 3, items(-1.0)) shouldBe Seq(0, 0, 0)
-        }
+        HistogramDataProcessor.transform(0, 3, 3, items(-1.0)) shouldBe Seq(0, 0, 0)
+      }
+    }
+
+    "positioning bins" should {
+      "place each bin at its middle" in {
+        HistogramDataProcessor.binPosition(0, 1, 0) shouldBe 0.5
+        HistogramDataProcessor.binPosition(0, 1, 2) shouldBe 2.5
       }
     }
   }
@@ -53,6 +52,25 @@ class DataProcessorSpec extends AnyWordSpec with Matchers {
         val result = CumulativeFrequencyDataProcessor.transform(0, 3, 3, values)
         result shouldBe Seq(2, 3, 4)
         result.last shouldBe values.size
+      }
+    }
+
+    "given values below the minimum" should {
+      "include them in every total" in {
+        CumulativeFrequencyDataProcessor.transform(0, 3, 3, items(-1.0, 1.5)) shouldBe Seq(1, 2, 2)
+      }
+    }
+
+    "given values above the maximum" should {
+      "not include them in any total" in {
+        CumulativeFrequencyDataProcessor.transform(0, 3, 3, items(1.5, 5.0)) shouldBe Seq(0, 1, 1)
+      }
+    }
+
+    "positioning bins" should {
+      "place each bin at its top, where its total applies" in {
+        CumulativeFrequencyDataProcessor.binPosition(0, 1, 0) shouldBe 1.0
+        CumulativeFrequencyDataProcessor.binPosition(0, 1, 2) shouldBe 3.0
       }
     }
   }

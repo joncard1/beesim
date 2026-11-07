@@ -17,7 +17,6 @@ import beesimulator.ui.processors.DataProcessor
 import scalafx.beans.property._
 import scalafx.scene.chart.XYChart
 import scalafx.collections.ObservableBuffer
-import math.BigDecimal.double2bigDecimal
 import scalafx.scene.chart.NumberAxis
 import javafx.collections.FXCollections
 import scalafx.Includes.jfxObjectProperty2sfx
@@ -142,6 +141,7 @@ class BeeChartControl() extends Initializable {
       dataset: Option[Dataset]
   ) = {
     if (dataset.isDefined && processor.isDefined) {
+      val binWidth = (maximumTemperature - minimumTemperature) / numberOfBins
       chart.data() = ObservableBuffer(
         XYChart.Series[Number, Number](
           dataset.get.name,
@@ -153,9 +153,9 @@ class BeeChartControl() extends Initializable {
                 numberOfBins,
                 dataset.get.bees
               )
-              .zip(minimumTemperature to maximumTemperature by ((maximumTemperature - minimumTemperature)/numberOfBins))
-              .map(tuple => {
-                XYChart.Data(tuple._2, tuple._1)
+              .zipWithIndex
+              .map((value, bin) => {
+                XYChart.Data[Number, Number](processor.get.binPosition(minimumTemperature, binWidth, bin), value)
               })
           )
         )

@@ -13,7 +13,9 @@ object CumulativeFrequencyDataProcessor extends DataProcessor {
     assert(histogramResults.length == width)
 
     val cumulativeTotals = new Array[Int](width)
-    var total = 0
+    // The histogram doesn't count bees below the minimum, but they are still
+    // below every temperature on the chart.
+    var total = input.count(_.value() < minimumYBoundary)
     for (i <- 0 until width) {
       total = total + histogramResults(i)
       cumulativeTotals(i) = total
@@ -21,4 +23,11 @@ object CumulativeFrequencyDataProcessor extends DataProcessor {
 
     cumulativeTotals
   }
+
+  /**
+    * Each bin's total includes the bees up to the top of the bin, so it is
+    * plotted there.
+    */
+  override def binPosition(minimumTemperature: Double, binWidth: Double, bin: Int): Double =
+    minimumTemperature + (bin + 1) * binWidth
 }

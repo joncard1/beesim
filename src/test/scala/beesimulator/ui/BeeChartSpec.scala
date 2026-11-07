@@ -99,19 +99,28 @@ class BeeChartSpec extends AnyWordSpec with Matchers {
       }
     }
 
-    // Known issue: each bin is plotted at its lower edge, but the cumulative
-    // count of a bin includes bees up to its upper edge, so the curve is drawn
-    // one bin width (0.06 degrees) to the left of where it should be. Bees at
-    // 20.03 are shown as already counted at 20.0.
     "showing a cumulative distribution" should {
-      "not count bees before the temperature of their thresholds" in {
+      "count bees only from the temperature of their thresholds" in {
         assert(JavaFxToolkit.available, "JavaFX could not start; see JavaFxToolkit")
         JavaFxToolkit.onFxThread {
           val f = new Fixture(240, 200)
           f.show(CumulativeFrequencyDataProcessor, Seq.fill(10)(20.03), 21.0)
-          pendingUntilFixed {
-            all(f.points.filter((x, _) => x < 20.03).map((_, count) => count)) shouldBe 0
-          }
+          all(f.points.filter((x, _) => x < 20.03).map((_, count) => count)) shouldBe 0
+          all(f.points.filter((x, _) => x > 20.03).map((_, count) => count)) shouldBe 10
+          f.points.head._1 shouldBe 20.06 +- 1e-9
+        }
+      }
+    }
+
+    "showing a histogram" should {
+      "plot each bin at its middle" in {
+        assert(JavaFxToolkit.available, "JavaFX could not start; see JavaFxToolkit")
+        JavaFxToolkit.onFxThread {
+          val f = new Fixture(240, 200)
+          f.show(HistogramDataProcessor, Seq.fill(10)(20.03), 21.0)
+          f.points.head._1 shouldBe 20.03 +- 1e-9
+          f.points.head._2 shouldBe 10
+          f.points.size shouldBe NumberOfBins
         }
       }
     }
