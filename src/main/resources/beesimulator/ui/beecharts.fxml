@@ -56,7 +56,7 @@
         </HBox>
       </right>
       <center>
-        <LineChart fx:id="temperatureChartDelegate" layoutX="-2.0" prefHeight="500.0" prefWidth="500.0">
+        <LineChart fx:id="temperatureChartDelegate" layoutX="-2.0" prefHeight="500.0" prefWidth="500.0" animated="false">
           <xAxis>
             <NumberAxis label="Time" side="BOTTOM" />
           </xAxis>

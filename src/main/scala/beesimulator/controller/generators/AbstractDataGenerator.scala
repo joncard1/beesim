@@ -32,17 +32,19 @@ abstract class AbstractDataGenerator[T <: SimState](name: String, numberOfIterat
     import sim._
 
     @tailrec
-    def iterate(iteration: Int, sim: BeeSim[T], temperatures: List[Double]): List[Double] = {
+    def iterate(iteration: Int, sim: BeeSim[T], temperatures: List[Double]): (BeeSim[T], List[Double]) = {
       if (iteration == numberOfIterations) {
-        temperatures
+        (sim, temperatures)
       } else {
         iterate(iteration + 1, sim.step(forcing1Value, forcing2Value), sim.currentState.currentTemperature :: temperatures)
       }
     }
-    val temperatures = iterate(0, sim, List())
+    val (finalSim, temperatures) = iterate(0, sim, List())
+    // The bees in the final step decided whether to be active based on this
+    // temperature, so the two are reported together.
     val lastTemperature = temperatures.head
     val reverseTemperatures = temperatures.reverse
 
-    datasetCreator(forcing1Value, forcing2Value, lastTemperature, name, sim.activeBees.length, reverseTemperatures, bees.map(bee => BeeHistogramItem(bee)))
+    datasetCreator(forcing1Value, forcing2Value, lastTemperature, name, finalSim.activeBees.length, reverseTemperatures, bees.map(bee => BeeHistogramItem(bee)))
   }
 }

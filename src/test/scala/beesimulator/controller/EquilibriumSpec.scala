@@ -88,13 +88,18 @@ class EquilibriumSpec extends AnyWordSpec with Matchers {
       }
     }
 
-    // Known issue: AbstractDataGenerator.runSimulator reports the active bees
-    // of the first step of the simulation rather than the last, so this is
-    // always 0.
     "reporting the final bee count" should {
       "report a non-zero count when heat is coming in" in {
-        pendingUntilFixed {
-          all(runs.map((_, _, dataset) => dataset.finalBeeCount)) should be > 0
+        all(runs.map((_, _, dataset) => dataset.finalBeeCount)) should be > 0
+      }
+
+      "count the simple bees whose thresholds are below the final temperature" in {
+        val simpleRuns = runs.filter((_, _, dataset) => beeOf(dataset).isInstanceOf[SimpleBee])
+        simpleRuns should not be empty
+        for ((heatIn, heatPerBee, dataset) <- simpleRuns) {
+          withClue(f"${dataset.name} at heatIn=$heatIn heatPerBee=$heatPerBee: ") {
+            dataset.finalBeeCount shouldBe thresholds(dataset).count(_ < dataset.indicatorPosition)
+          }
         }
       }
     }

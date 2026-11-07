@@ -20,8 +20,6 @@ import javafx.collections.ListChangeListener.Change
 import scalafx.collections.ObservableBuffer
 import javafx.collections.FXCollections
 import java.util.ArrayList
-import javafx.beans.value.ChangeListener
-import javafx.beans.value.ObservableValue
 
 // TODO: Also, it should be easy to change the heat per bee at this point with a slider.
 
@@ -40,35 +38,37 @@ class LineChartWithIndicator(
     updateIndicator(newFinalTemperature)
   })
 
-  yAxis.scaleProperty().addListener(new ChangeListener[Number]() {
-    def changed (
-      observable: javafx.beans.value.ObservableValue[? <: Number],
-      oldValue: Number,
-      newValue: Number
-    ): Unit = {
-      updateIndicator(indicatorPosition())
-    }
-  })
+  /**
+    * Lays out the data, and then the indicator. The pixel position of the
+    * indicator depends on the axes, which change whenever the chart is resized
+    * or the data changes the range of the y-axis, so it is recalculated every
+    * time the chart is laid out.
+    */
+  override protected def layoutPlotChildren(): Unit = {
+    super.layoutPlotChildren()
+    positionIndicator()
+  }
 
   private def updateIndicator(newFinalTemperature: Option[Double]) = {
-    if (newFinalTemperature.isDefined) {
-      if (indicatorLine.isDefined) {
-        this.getPlotChildren().remove(indicatorLine.get)
-      }
-
-      val startElement = new MoveTo(
-        xAxis.getDisplayPosition(newFinalTemperature.get),
-        yAxis.getDisplayPosition(0)
-      )
-      val lineElement = new LineTo(
-        xAxis.getDisplayPosition(newFinalTemperature.get),
-        yAxis.getDisplayPosition(yAxis.upperBoundProperty().get())
-      )
-      val path = new Path(startElement, lineElement)
+    indicatorLine.foreach(line => this.getPlotChildren().remove(line))
+    indicatorLine = newFinalTemperature.map(_ => {
+      val path = new Path(new MoveTo(), new LineTo())
       path.getStyleClass().setAll("temperature-indicator")
-      indicatorLine = Some(path)
-      this.getPlotChildren().add(indicatorLine.get)
-    }
+      this.getPlotChildren().add(path)
+      path
+    })
+    positionIndicator()
+  }
 
+  private def positionIndicator(): Unit = {
+    for (line <- indicatorLine; temperature <- indicatorPosition()) {
+      val x = xAxis.getDisplayPosition(temperature)
+      val start = line.getElements().get(0).asInstanceOf[MoveTo]
+      start.setX(x)
+      start.setY(yAxis.getDisplayPosition(0))
+      val end = line.getElements().get(1).asInstanceOf[LineTo]
+      end.setX(x)
+      end.setY(yAxis.getDisplayPosition(yAxis.getUpperBound()))
+    }
   }
 }
