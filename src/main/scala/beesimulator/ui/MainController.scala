@@ -20,12 +20,9 @@ import scalafx.beans.property._
 import scalafx.collections._
 import beesimulator.ui.processors._
 import scalafx.application.Platform
-import scala.concurrent.Future
 import scalafx.event.subscriptions.Subscription
 import scalafx.beans.value.ObservableValue
 import javafx.collections.FXCollections
-import scala.util._
-import scala.concurrent.Promise
 import java.util.ArrayList
 import scalafx.util.StringConverter
 
@@ -71,7 +68,7 @@ class MainController {
   /**
    * The simple, default way to launching background threads.
    */
-  import concurrent.ExecutionContext.Implicits.global
+  private val backgroundThreads = scala.concurrent.ExecutionContext.global
 
   /**
    * The number of bins used when generating the histograms that summarize the
@@ -200,10 +197,10 @@ class MainController {
   val processor = ObjectProperty[Option[DataProcessor]](None)
 
   /**
-   * A special class of exception to distinguish cancelled simulator runs from
-   * actual exceptions calculating the simulator data.
+   * Runs the currently selected simulation in the background as the sliders
+   * move. It is replaced when a different simulation is selected.
    */
-  final case class CancelledOperation() extends Exception
+  private var simulationRunner: Option[ConflatingRunner[(Double, Double), List[Dataset]]] = None
 
   /**
     *
@@ -328,14 +325,20 @@ class MainController {
       //   simulatorData().clear()
       //   simulatorData().addall(datasets)
       // except that, the simulator taking a bit long, the mouse loses track of
-      // the slider for a bit while it updates. This way, the recomputation is
-      // done in another thread, "repatriated," kind-of, to the JavaFX thread with
-      // Platform.runLater, and can be cancelled by later recomputations if the
-      // slider is being dragged.
-      // I'm conflicted about it, really; the data changing gradually is better
-      // animated without the background thread, but the slider not being able to
-      // keep up is kind-of annoying.
-      var cancel: () => Unit = {() => ()}
+      // the slider for a bit while it updates. So the recomputation is done in
+      // another thread by a ConflatingRunner, which only runs one simulation at
+      // a time and skips slider positions that were passed over while it was
+      // busy, and the results are "repatriated," kind-of, to the JavaFX thread
+      // with Platform.runLater. While dragging, the charts update as fast as
+      // the simulations can be run, and they always end up showing the final
+      // slider position.
+      simulationRunner.foreach(_.close())
+      val runner = new ConflatingRunner[(Double, Double), List[Dataset]](
+        (forcingValues) => newSimulation.generator.generatePoints(forcingValues._1, forcingValues._2),
+        (datasets) => simulatorData() = ObservableBuffer.from(datasets),
+        () => borderPane.parent().setCursor(jfxs.Cursor.DEFAULT)
+      )(backgroundThreads, (task: Runnable) => Platform.runLater(task))
+      simulationRunner = Some(runner)
       val heatFlowTooltip = new Tooltip(newSimulation.forcingVariable1Name)
       val heatPerBeeTooltip = new Tooltip(newSimulation.forcingVariable2Name)
       Tooltip.install(heatFlowSlider, heatFlowTooltip)
@@ -344,34 +347,20 @@ class MainController {
       heatFlowSlider.max() = newSimulation.forcingVariable1Range._2
       heatPerBeeSlider.min() = newSimulation.forcingVariable2Range._1
       heatPerBeeSlider.max() = newSimulation.forcingVariable2Range._2
-      val updateData: (ObservableValue[Double, Number], Number, Number) => Unit = {(_, _, newValue) =>
-        cancel()
+      def updateData(): Unit = {
         borderPane.parent().setCursor(jfxs.Cursor.WAIT)
-        val f = Future(newSimulation.generator.generatePoints(heatFlowSlider.value().doubleValue(), heatPerBeeSlider.value().doubleValue()))
-        val p = Promise[List[Dataset]]()
-        Future.firstCompletedOf(Seq(f, p.future)).andThen {
-          case Success(datasets) => {
-            Platform.runLater({
-              simulatorData() = ObservableBuffer.from(datasets)
-              borderPane.parent().setCursor(jfxs.Cursor.DEFAULT)
-            })
-          }
-          case Failure(CancelledOperation()) => {}
-          case Failure(e) => {
-            // TODO: Probably some better error handling here
-          }
-        }
-        cancel = () => {
-          if (!p.isCompleted)
-          p.failure(CancelledOperation())
-        }
+        runner.submit((heatFlowSlider.value().doubleValue(), heatPerBeeSlider.value().doubleValue()))
       }
       heatFlowSlider.value() = newSimulation.forcingVariable1InitialValue
-      heatFlowSliderSubscription = Some(heatFlowSlider.value.onChange(updateData))
-      heatPerBeeSliderSubscription = Some(heatPerBeeSlider.value.onChange(updateData))
-
-      // This triggers the data creation
       heatPerBeeSlider.value() = newSimulation.forcingVariable2InitialValue
+      heatFlowSliderSubscription = Some(heatFlowSlider.value.onChange(updateData()))
+      heatPerBeeSliderSubscription = Some(heatPerBeeSlider.value.onChange(updateData()))
+
+      // This triggers the data creation. It can't be left to the slider change
+      // events, because a slider that is already at its initial value, as the
+      // heat per bee slider is when switching between simulations that share
+      // the same initial value, doesn't send one.
+      updateData()
 
       // Sets the focus on the slider. This needs to be done "later", after the
       // window is displayed, otherwise it will just get ignored.
