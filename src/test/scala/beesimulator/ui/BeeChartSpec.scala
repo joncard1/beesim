@@ -74,9 +74,6 @@ class BeeChartSpec extends AnyWordSpec with Matchers {
       }
     }
 
-    // Known issue: the indicator is only redrawn when the indicator or the
-    // y-axis scale changes, so when the chart gets wider or narrower the
-    // indicator stays at its old pixel position.
     "resized after the indicator is drawn" should {
       "move the indicator with the axis" in {
         assert(JavaFxToolkit.available, "JavaFX could not start; see JavaFxToolkit")
@@ -85,9 +82,7 @@ class BeeChartSpec extends AnyWordSpec with Matchers {
           f.show(HistogramDataProcessor, thresholds, 21.0)
           f.view.resize(480, 200)
           f.layout()
-          pendingUntilFixed {
-            f.indicatorX shouldBe f.expectedIndicatorX(21.0) +- 0.5
-          }
+          f.indicatorX shouldBe f.expectedIndicatorX(21.0) +- 0.5
         }
       }
     }
