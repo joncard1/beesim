@@ -11,7 +11,6 @@ import scala.jdk.CollectionConverters._
 /**
   * Lays out the bee chart from beechart.fxml without showing it, and checks
   * where the indicator and the summary of the bee population are drawn.
-  * Skipped when there is no display for JavaFX to start on.
   */
 class BeeChartSpec extends AnyWordSpec with Matchers {
 
@@ -66,7 +65,7 @@ class BeeChartSpec extends AnyWordSpec with Matchers {
   "The bee chart" when {
     "laid out with an indicator" should {
       "draw the indicator at the indicated temperature" in {
-        assume(JavaFxToolkit.available, "JavaFX could not start")
+        assert(JavaFxToolkit.available, "JavaFX could not start; see JavaFxToolkit")
         JavaFxToolkit.onFxThread {
           val f = new Fixture(240, 200)
           f.show(HistogramDataProcessor, thresholds, 21.0)
@@ -80,7 +79,7 @@ class BeeChartSpec extends AnyWordSpec with Matchers {
     // indicator stays at its old pixel position.
     "resized after the indicator is drawn" should {
       "move the indicator with the axis" in {
-        assume(JavaFxToolkit.available, "JavaFX could not start")
+        assert(JavaFxToolkit.available, "JavaFX could not start; see JavaFxToolkit")
         JavaFxToolkit.onFxThread {
           val f = new Fixture(240, 200)
           f.show(HistogramDataProcessor, thresholds, 21.0)
@@ -95,7 +94,7 @@ class BeeChartSpec extends AnyWordSpec with Matchers {
 
     "switched from a histogram to a cumulative distribution" should {
       "keep the indicator at the indicated temperature" in {
-        assume(JavaFxToolkit.available, "JavaFX could not start")
+        assert(JavaFxToolkit.available, "JavaFX could not start; see JavaFxToolkit")
         JavaFxToolkit.onFxThread {
           val f = new Fixture(240, 200)
           f.show(HistogramDataProcessor, thresholds, 21.0)
@@ -111,7 +110,7 @@ class BeeChartSpec extends AnyWordSpec with Matchers {
     // 20.03 are shown as already counted at 20.0.
     "showing a cumulative distribution" should {
       "not count bees before the temperature of their thresholds" in {
-        assume(JavaFxToolkit.available, "JavaFX could not start")
+        assert(JavaFxToolkit.available, "JavaFX could not start; see JavaFxToolkit")
         JavaFxToolkit.onFxThread {
           val f = new Fixture(240, 200)
           f.show(CumulativeFrequencyDataProcessor, Seq.fill(10)(20.03), 21.0)

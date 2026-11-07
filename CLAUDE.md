@@ -18,7 +18,7 @@ sbt "testOnly beesimulator.bees.InternalBeeSimSpec -- -z \"stabilize at 2 bees\"
 sbt run        # launches the GUI (beesimulator.MainJFX)
 ```
 
-Tests use ScalaTest `AnyWordSpec` with `Matchers`. The README says the JavaFX libraries may have to be provided externally (the author keeps them in an untracked `lib/` folder). `project/` is gitignored, so `build.properties` and the bloop plugin are local only.
+Tests use ScalaTest `AnyWordSpec` with `Matchers`. UI tests run headlessly through Monocle (`org.testfx:openjfx-monocle`, test scope): `src/test/scala/beesimulator/ui/JavaFxToolkit.scala` starts JavaFX with the headless properties, and `onFxThread` runs code on the JavaFX thread. Monocle is published only up to 21.0.2 but works with JavaFX 25; if a JavaFX upgrade breaks it, the UI tests fail at startup. Known bugs are recorded as `pendingUntilFixed` tests; remove the wrapper when fixing one. The README says the JavaFX libraries may have to be provided externally (the author keeps them in an untracked `lib/` folder). `project/` is gitignored, so `build.properties` and the bloop plugin are local only.
 
 ## Architecture
 
