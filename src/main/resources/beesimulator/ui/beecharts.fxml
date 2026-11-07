@@ -36,7 +36,11 @@
               </ComboBox>
             </children>
           </GridPane>
-          <HBox fx:id="beeChartsBoxDelegate" />
+          <ScrollPane fx:id="scrollPane" hbarPolicy="AS_NEEDED" vbarPolicy="NEVER" fitToHeight="true">
+            <content>
+              <HBox fx:id="beeChartsBoxDelegate" />
+            </content>
+          </ScrollPane>
         </VBox>
       </top>
       <right>
