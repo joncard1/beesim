@@ -1,0 +1,39 @@
+# CLAUDE.md
+
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+
+## Project
+
+A ScalaFX desktop app that simulates honeybee "bearding" (hive temperature regulation) as emergent behavior: each bee has its own temperature threshold, and the hive temperature stabilizes based on the distribution of those thresholds across the population. Numeric constants are tuned to look like realistic Celsius values, not taken from real data.
+
+## Commands
+
+Scala 3.3.4, sbt 1.12.9. CI (`.github/workflows/scala.yml`) runs `sbt test` on JDK 17.
+
+```sh
+sbt compile
+sbt test
+sbt "testOnly beesimulator.bees.InternalBeeSimSpec"
+sbt "testOnly beesimulator.bees.InternalBeeSimSpec -- -z \"stabilize at 2 bees\""   # one test by name
+sbt run        # launches the GUI (beesimulator.MainJFX)
+```
+
+Tests use ScalaTest `AnyWordSpec` with `Matchers`. The README says the JavaFX libraries may have to be provided externally (the author keeps them in an untracked `lib/` folder). `project/` is gitignored, so `build.properties` and the bloop plugin are local only.
+
+## Architecture
+
+The code has four layers, and they depend on each other in this order:
+
+**`simulator/`: generic step engine.** `Sim[T, U, V]` (T = forcing value type, U = state, V = actor) runs one step in `executeStep`. Each active actor is asked whether it wants to `leave`, then each inactive actor whether it wants to `join`. The subclass's `newState(forcing1, forcing2, inactiveCount, activeCount, state)` computes the next state, and `SimActorProvider.update` gives each actor a chance to update its memory. The simulation is immutable: `step` (from the `SimOps` implicit class, which needs an implicit `SimProvider` in scope and `import sim._`) returns a new `Sim` built by `SimProvider.createSim`. Every simulation has exactly two forcing variables.
+
+**`bees/`: domain implementation.** `Bee[-T]` extends `SimActor` and adds a `threshold`, which the UI histograms use. There are two simulation variants, each with its own state case class and sim:
+- `InternalBeeSim` / `InternalSimState`: bees sense the hive temperature. The forcing variables are heat in and heat removed per bee.
+- `ExternalBeeSim` / `ExternalSimState`: bees sense the external temperature, and heat moves through the hive walls by thermal conductivity.
+
+Bee variants (`SimpleBee`, `DerivativeBee`, `IntegralBee`, `CombinedIntegralBee`, `SimpleExternalBee`) are case classes. Their per-step state update is **not** defined on the bee; it lives in the pattern match of the implicit `SimActorProvider` objects in `object Bee` (`Bee.scala`). When you add a bee type, you must add a case there, or the match fails at runtime.
+
+**`controller/`: population setup.** `InternalSimulationInitializer` and `ExternalSimulationInitializer` build a `ui.Simulation`: forcing variable names, ranges, and defaults, plus an `AggregateDataGenerator` holding several population generators. The generators in `controller/generators/` (MixedFathers, SingleFather, Bimodal, Focused) extend `AbstractDataGenerator`, which owns the iteration loop (`runSimulator`). Concrete generators only decide how bee thresholds are distributed, usually as "fathers" (genetic sub-populations) each with many "daughters". Many generators take a factory such as `DerivativeBee.apply(_, ...)` to pick the bee type. There is no dependency injection: to add a population profile, write a generator and register it in an initializer.
+
+**`ui/`: ScalaFX/JavaFX front end.** `MainJFX` creates both simulations, loads `src/main/resources/beesimulator/ui/beecharts.fxml`, and passes the simulations to `MainController`. FXML injects JavaFX delegate fields, which are wrapped in `lazy` ScalaFX objects (the reasoning is documented at the top of `MainController`). When a slider changes, `DataGenerator.generatePoints` runs on a background `Future` and produces `Dataset`s (temperature series plus a histogram of bee thresholds). `ui/processors/` turns those into histogram or cumulative-frequency chart data.
+
+`src/main/scala/beesimulator/package.scala` contains a long package-level Scaladoc explaining the biological background and the design intent.
