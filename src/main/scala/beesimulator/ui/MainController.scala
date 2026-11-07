@@ -347,16 +347,20 @@ class MainController {
       heatFlowSlider.max() = newSimulation.forcingVariable1Range._2
       heatPerBeeSlider.min() = newSimulation.forcingVariable2Range._1
       heatPerBeeSlider.max() = newSimulation.forcingVariable2Range._2
-      val updateData: (ObservableValue[Double, Number], Number, Number) => Unit = {(_, _, newValue) =>
+      def updateData(): Unit = {
         borderPane.parent().setCursor(jfxs.Cursor.WAIT)
         runner.submit((heatFlowSlider.value().doubleValue(), heatPerBeeSlider.value().doubleValue()))
       }
       heatFlowSlider.value() = newSimulation.forcingVariable1InitialValue
-      heatFlowSliderSubscription = Some(heatFlowSlider.value.onChange(updateData))
-      heatPerBeeSliderSubscription = Some(heatPerBeeSlider.value.onChange(updateData))
-
-      // This triggers the data creation
       heatPerBeeSlider.value() = newSimulation.forcingVariable2InitialValue
+      heatFlowSliderSubscription = Some(heatFlowSlider.value.onChange(updateData()))
+      heatPerBeeSliderSubscription = Some(heatPerBeeSlider.value.onChange(updateData()))
+
+      // This triggers the data creation. It can't be left to the slider change
+      // events, because a slider that is already at its initial value, as the
+      // heat per bee slider is when switching between simulations that share
+      // the same initial value, doesn't send one.
+      updateData()
 
       // Sets the focus on the slider. This needs to be done "later", after the
       // window is displayed, otherwise it will just get ignored.
