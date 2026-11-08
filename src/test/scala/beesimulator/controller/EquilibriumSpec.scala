@@ -88,6 +88,26 @@ class EquilibriumSpec extends AnyWordSpec with Matchers {
       }
     }
 
+    "reporting the final temperatures" should {
+      "band the range of the last steps, around the indicator" in {
+        for ((heatIn, heatPerBee, dataset) <- runs) {
+          val tail = dataset.temperatures.takeRight(Dataset.SettlingWindow)
+          withClue(f"${dataset.name} at heatIn=$heatIn heatPerBee=$heatPerBee: ") {
+            dataset.indicatorBand shouldBe Some((tail.min, tail.max))
+            dataset.indicatorPosition should (be >= tail.min and be <= tail.max)
+          }
+        }
+      }
+
+      "band a wide range when the simulation never settles" in {
+        val (_, _, bimodal) = runs.find((heatIn, heatPerBee, dataset) =>
+          heatIn == 1.0 && heatPerBee == 0.002 && dataset.name == "Bimodal bee set"
+        ).get
+        val (low, high) = bimodal.indicatorBand.get
+        (high - low) should be > SettledRange
+      }
+    }
+
     "reporting the final bee count" should {
       "report a non-zero count when heat is coming in" in {
         all(runs.map((_, _, dataset) => dataset.finalBeeCount)) should be > 0

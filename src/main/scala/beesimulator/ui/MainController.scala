@@ -312,6 +312,7 @@ class MainController {
 
         (simulatorDataSubscriptions.get)(i) = simulatorData.onChange((_, _, newDatasets) => {
           view.indicatorPosition() = Some(newDatasets.get(i).indicatorPosition)
+          view.indicatorBand() = newDatasets.get(i).indicatorBand
           newBeeChartController.simulatorData() = Option(newDatasets.get(i))
         })
 
