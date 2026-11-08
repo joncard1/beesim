@@ -26,8 +26,9 @@ version := "1.0"
 // You can define other libraries as dependencies in your build like this:
 
 // Forced version upgrades in response to Dependabot alerts
-val fasterxmlVersion = "2.21.8"
-val jsoupVersion = "1.24.1"
+val fasterxml3Version = "3.2.4"   // Scaladoc 3.10.0 apparently has dependencies on both fasterxml jackson-core 3 and 2, which seems unwise, but the dependency on 3 is on 3.2.1 and the last LTS version of 3 is 3.1, so this is the latest release.
+val fasterxml2Version = "2.21.8"  // Latest patch of the most recent LTS.
+val jsoupVersion = "1.24.1"       // Latest patch. They don't seem to have a LTS policy, according to Google
 
 libraryDependencies += "org.scala-lang.modules" %% "scala-parser-combinators" % "2.1.1"
 libraryDependencies += "org.scala-lang.modules" %% "scala-swing" % "3.0.0"
@@ -37,9 +38,11 @@ libraryDependencies += "org.scalamock" % "scalamock_2.13" % "5.1.0" % Test
 libraryDependencies += "org.scalatestplus" %% "scalacheck-1-16" % "3.2.13.0" % Test
 libraryDependencies += "io.reactivex" % "rxscala_2.13" % "0.27.0"
 libraryDependencies += "org.scalafx" %% "scalafx" % "25.0.2-R37"
-libraryDependencies += "com.fasterxml.jackson.core" % "jackson-core" % fasterxmlVersion % Configurations.ScalaDocTool
-libraryDependencies += "com.fasterxml.jackson.core" % "jackson-databind" % fasterxmlVersion % Configurations.ScalaDocTool
+libraryDependencies += "com.fasterxml.jackson.core" % "jackson-core" % fasterxml2Version % Configurations.ScalaDocTool
+libraryDependencies += "com.fasterxml.jackson.core" % "jackson-databind" % fasterxml2Version % Configurations.ScalaDocTool
 libraryDependencies += "org.jsoup" % "jsoup" % jsoupVersion % Configurations.ScalaDocTool
+libraryDependencies += "tools.jackson.core" % "jackson-core" % fasterxml3Version % Configurations.ScalaDocTool
+libraryDependencies += "tools.jackson.core" % "jackson-databind" % fasterxml3Version % Configurations.ScalaDocTool
 /*libraryDependencies ++= {
   lazy val osName = System.getProperty("os.name") match {
     case n if n.startsWith("Linux") => "linux"
