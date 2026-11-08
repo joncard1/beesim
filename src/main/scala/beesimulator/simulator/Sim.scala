@@ -118,6 +118,6 @@ abstract class Sim[T, U, V <: SimActor[U]](
   ): U
 
   override def toString(): String = {
-    s"Current temperature ${newState}; bees active ${activeActors.length}"
+    s"Current state ${currentState}; bees active ${activeActors.length}"
   }
 }
