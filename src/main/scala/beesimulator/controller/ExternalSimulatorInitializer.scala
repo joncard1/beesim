@@ -74,7 +74,7 @@ object ExternalSimulationInitializer extends SimulationInitializer {
       externalInitialState,
       datasetCreator,
       SimpleExternalBee(_)
-    )(externalSimProvider)
+    )(using externalSimProvider)
     aggregateGenerator.addDataGenerator(mixedFathersGenerator)
 
     val singleFatherInMiddleGenerator = new SingleFatherGenerator(
@@ -88,7 +88,7 @@ object ExternalSimulationInitializer extends SimulationInitializer {
       externalInitialState,
       datasetCreator,
       SimpleExternalBee.apply(_)
-    )(externalSimProvider)
+    )(using externalSimProvider)
     aggregateGenerator.addDataGenerator(singleFatherInMiddleGenerator)
 
     new Simulation() {

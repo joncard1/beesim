@@ -59,7 +59,7 @@ object InternalSimulationInitializer extends SimulationInitializer {
       fatherWindow,
       internalInitialState,
       datasetCreator
-    )(internalSimProvider)
+    )(using internalSimProvider)
     aggregateGenerator.addDataGenerator(mixedFathersGenerator)
     val mixedFathersDerivativeGenerator = new MixedFathersGenerator(
       "Mixed Fathers with derivative",
