@@ -2,7 +2,9 @@ package beesimulator.ui
 
 import javafx.fxml.FXMLLoader
 import javafx.scene.Scene
+import javafx.scene.control.Label
 import javafx.scene.shape.{MoveTo, Path}
+import javafx.scene.text.Text
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatest.matchers.should.Matchers
 import beesimulator.ui.processors._
@@ -41,10 +43,10 @@ class BeeChartSpec extends AnyWordSpec with Matchers {
       view.layout()
     }
 
-    def show(processor: DataProcessor, thresholds: Seq[Double], indicator: Double): Unit = {
+    def show(processor: DataProcessor, thresholds: Seq[Double], indicator: Double, name: String = "test"): Unit = {
       controller.processor() = Some(processor)
       view.indicatorPosition() = Some(indicator)
-      controller.simulatorData() = Some(Dataset("test", indicator, 0, Seq(), thresholds.map(Item(_))))
+      controller.simulatorData() = Some(Dataset(name, indicator, 0, Seq(), thresholds.map(Item(_))))
       layout()
     }
 
@@ -108,6 +110,22 @@ class BeeChartSpec extends AnyWordSpec with Matchers {
           all(f.points.filter((x, _) => x < 20.03).map((_, count) => count)) shouldBe 0
           all(f.points.filter((x, _) => x > 20.03).map((_, count) => count)) shouldBe 10
           f.points.head._1 shouldBe 20.06 +- 1e-9
+        }
+      }
+    }
+
+    "showing a population with a long name" should {
+      "show the whole name as the chart's title" in {
+        assert(JavaFxToolkit.available, "JavaFX could not start; see JavaFxToolkit")
+        JavaFxToolkit.onFxThread {
+          val name = "Single Father with medium thresholds"
+          val f = new Fixture(240, 200)
+          f.show(HistogramDataProcessor, thresholds, 21.0, name)
+          val title = f.view.lookup(".chart-title").asInstanceOf[Label]
+          title.isVisible shouldBe true
+          // The text actually drawn, which would end in an ellipsis if the
+          // title were truncated.
+          title.lookup(".text").asInstanceOf[Text].getText shouldBe name
         }
       }
     }
