@@ -4,7 +4,8 @@ import javafx.collections.ObservableList
 import javafx.fxml.FXMLLoader
 import javafx.scene.{Parent, Scene}
 import javafx.scene.chart.{LineChart, XYChart}
-import javafx.scene.control.Slider
+import javafx.scene.chart.NumberAxis
+import javafx.scene.control.{ComboBox, Slider}
 import org.scalatest.concurrent.Eventually
 import org.scalatest.time.{Millis, Seconds, Span}
 import org.scalatest.wordspec.AnyWordSpec
@@ -65,6 +66,30 @@ class MainControllerSpec extends AnyWordSpec with Matchers with Eventually {
   }
 
   "The main view" when {
+    "showing the bee charts" should {
+      "give them all the same y-axis, covering every chart's data" in {
+        assert(JavaFxToolkit.available, "JavaFX could not start; see JavaFxToolkit")
+        val f = new Fixture()
+        f.awaitNewData(null)
+        for (summary <- Seq(MainController.ComboSelections.Cumulative, MainController.ComboSelections.Histogram)) {
+          JavaFxToolkit.onFxThread {
+            f.root.lookup("#processorSelectionComboBoxDelegate")
+              .asInstanceOf[ComboBox[MainController.ComboSelections]].setValue(summary)
+            f.root.applyCss()
+            f.root.layout()
+            val charts = (0 until 8).map(i => f.root.lookup(s"#beechart-$i").asInstanceOf[LineChart[Number, Number]])
+            val bounds = charts.map(_.getYAxis.asInstanceOf[NumberAxis].getUpperBound)
+            val largest = charts.flatMap(_.getData.get(0).getData.asScala.map(_.getYValue.doubleValue)).max
+            withClue(s"$summary: ") {
+              bounds.distinct should have size 1
+              bounds.head should be >= largest
+              bounds.head should be < 2 * largest
+            }
+          }
+        }
+      }
+    }
+
     "the heat slider is moved" should {
       "keep each temperature series the same colour as its bee chart" in {
         assert(JavaFxToolkit.available, "JavaFX could not start; see JavaFxToolkit")
