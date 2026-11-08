@@ -2,7 +2,7 @@ package beesimulator.ui
 
 import javafx.fxml.FXMLLoader
 import javafx.scene.Scene
-import javafx.scene.shape.{MoveTo, Path, Rectangle}
+import javafx.scene.shape.{MoveTo, Path}
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatest.matchers.should.Matchers
 import beesimulator.ui.processors._
@@ -41,11 +41,10 @@ class BeeChartSpec extends AnyWordSpec with Matchers {
       view.layout()
     }
 
-    def show(processor: DataProcessor, thresholds: Seq[Double], indicator: Double, band: Option[(Double, Double)] = None): Unit = {
+    def show(processor: DataProcessor, thresholds: Seq[Double], indicator: Double): Unit = {
       controller.processor() = Some(processor)
       view.indicatorPosition() = Some(indicator)
-      view.indicatorBand() = band
-      controller.simulatorData() = Some(Dataset("test", indicator, 0, Seq(), thresholds.map(Item(_)), band))
+      controller.simulatorData() = Some(Dataset("test", indicator, 0, Seq(), thresholds.map(Item(_))))
       layout()
     }
 
@@ -56,8 +55,6 @@ class BeeChartSpec extends AnyWordSpec with Matchers {
     }
 
     def expectedIndicatorX(temperature: Double): Double = controller.xAxis.getDisplayPosition(temperature)
-
-    def band: Rectangle = view.lookup(".temperature-band").asInstanceOf[Rectangle]
 
     def points: Seq[(Double, Int)] = view.getData.get(0).getData.asScala.toSeq
       .map(point => (point.getXValue.doubleValue, point.getYValue.intValue))
@@ -111,38 +108,6 @@ class BeeChartSpec extends AnyWordSpec with Matchers {
           all(f.points.filter((x, _) => x < 20.03).map((_, count) => count)) shouldBe 0
           all(f.points.filter((x, _) => x > 20.03).map((_, count) => count)) shouldBe 10
           f.points.head._1 shouldBe 20.06 +- 1e-9
-        }
-      }
-    }
-
-    "showing a band around the indicator" should {
-      "shade the band's range in the indicator's colour, following the axis when resized" in {
-        assert(JavaFxToolkit.available, "JavaFX could not start; see JavaFxToolkit")
-        JavaFxToolkit.onFxThread {
-          val f = new Fixture(240, 200)
-          f.show(HistogramDataProcessor, thresholds, 21.0, Some((20.8, 21.2)))
-          for (width <- Seq(240.0, 480.0)) {
-            f.view.resize(width, 200)
-            f.layout()
-            withClue(s"at width $width: ") {
-              f.band.isVisible shouldBe true
-              f.band.getX shouldBe f.expectedIndicatorX(20.8) +- 0.5
-              (f.band.getX + f.band.getWidth) shouldBe f.expectedIndicatorX(21.2) +- 0.5
-              f.band.getHeight should be > 0.0
-            }
-          }
-          val indicator = f.view.lookup(".temperature-indicator").asInstanceOf[Path]
-          f.band.getFill shouldBe indicator.getStroke
-        }
-      }
-
-      "show no band when there is none" in {
-        assert(JavaFxToolkit.available, "JavaFX could not start; see JavaFxToolkit")
-        JavaFxToolkit.onFxThread {
-          val f = new Fixture(240, 200)
-          f.show(HistogramDataProcessor, thresholds, 21.0, Some((20.8, 21.2)))
-          f.show(HistogramDataProcessor, thresholds, 21.0, None)
-          f.band.isVisible shouldBe false
         }
       }
     }
