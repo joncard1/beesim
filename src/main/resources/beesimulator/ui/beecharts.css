@@ -21,6 +21,18 @@
 #temperatureChartDelegate {
   -fx-create-symbols: false
 }
+
+/* Fixed-width slider columns, wide enough for the longest value text, and
+   monospaced digits, so the sliders and their values don't shift as the
+   values change. */
+.slider-column {
+  -fx-min-width: 64px;
+  -fx-pref-width: 64px;
+  -fx-max-width: 64px;
+}
+.slider-value {
+  -fx-font-family: "Monospaced";
+}
 .chart-series-line.series0 {
   -fx-stroke: #f9d900;
   stroke: #f9d900;

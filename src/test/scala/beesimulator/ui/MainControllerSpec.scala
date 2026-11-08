@@ -65,6 +65,28 @@ class MainControllerSpec extends AnyWordSpec with Matchers with Eventually {
   }
 
   "The main view" when {
+    "the slider values change" should {
+      "keep the sliders and the temperature chart in place" in {
+        assert(JavaFxToolkit.available, "JavaFX could not start; see JavaFxToolkit")
+        val f = new Fixture()
+        // Values whose text has different widths in a proportional font.
+        val positions = for (heat <- Seq(0.0, 1.11, 2.88, 0.41, 3.0)) yield {
+          JavaFxToolkit.onFxThread(f.heatFlowSlider.setValue(heat))
+          JavaFxToolkit.onFxThread {
+            f.root.applyCss()
+            f.root.layout()
+            val heatPerBeeSlider = f.root.lookup("#heatPerBeeSliderDelegate")
+            (
+              f.heatFlowSlider.localToScene(0, 0).getX,
+              heatPerBeeSlider.localToScene(0, 0).getX,
+              f.temperatureChart.getLayoutBounds.getWidth
+            )
+          }
+        }
+        positions.distinct should have size 1
+      }
+    }
+
     "the heat slider is moved" should {
       "keep each temperature series the same colour as its bee chart" in {
         assert(JavaFxToolkit.available, "JavaFX could not start; see JavaFxToolkit")
