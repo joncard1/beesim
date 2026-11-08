@@ -36,7 +36,8 @@ jobs:
     - name: Summarize coverage
       if: always()
       run: |
-        report=$(ls target/scala-*/scoverage-report/scoverage.xml 2>/dev/null | head -1)
+        # sbt 1 writes to target/scala-<version>/, sbt 2 to target/out/jvm/.../
+        report=$(find target -path "*/scoverage-report/scoverage.xml" | head -1)
         if [ -n "$report" ]; then
           statements=$(grep -o 'statement-rate="[^"]*"' "$report" | head -1 | cut -d'"' -f2)
           branches=$(grep -o 'branch-rate="[^"]*"' "$report" | head -1 | cut -d'"' -f2)
@@ -55,7 +56,7 @@ jobs:
       uses: actions/upload-artifact@v7
       with:
         name: coverage-report
-        path: target/scala-*/scoverage-report/
+        path: target/**/scoverage-report/
         if-no-files-found: ignore
       # Optional: This step uploads information to the GitHub dependency graph and unblocking Dependabot alerts for the repository
     - name: Upload dependency graph
