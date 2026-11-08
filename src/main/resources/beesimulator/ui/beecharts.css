@@ -18,9 +18,6 @@
   -fx-max-width: 300px;
   max-width: 300px;
 }
-#temperatureChartDelegate {
-  -fx-create-symbols: false
-}
 
 /* Fixed-width slider columns, wide enough for the longest value text, and
    monospaced digits, so the sliders and their values don't shift as the
@@ -32,6 +29,9 @@
 }
 .slider-value {
   -fx-font-family: "Monospaced";
+}
+#temperatureChartDelegate {
+  -fx-create-symbols: false
 }
 .chart-series-line.series0 {
   -fx-stroke: #f9d900;
