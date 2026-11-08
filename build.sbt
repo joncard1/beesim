@@ -22,3 +22,6 @@ libraryDependencies += "com.fasterxml.jackson.core" % "jackson-databind" % faste
 libraryDependencies += "org.jsoup" % "jsoup" % jsoupVersion % Configurations.ScalaDocTool
 libraryDependencies += "tools.jackson.core" % "jackson-core" % fasterxml3Version % Configurations.ScalaDocTool
 libraryDependencies += "tools.jackson.core" % "jackson-databind" % fasterxml3Version % Configurations.ScalaDocTool
+
+// Drives the UI in tests the way a user does (dragging, clicking).
+libraryDependencies += "org.testfx" % "testfx-core" % "4.0.18" % Test
