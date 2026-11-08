@@ -1,6 +1,7 @@
 package beesimulator.controller.generators
 
-import scala.annotation.tailrec
+import scala.concurrent.{Await, ExecutionContext, Future}
+import scala.concurrent.duration.Duration
 import beesimulator.ui._
 
 /**
@@ -9,8 +10,11 @@ import beesimulator.ui._
   * this is the only class that has to implement [[DataGenerator]], which is a
   * UI dependency in the controller, but it doesn't really matter; the
   * dependencies are all headed the correct direction.
+  *
+  * @param executionContext Where the contained generators run. They are
+  *     independent of each other, so they run in parallel.
   */
-class AggregateDataGenerator extends DataGenerator {
+class AggregateDataGenerator(executionContext: ExecutionContext = ExecutionContext.global) extends DataGenerator {
 
   /**
     * The collection of generators to operate.
@@ -43,17 +47,13 @@ class AggregateDataGenerator extends DataGenerator {
     * @return           The data series the UI should display
     */
   override def generatePoints(heatInFlux: Double, heatPerBee: Double): List[Dataset] = {
-    @tailrec
-    def iterateDataGenerator(generators: List[DataGenerator], results: List[Dataset]): List[Dataset] = {
-      generators match {
-        case Nil => results
-        case x :: xs => {
-          val newValue = x.generatePoints(heatInFlux, heatPerBee)
-          iterateDataGenerator(xs, newValue ::: results)
-        }
-      }
-    }
-
-    iterateDataGenerator(dataGenerators, List())
+    implicit val ec: ExecutionContext = executionContext
+    // The generators are kept in reverse order of being added, and the data
+    // series are returned in the order the generators were added.
+    val results = Future.traverse(dataGenerators.reverse)(generator =>
+      Future(generator.generatePoints(heatInFlux, heatPerBee))
+    )
+    Await.result(results, Duration.Inf).flatten
   }
+
 }

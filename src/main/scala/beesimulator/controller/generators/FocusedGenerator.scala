@@ -32,7 +32,11 @@ class FocusedGenerator[T <: SimState](
   )(implicit provider: SimProvider[Double, T, Bee[T], BeeSim[T]]) extends AbstractDataGenerator(name, numberOfIterations, simAttributes) {
   override def numberOfFamilies: Int = 1
 
-  override def generatePoints(heatInflux: Double, heatPerBee: Double): List[Dataset] = {
+  /**
+    * The bees don't depend on the forcing values, so they are created once and
+    * reused by every run.
+    */
+  private lazy val bees: Seq[Bee[T]] = {
     val numberOfBees = (numberOfFathers * numberOfDaughters).toDouble
     // The width of a half-bell curve that I'm going to bother to generate
     val widthInSigma = 4
@@ -58,7 +62,10 @@ class FocusedGenerator[T <: SimState](
         bees
       }
     } yield bee
+    bees
+  }
 
+  override def generatePoints(heatInflux: Double, heatPerBee: Double): List[Dataset] = {
     List(runSimulator(heatInflux, heatPerBee, bees, datasetCreator))
   }
 }
