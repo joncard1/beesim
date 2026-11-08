@@ -28,7 +28,7 @@ class FocusedGenerator[T <: SimState](
     temperatureRange: Double,
     simAttributes: T,
     datasetCreator: (Double, Double, Double, String, Int, List[Double], Seq[BeeHistogramItem]) => Dataset,
-    constructor: (threshold: Double) => Bee[T] = (SimpleBee.apply _)
+    constructor: (threshold: Double) => Bee[T] = (SimpleBee.apply)
   )(implicit provider: SimProvider[Double, T, Bee[T], BeeSim[T]]) extends AbstractDataGenerator(name, numberOfIterations, simAttributes) {
   override def numberOfFamilies: Int = 1
 
