@@ -149,6 +149,25 @@ class MainController {
   private lazy val yAxis: NumberAxis = new NumberAxis(yAxisDelegate)
 
   /**
+   * Shows why the charts stopped updating when a simulation run fails, and is
+   * hidden otherwise.
+   */
+  @FXML
+  private var errorLabelDelegate: jfxsc.Label = uninitialized
+  private lazy val errorLabel: Label = new Label(errorLabelDelegate)
+
+  /**
+   * Shows an error message below the charts, or hides it when there is none.
+   *
+   * @param message The message to show, or None to hide it.
+   */
+  private def showError(message: Option[String]): Unit = {
+    errorLabel.text = message.getOrElse("")
+    errorLabel.visible = message.isDefined
+    errorLabel.managed = message.isDefined
+  }
+
+  /**
    * The minimum Y value to display on the temperature chart.
    */
   val minimumYValue = new DoubleProperty()
@@ -336,8 +355,15 @@ class MainController {
       simulationRunner.foreach(_.close())
       val runner = new ConflatingRunner[(Double, Double), List[Dataset]](
         (forcingValues) => newSimulation.generator.generatePoints(forcingValues._1, forcingValues._2),
-        (datasets) => simulatorData() = ObservableBuffer.from(datasets),
-        () => borderPane.parent().setCursor(jfxs.Cursor.DEFAULT)
+        (datasets) => {
+          showError(None)
+          simulatorData() = ObservableBuffer.from(datasets)
+        },
+        () => borderPane.parent().setCursor(jfxs.Cursor.DEFAULT),
+        (e) => {
+          showError(Some(s"The simulation failed, so the charts weren't updated: ${e}"))
+          e.printStackTrace()
+        }
       )(backgroundThreads, (task: Runnable) => Platform.runLater(task))
       simulationRunner = Some(runner)
       val heatFlowTooltip = new Tooltip(newSimulation.forcingVariable1Name)

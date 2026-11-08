@@ -21,6 +21,11 @@
 #temperatureChartDelegate {
   -fx-create-symbols: false
 }
+
+.error-message {
+  -fx-text-fill: #b00020;
+  -fx-padding: 8 0 0 0;
+}
 .chart-series-line.series0 {
   -fx-stroke: #f9d900;
   stroke: #f9d900;
