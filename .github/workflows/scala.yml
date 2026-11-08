@@ -37,3 +37,6 @@ jobs:
       uses: scalacenter/sbt-dependency-submission@v3
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    - name: Check formatting
+      # Run `sbt scalafmtAll` to fix any formatting this reports.
+      run: sbt "scalafmtCheckAll ; scalafmtSbtCheck ; shutdown"
