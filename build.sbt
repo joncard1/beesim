@@ -25,6 +25,10 @@ version := "1.0"
 // Want to use a published library in your project?
 // You can define other libraries as dependencies in your build like this:
 
+// Forced version upgrades in response to Dependabot alerts
+val fasterxmlVersion = "2.21.8"
+val jsoupVersion = "1.24.1"
+
 libraryDependencies += "org.scala-lang.modules" %% "scala-parser-combinators" % "2.1.1"
 libraryDependencies += "org.scala-lang.modules" %% "scala-swing" % "3.0.0"
 libraryDependencies += "org.scalatest" %% "scalatest" % "3.2.11" % Test
@@ -33,6 +37,9 @@ libraryDependencies += "org.scalamock" % "scalamock_2.13" % "5.1.0" % Test
 libraryDependencies += "org.scalatestplus" %% "scalacheck-1-16" % "3.2.13.0" % Test
 libraryDependencies += "io.reactivex" % "rxscala_2.13" % "0.27.0"
 libraryDependencies += "org.scalafx" %% "scalafx" % "25.0.2-R37"
+libraryDependencies += "com.fasterxml.jackson.core" % "jackson-core" % fasterxmlVersion
+libraryDependencies += "com.fasterxml.jackson.core" % "jackson-databind" % fasterxmlVersion
+libraryDependencies += "org.jsoup" % "jsoup" % jsoupVersion
 /*libraryDependencies ++= {
   lazy val osName = System.getProperty("os.name") match {
     case n if n.startsWith("Linux") => "linux"

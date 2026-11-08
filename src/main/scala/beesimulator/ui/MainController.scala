@@ -25,6 +25,7 @@ import scalafx.beans.value.ObservableValue
 import javafx.collections.FXCollections
 import java.util.ArrayList
 import scalafx.util.StringConverter
+import scala.compiletime.uninitialized
 
 // TODO: It occurs to me that this needs to be much more defensive if I'm
 // expecting people to potentially write their own bees or generators.
@@ -81,17 +82,17 @@ class MainController {
    */
   val InitialProcessorSelection = MainController.ComboSelections.Histogram
 
-  @FXML var borderPaneDelegate: jfxs.layout.BorderPane = _
+  @FXML var borderPaneDelegate: jfxs.layout.BorderPane = uninitialized
   private lazy val borderPane = new BorderPane(borderPaneDelegate)
 
-  @FXML var simulatorSelectionComboBoxDelegate: jfxsc.ComboBox[Simulation] = _
+  @FXML var simulatorSelectionComboBoxDelegate: jfxsc.ComboBox[Simulation] = uninitialized
   private lazy val simulatorSelectionComboBox: ComboBox[Simulation] = new ComboBox(simulatorSelectionComboBoxDelegate)
   /**
    * The combo box that allows users to select the style of summary used to
    * summarize the bee populations in the charts across the top. It uses the
-   * values in the enum [[ComboSelections]] up above.
+   * values in the enum [[beesimulator.ui.MainController.ComboSelections]] up above.
    */
-  @FXML var processorSelectionComboBoxDelegate: jfxsc.ComboBox[MainController.ComboSelections] = _
+  @FXML var processorSelectionComboBoxDelegate: jfxsc.ComboBox[MainController.ComboSelections] = uninitialized
   private lazy val processorSelectionComboBox: ComboBox[MainController.ComboSelections] = new ComboBox(
     processorSelectionComboBoxDelegate
   )
@@ -101,22 +102,22 @@ class MainController {
    * [[heatFlowSlider]] has been set below.
    */
   @FXML
-  private var heatFlowTextDelegate: jfxst.Text = _
+  private var heatFlowTextDelegate: jfxst.Text = uninitialized
   private lazy val heatFlowText: Text = new Text(heatFlowTextDelegate)
 
   @FXML
-  private var heatPerBeeTextDelegate: jfxst.Text = _
+  private var heatPerBeeTextDelegate: jfxst.Text = uninitialized
   private lazy val heatPerBeeText: Text = new Text(heatPerBeeTextDelegate)
 
   /**
    * The slider that sets the amount of heat flow into the hive.
    */
   @FXML
-  private var heatFlowSliderDelegate: jfxsc.Slider = _
+  private var heatFlowSliderDelegate: jfxsc.Slider = uninitialized
   private lazy val heatFlowSlider: Slider = new Slider(heatFlowSliderDelegate)
 
   @FXML
-  private var heatPerBeeSliderDelegate: jfxsc.Slider = _
+  private var heatPerBeeSliderDelegate: jfxsc.Slider = uninitialized
   private lazy val heatPerBeeSlider: Slider = new Slider(heatPerBeeSliderDelegate)
 
   /**
@@ -124,7 +125,7 @@ class MainController {
    * both the heat flow into the hive and the bees expelling heat.
    */
   @FXML
-  private var temperatureChartDelegate: jfxch.LineChart[Number, Number] = _
+  private var temperatureChartDelegate: jfxch.LineChart[Number, Number] = uninitialized
   private lazy val temperatureChart: LineChart[Number, Number] = new LineChart(
     temperatureChartDelegate
   )
@@ -137,14 +138,14 @@ class MainController {
    * beechart.fxml.
    */
   @FXML
-  private var beeChartsBoxDelegate: jfxsl.HBox = _
+  private var beeChartsBoxDelegate: jfxsl.HBox = uninitialized
   private lazy val beeChartsBox: HBox = new HBox(beeChartsBoxDelegate)
 
   /**
    * The yAxis of the temperature chart.
    */
   @FXML
-  private var yAxisDelegate: jfxch.NumberAxis = _
+  private var yAxisDelegate: jfxch.NumberAxis = uninitialized
   private lazy val yAxis: NumberAxis = new NumberAxis(yAxisDelegate)
 
   /**

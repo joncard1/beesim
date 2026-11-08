@@ -20,9 +20,10 @@ import scalafx.collections.ObservableBuffer
 import scalafx.scene.chart.NumberAxis
 import javafx.collections.FXCollections
 import scalafx.Includes.jfxObjectProperty2sfx
+import scala.compiletime.uninitialized
 
 /**
-  * Controller class for a chart that summarizes a population in a [[Dataset]] using a provided [[DataProcessor]]. Create an instance of this class, and then the control itself can be accessed in the property [[view]].
+  * Controller class for a chart that summarizes a population in a [[beesimulator.ui.Dataset]] using a provided [[beesimulator.ui.processors.DataProcessor]]. Create an instance of this class, and then the control itself can be accessed in the property [[view]].
   */
 class BeeChartControl() extends Initializable {
   /**
@@ -38,7 +39,7 @@ class BeeChartControl() extends Initializable {
     * The X-axis of the chart contained in this control.
     */
   @FXML
-  var xAxisDelegate: jfxch.NumberAxis = _
+  var xAxisDelegate: jfxch.NumberAxis = uninitialized
   /**
     * The Scala version of the X-axis of the chart container in this control.
     */
@@ -58,7 +59,7 @@ class BeeChartControl() extends Initializable {
   val numberOfBins = IntegerProperty(1)
 
   @FXML
-  var chartDelegate: jfxch.LineChart[Number, Number] = _
+  var chartDelegate: jfxch.LineChart[Number, Number] = uninitialized
   lazy val chart: LineChart[Number, Number] = new LineChart(chartDelegate)
 
   /**
