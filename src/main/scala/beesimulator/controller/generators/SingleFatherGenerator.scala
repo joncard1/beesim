@@ -34,11 +34,15 @@ class SingleFatherGenerator[T <: SimState](
   )(implicit provider: SimProvider[Double, T, Bee[T], BeeSim[T]]) extends AbstractDataGenerator(name, numberOfIterations, simAttributes) {
   def numberOfFamilies: Int = 1
 
-  def generatePoints(heatInflux: Double, heatPerBee: Double): List[Dataset] = {
-    val bees: Seq[Bee[T]] = for {
-      i: Int <- 0.asInstanceOf[Int] to ((numberOfFathers + 1) * (numberOfDaughters + 1))
-    } yield constructor(startingTemperture + (fatherWindow / ((numberOfFathers + 1) * (numberOfDaughters + 1))) * i)
+  /**
+    * The bees don't depend on the forcing values, so they are created once and
+    * reused by every run.
+    */
+  private lazy val bees: Seq[Bee[T]] = for {
+    i: Int <- 0.asInstanceOf[Int] to ((numberOfFathers + 1) * (numberOfDaughters + 1))
+  } yield constructor(startingTemperture + (fatherWindow / ((numberOfFathers + 1) * (numberOfDaughters + 1))) * i)
 
+  def generatePoints(heatInflux: Double, heatPerBee: Double): List[Dataset] = {
     List(runSimulator(heatInflux, heatPerBee, bees, datasetCreator))
   }
 }

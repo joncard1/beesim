@@ -39,11 +39,15 @@ class BimodalGenerator[T <: SimState](
     )(implicit provider: SimProvider[Double, T, Bee[T], BeeSim[T]]) extends AbstractDataGenerator(name, numberOfIterations, simAttributes) {
   override val numberOfFamilies: Int = 1
 
-  override def generatePoints(heatInflux: Double, heatPerBee: Double): List[Dataset] = {
+  /**
+    * The bees don't depend on the forcing values, so they are created once and
+    * reused by every run.
+    */
+  private lazy val bimodalBees: Seq[Bee[T]] = {
     // Bimodal distribution
     // Equation for the bell curve: y = (1 / (sigma*sqrt(2*pi))) * e ^((x - u)^2/(2 * sigma^2)
     // Adapted for 2 bell curves at different centers, added together.
-    var bimodalBees = Seq[Bee[T]]()
+    val bees = Vector.newBuilder[Bee[T]]
     val numberOfBees = (numberOfFathers * numberOfDaughters).toDouble
     val step = temperatureRange / (16 * 10)
     val sigma = temperatureRange / 16
@@ -64,10 +68,13 @@ class BimodalGenerator[T <: SimState](
       val exponent2 = -1 * (secondNumerator/denominator).doubleValue
       val numberOfBeesAtStep = scale * (math.exp(exponent1) + math.exp(exponent2))
       for (i <- 0.asInstanceOf[Int] until math.round(numberOfBeesAtStep).toInt ) {
-        bimodalBees = bimodalBees :+ constructor(setPoint + x.toDouble)
+        bees += constructor(setPoint + x.toDouble)
       }
     }
+    bees.result()
+  }
 
+  override def generatePoints(heatInflux: Double, heatPerBee: Double): List[Dataset] = {
     List(runSimulator(heatInflux, heatPerBee, bimodalBees, datasetCreator))
   }
 }
