@@ -30,8 +30,33 @@ jobs:
         distribution: 'temurin'
         cache: 'sbt'
     - uses: sbt/setup-sbt@v1
-    - name: Run tests
-      run: sbt "test ; shutdown"
+    - name: Run tests with coverage
+      # Coverage is reported, not enforced: low coverage doesn't fail the build.
+      run: sbt "coverage ; test ; coverageReport ; shutdown"
+    - name: Summarize coverage
+      if: always()
+      run: |
+        report=$(ls target/scala-*/scoverage-report/scoverage.xml 2>/dev/null | head -1)
+        if [ -n "$report" ]; then
+          statements=$(grep -o 'statement-rate="[^"]*"' "$report" | head -1 | cut -d'"' -f2)
+          branches=$(grep -o 'branch-rate="[^"]*"' "$report" | head -1 | cut -d'"' -f2)
+          {
+            echo "### Code coverage"
+            echo ""
+            echo "| Statements | Branches |"
+            echo "|---|---|"
+            echo "| ${statements}% | ${branches}% |"
+            echo ""
+            echo "The full HTML report is attached to this run as the \`coverage-report\` artifact."
+          } >> "$GITHUB_STEP_SUMMARY"
+        fi
+    - name: Upload coverage report
+      if: always()
+      uses: actions/upload-artifact@v7
+      with:
+        name: coverage-report
+        path: target/scala-*/scoverage-report/
+        if-no-files-found: ignore
       # Optional: This step uploads information to the GitHub dependency graph and unblocking Dependabot alerts for the repository
     - name: Upload dependency graph
       uses: scalacenter/sbt-dependency-submission@v3

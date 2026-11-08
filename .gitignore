@@ -2,7 +2,10 @@
 .bsp
 .metals
 .vscode
-project
+# sbt's project definition (build.properties and plugin .sbt files) is part of
+# the build and is tracked; what sbt and Metals generate inside it is not.
+project/project
+project/metals.sbt
 target
 .scalafmt.conf
 .DS_Store
