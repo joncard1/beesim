@@ -7,6 +7,7 @@ package beesimulator.ui
   * different ways of assembling the bee population for comparison.
   */
 trait DataGenerator {
+
   /**
     * Generates the data. The data is returned as a list so there can be
     * multiple data series per generator, as there can only be one generator for
@@ -17,6 +18,7 @@ trait DataGenerator {
     * @return                 The list of data series to display.
     */
   def generatePoints(forcingVariable1: Double, forcingVariable2: Double): List[Dataset]
+
   /**
     * The number of different families expected to be returned by the data
     * generator. Mostly a convenience so that we don't have to generate the data

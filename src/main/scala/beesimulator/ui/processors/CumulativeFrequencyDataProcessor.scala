@@ -8,7 +8,12 @@ import beesimulator.ui._
  * threshold below the temperature value of each bin.
  */
 object CumulativeFrequencyDataProcessor extends DataProcessor {
-  override def transform(minimumYBoundary: Double, maximumYBoundary: Double, width: Int, input: Seq[HistogramItem]): Seq[Int] = {
+  override def transform(
+      minimumYBoundary: Double,
+      maximumYBoundary: Double,
+      width: Int,
+      input: Seq[HistogramItem]
+  ): Seq[Int] = {
     val histogramResults = HistogramDataProcessor.transform(minimumYBoundary, maximumYBoundary, width, input)
     assert(histogramResults.length == width)
 

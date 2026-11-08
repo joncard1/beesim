@@ -29,7 +29,8 @@ class FocusedGenerator[T <: SimState](
     simAttributes: T,
     datasetCreator: (Double, Double, Double, String, Int, List[Double], Seq[BeeHistogramItem]) => Dataset,
     constructor: (threshold: Double) => Bee[T] = (SimpleBee.apply)
-  )(implicit provider: SimProvider[Double, T, Bee[T], BeeSim[T]]) extends AbstractDataGenerator(name, numberOfIterations, simAttributes) {
+)(implicit provider: SimProvider[Double, T, Bee[T], BeeSim[T]])
+    extends AbstractDataGenerator(name, numberOfIterations, simAttributes) {
   override def numberOfFamilies: Int = 1
 
   /**
@@ -47,7 +48,7 @@ class FocusedGenerator[T <: SimState](
     val scale = (numberOfDaughters * step) / (sigma * math.sqrt(2 * math.Pi))
     val denominator = 2 * math.pow(sigma, 2)
     val mean = temperatureRange / (numberOfFathers + 1)
-    val bees = for  {
+    val bees = for {
       startTemperatureOfStep <- (0 to (4 * 2 * sigma) by step)
       indexOfFather <- 0.asInstanceOf[Int] until numberOfFathers
       bee <- {

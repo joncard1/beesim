@@ -33,8 +33,8 @@ abstract class Sim[T, U, V <: SimActor[U]](
     * @return
     *   The next step of the simulation.
     */
-  implicit class SimOps[-T, +U, +V <: SimActor[U], +W <: Sim[T, U, V]](sim: W)(
-      implicit provider: SimProvider[T, U, V, W]
+  implicit class SimOps[-T, +U, +V <: SimActor[U], +W <: Sim[T, U, V]](sim: W)(implicit
+      provider: SimProvider[T, U, V, W]
   ) {
     def step(inForcing1: T, inForcing2: T): W = {
       val (newInactiveBees, newActiveBees, newState) =

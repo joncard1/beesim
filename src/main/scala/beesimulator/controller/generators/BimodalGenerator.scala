@@ -36,7 +36,8 @@ class BimodalGenerator[T <: SimState](
     simAttributes: T,
     datasetCreator: (Double, Double, Double, String, Int, List[Double], Seq[BeeHistogramItem]) => Dataset,
     constructor: (threshold: Double) => Bee[T] = (SimpleBee.apply)
-    )(implicit provider: SimProvider[Double, T, Bee[T], BeeSim[T]]) extends AbstractDataGenerator(name, numberOfIterations, simAttributes) {
+)(implicit provider: SimProvider[Double, T, Bee[T], BeeSim[T]])
+    extends AbstractDataGenerator(name, numberOfIterations, simAttributes) {
   override val numberOfFamilies: Int = 1
 
   /**
@@ -64,10 +65,10 @@ class BimodalGenerator[T <: SimState](
     for (x <- 0 to temperatureRange by step) {
       val firstNumerator = math.pow(setPoint + x.toDouble - u1, 2)
       val secondNumerator = math.pow(setPoint + x.toDouble - u2, 2)
-      val exponent1 = -1 * (firstNumerator/denominator).doubleValue
-      val exponent2 = -1 * (secondNumerator/denominator).doubleValue
+      val exponent1 = -1 * (firstNumerator / denominator).doubleValue
+      val exponent2 = -1 * (secondNumerator / denominator).doubleValue
       val numberOfBeesAtStep = scale * (math.exp(exponent1) + math.exp(exponent2))
-      for (i <- 0.asInstanceOf[Int] until math.round(numberOfBeesAtStep).toInt ) {
+      for (i <- 0.asInstanceOf[Int] until math.round(numberOfBeesAtStep).toInt) {
         bees += constructor(setPoint + x.toDouble)
       }
     }

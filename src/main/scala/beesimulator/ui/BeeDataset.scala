@@ -12,4 +12,10 @@ import beesimulator.ui.processors._
   * @param temperatures     The data series of temperatures at each step of the simulator
   * @param bees             The entire set of bees to be summarized in the bee charts
   */
-final case class Dataset(name: String, indicatorPosition: Double, finalBeeCount: Int, temperatures: Seq[Double], bees: Seq[HistogramItem])
+final case class Dataset(
+    name: String,
+    indicatorPosition: Double,
+    finalBeeCount: Int,
+    temperatures: Seq[Double],
+    bees: Seq[HistogramItem]
+)

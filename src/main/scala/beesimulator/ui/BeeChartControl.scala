@@ -6,12 +6,7 @@ import java.net.URL
 import java.{util => ju}
 import java.io.IOException
 import javafx.fxml.FXML
-import javafx.scene.{
-  control => jfxsc,
-  layout => jfxsl,
-  text => jfxst,
-  chart => jfxch
-}
+import javafx.scene.{control => jfxsc, layout => jfxsl, text => jfxst, chart => jfxch}
 import scalafx.scene.chart.LineChart
 import beesimulator.ui.processors.DataProcessor
 import scalafx.beans.property._
@@ -26,10 +21,12 @@ import scala.compiletime.uninitialized
   * Controller class for a chart that summarizes a population in a [[beesimulator.ui.Dataset]] using a provided [[beesimulator.ui.processors.DataProcessor]]. Create an instance of this class, and then the control itself can be accessed in the property [[view]].
   */
 class BeeChartControl() extends Initializable {
+
   /**
     * The simulation data to be summarized by this control.
     */
   val simulatorData = ObjectProperty[Option[Dataset]](None)
+
   /**
     * The processor used to summarize the data.
     */
@@ -40,6 +37,7 @@ class BeeChartControl() extends Initializable {
     */
   @FXML
   var xAxisDelegate: jfxch.NumberAxis = uninitialized
+
   /**
     * The Scala version of the X-axis of the chart container in this control.
     */
@@ -49,10 +47,12 @@ class BeeChartControl() extends Initializable {
     * The minimum temperature to display. This is the lowest value on the X-axis.
     */
   val minimumTemperature = DoubleProperty(0.0)
+
   /**
     * The maximum temperature to display. This is the highest value on the X-axis.
     */
   val maximumTemperature = DoubleProperty(0.0)
+
   /**
     * The number of bins used when calculating the histograms.
     */
@@ -121,7 +121,7 @@ class BeeChartControl() extends Initializable {
       if(newData.isDefined) {
         view.indicatorPosition() = Option(newData.get.finalTemperature)
       }
-      */
+       */
     )
   }
 

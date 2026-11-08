@@ -16,7 +16,9 @@ import beesimulator.simulator._
   * @param numberOfIterations
   * @param currentState
   */
-abstract class AbstractDataGenerator[T <: SimState](name: String, numberOfIterations: Int, currentState: T)(implicit provider: SimProvider[Double, T, Bee[T], BeeSim[T]]) extends DataGenerator{
+abstract class AbstractDataGenerator[T <: SimState](name: String, numberOfIterations: Int, currentState: T)(implicit
+    provider: SimProvider[Double, T, Bee[T], BeeSim[T]]
+) extends DataGenerator {
 
   /**
    * This method iterates the simulation through [[numberOfInterations]], applying [[forcing1Value]] and [[forcing2Value]] at each step.
@@ -27,7 +29,12 @@ abstract class AbstractDataGenerator[T <: SimState](name: String, numberOfIterat
     * @param datasetCreator A factory method to create the [[Dataset]].
     * @return               The dataset that resulted from the simulation.
     */
-  protected def runSimulator(forcing1Value: Double, forcing2Value: Double, bees: Seq[Bee[T]], datasetCreator: (Double, Double, Double, String, Int, List[Double], Seq[BeeHistogramItem]) => Dataset): Dataset = {
+  protected def runSimulator(
+      forcing1Value: Double,
+      forcing2Value: Double,
+      bees: Seq[Bee[T]],
+      datasetCreator: (Double, Double, Double, String, Int, List[Double], Seq[BeeHistogramItem]) => Dataset
+  ): Dataset = {
     val sim = provider.createSim(bees, Seq(), currentState)
     import sim._
 
@@ -36,7 +43,11 @@ abstract class AbstractDataGenerator[T <: SimState](name: String, numberOfIterat
       if (iteration == numberOfIterations) {
         (sim, temperatures)
       } else {
-        iterate(iteration + 1, sim.step(forcing1Value, forcing2Value), sim.currentState.currentTemperature :: temperatures)
+        iterate(
+          iteration + 1,
+          sim.step(forcing1Value, forcing2Value),
+          sim.currentState.currentTemperature :: temperatures
+        )
       }
     }
     val (finalSim, temperatures) = iterate(0, sim, List())
@@ -45,6 +56,14 @@ abstract class AbstractDataGenerator[T <: SimState](name: String, numberOfIterat
     val lastTemperature = temperatures.head
     val reverseTemperatures = temperatures.reverse
 
-    datasetCreator(forcing1Value, forcing2Value, lastTemperature, name, finalSim.activeBees.length, reverseTemperatures, bees.map(bee => BeeHistogramItem(bee)))
+    datasetCreator(
+      forcing1Value,
+      forcing2Value,
+      lastTemperature,
+      name,
+      finalSim.activeBees.length,
+      reverseTemperatures,
+      bees.map(bee => BeeHistogramItem(bee))
+    )
   }
 }

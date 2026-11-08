@@ -31,7 +31,8 @@ class SingleFatherGenerator[T <: SimState](
     simAttributes: T,
     datasetCreator: (Double, Double, Double, String, Int, List[Double], Seq[BeeHistogramItem]) => Dataset,
     constructor: (threshold: Double) => Bee[T] = (SimpleBee.apply)
-  )(implicit provider: SimProvider[Double, T, Bee[T], BeeSim[T]]) extends AbstractDataGenerator(name, numberOfIterations, simAttributes) {
+)(implicit provider: SimProvider[Double, T, Bee[T], BeeSim[T]])
+    extends AbstractDataGenerator(name, numberOfIterations, simAttributes) {
   def numberOfFamilies: Int = 1
 
   /**

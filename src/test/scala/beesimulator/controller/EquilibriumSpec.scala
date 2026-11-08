@@ -113,7 +113,12 @@ class EquilibriumSpec extends AnyWordSpec with Matchers {
       "not have isolated spikes" in {
         pendingUntilFixed {
           val (_, _, mixedFathers) = runs.find((_, _, dataset) => dataset.name == "Mixed Fathers").get
-          val bins = HistogramDataProcessor.transform(StartTemperature, StartTemperature + TemperatureRange, 50, mixedFathers.bees)
+          val bins = HistogramDataProcessor.transform(
+            StartTemperature,
+            StartTemperature + TemperatureRange,
+            50,
+            mixedFathers.bees
+          )
           for (i <- 1 until bins.length - 1) {
             withClue(s"bin $i of ${bins.mkString(",")}: ") {
               bins(i).toDouble should be <= 1.25 * math.max(bins(i - 1), bins(i + 1))

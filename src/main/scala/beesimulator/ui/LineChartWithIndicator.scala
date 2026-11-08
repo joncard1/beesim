@@ -27,8 +27,7 @@ import java.util.ArrayList
 class LineChartWithIndicator(
     @NamedArg("xAxis") xAxis: NumberAxis,
     @NamedArg("yAxis") yAxis: NumberAxis,
-    @NamedArg("data") val data: ObservableList[Series[Number, Number]] =
-      new ObservableListWrapper(new ArrayList())
+    @NamedArg("data") val data: ObservableList[Series[Number, Number]] = new ObservableListWrapper(new ArrayList())
 ) extends jfxsc.LineChart[Number, Number](xAxis, yAxis, data) {
   val indicatorPosition = ObjectProperty[Option[Double]](None)
 

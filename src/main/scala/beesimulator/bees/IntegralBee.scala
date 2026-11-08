@@ -26,13 +26,14 @@ package beesimulator.bees
   * @param timeConstant The time constant controlling the impact of the integral control
   * @param accumulator  The acculuated error
   */
-final case class IntegralBee(threshold: Double, timeConstant: Int, accumulator: Double = 0) extends Bee[InternalSimState] {
+final case class IntegralBee(threshold: Double, timeConstant: Int, accumulator: Double = 0)
+    extends Bee[InternalSimState] {
 
-    override def join(currentState: InternalSimState): Boolean = {
-        (currentState.currentTemperature + (accumulator + currentState.currentTemperature - threshold) / timeConstant) > threshold
-    }
+  override def join(currentState: InternalSimState): Boolean = {
+    (currentState.currentTemperature + (accumulator + currentState.currentTemperature - threshold) / timeConstant) > threshold
+  }
 
-    override def leave(currentState: InternalSimState): Boolean = {
-        !join(currentState)
-    }
+  override def leave(currentState: InternalSimState): Boolean = {
+    !join(currentState)
+  }
 }

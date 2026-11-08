@@ -18,8 +18,14 @@ object SimulationBenchmark {
 
   def main(args: Array[String]): Unit = {
     val simulations = Seq(
-      InternalSimulationInitializer.getSimulation(MainJFX.StartTemperature, MainJFX.TemperatureRange, MainJFX.Mass, MainJFX.SpecificHeat),
-      ExternalSimulationInitializer.getSimulation(MainJFX.StartTemperature, MainJFX.TemperatureRange, MainJFX.Mass, MainJFX.SpecificHeat)
+      InternalSimulationInitializer
+        .getSimulation(MainJFX.StartTemperature, MainJFX.TemperatureRange, MainJFX.Mass, MainJFX.SpecificHeat),
+      ExternalSimulationInitializer.getSimulation(
+        MainJFX.StartTemperature,
+        MainJFX.TemperatureRange,
+        MainJFX.Mass,
+        MainJFX.SpecificHeat
+      )
     )
     for (simulation <- simulations) {
       measure(simulation)
@@ -36,11 +42,15 @@ object SimulationBenchmark {
       simulation.generator.generatePoints(forcing1, forcing2)
     }
     (0 until WarmupRuns).foreach(run)
-    val times = (0 until MeasuredRuns).map(i => {
-      val start = System.nanoTime()
-      run(i)
-      (System.nanoTime() - start) / 1e6
-    }).sorted
-    println(f"${simulation.simulatorName}%-35s median ${times(times.size / 2)}%7.1f ms   min ${times.head}%7.1f ms   max ${times.last}%7.1f ms")
+    val times = (0 until MeasuredRuns)
+      .map(i => {
+        val start = System.nanoTime()
+        run(i)
+        (System.nanoTime() - start) / 1e6
+      })
+      .sorted
+    println(
+      f"${simulation.simulatorName}%-35s median ${times(times.size / 2)}%7.1f ms   min ${times.head}%7.1f ms   max ${times.last}%7.1f ms"
+    )
   }
 }

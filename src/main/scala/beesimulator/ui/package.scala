@@ -6,6 +6,4 @@ package beesimulator
   * defined here that the UI expects to be able to interact with, but which the
   * controlling logic is expected to implement.
   */
-package object ui {
-
-}
+package object ui {}

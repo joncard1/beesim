@@ -56,7 +56,11 @@ class BeeChartSpec extends AnyWordSpec with Matchers {
 
     def expectedIndicatorX(temperature: Double): Double = controller.xAxis.getDisplayPosition(temperature)
 
-    def points: Seq[(Double, Int)] = view.getData.get(0).getData.asScala.toSeq
+    def points: Seq[(Double, Int)] = view.getData
+      .get(0)
+      .getData
+      .asScala
+      .toSeq
       .map(point => (point.getXValue.doubleValue, point.getYValue.intValue))
   }
 
