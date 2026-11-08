@@ -2,11 +2,11 @@ package beesimulator.controller
 
 import beesimulator.ui.Simulation
 
-/** A generic interface used to initialize a [[Simulation]].
+/** A generic interface used to initialize a [[beesimulator.ui.Simulation]].
   */
 trait SimulationInitializer {
 
-  /** Creates a new [[Simulation]].
+  /** Creates a new [[beesimulator.ui.Simulation]].
     *
     * @param startTemperature
     *   The start temperature of the simulation.
@@ -17,7 +17,7 @@ trait SimulationInitializer {
     * @param specificHeat
     *   The specific heat of the hive.
     * @return
-    *   A [[Simulation]] initialized with the provided shared constants used by
+    *   A [[beesimulator.ui.Simulation]] initialized with the provided shared constants used by
     *   all simulations.
     */
   def getSimulation(

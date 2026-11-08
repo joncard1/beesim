@@ -72,7 +72,7 @@
   * imagine a means of deriving the size of the outside force without reference
   * to some base condition where an outside force is not present.
   * 
-  * The class [[beesimulator.controller.Sim]] contains the simulator, which
+  * The class [[beesimulator.simulator.Sim]] contains the simulator, which
   * steps through time, testing the temperature in the "hive" against all of the
   * "bees" in the hive, giving them a chance to join or leave the bearding, and
   * then calculating the amount of heat a bearding of that size would expel vs
@@ -93,7 +93,7 @@
   * times, and it provides the trait [[beesimulator.ui.DataGenerator]] to
   * provide the means to do this. There are various implementations of this
   * depending on how the population is generated, including a
-  * [[beesimulator.controller.AggregateDataGenerator]] for tying all of the
+  * [[beesimulator.controller.generators.AggregateDataGenerator]] for tying all of the
   * implementations together to provide to the UI a single generator.
   * 
   * The package [[beesimulator.ui]] contains the logic for displaying the data

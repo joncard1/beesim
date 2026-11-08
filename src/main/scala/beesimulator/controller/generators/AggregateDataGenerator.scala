@@ -7,7 +7,7 @@ import beesimulator.ui._
 /**
   * A data generator for assembling multiple other generators so that the UI can
   * display multiple families, and each family can be its own class. Strictly,
-  * this is the only class that has to implement [[DataGenerator]], which is a
+  * this is the only class that has to implement [[beesimulator.ui.DataGenerator]], which is a
   * UI dependency in the controller, but it doesn't really matter; the
   * dependencies are all headed the correct direction.
   *

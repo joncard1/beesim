@@ -4,7 +4,7 @@ import beesimulator.bees._
 import beesimulator.ui.processors._
 
 /**
- * Wrapper class so that a [[Bee]] can be summarized by a [[DataProcessor]].
+ * Wrapper class so that a [[beesimulator.bees.Bee]] can be summarized by a [[beesimulator.ui.processors.DataProcessor]].
  *
   * @param bee
   */
