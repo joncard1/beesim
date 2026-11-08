@@ -15,7 +15,7 @@ sbt compile
 sbt test
 sbt "testOnly beesimulator.bees.InternalBeeSimSpec"
 sbt "testOnly beesimulator.bees.InternalBeeSimSpec -- -z \"stabilize at 2 bees\""   # one test by name
-sbt run        # launches the GUI (beesimulator.MainJFX)
+sbt run        # launches the GUI (beesimulator.BeeSimulatorApp)
 sbt "Test/runMain beesimulator.SimulationBenchmark"   # times a warmed-up run of each simulation
 ```
 
@@ -35,7 +35,7 @@ Bee variants (`SimpleBee`, `DerivativeBee`, `IntegralBee`, `CombinedIntegralBee`
 
 **`controller/`: population setup.** `InternalSimulationInitializer` and `ExternalSimulationInitializer` build a `ui.Simulation`: forcing variable names, ranges, and defaults, plus an `AggregateDataGenerator` holding several population generators, which it runs in parallel. The generators in `controller/generators/` (MixedFathers, SingleFather, Bimodal, Focused) extend `AbstractDataGenerator`, which owns the iteration loop (`runSimulator`). Concrete generators only decide how bee thresholds are distributed (each builds its population once, in a lazy val), usually as "fathers" (genetic sub-populations) each with many "daughters". Many generators take a factory such as `DerivativeBee.apply(_, ...)` to pick the bee type. There is no dependency injection: to add a population profile, write a generator and register it in an initializer.
 
-**`ui/`: ScalaFX/JavaFX front end.** `MainJFX` creates both simulations, loads `src/main/resources/beesimulator/ui/beecharts.fxml`, and passes the simulations to `MainController`. FXML injects JavaFX delegate fields, which are wrapped in `lazy` ScalaFX objects (the reasoning is documented at the top of `MainController`). When a slider changes, `MainController` submits the slider values to a `ConflatingRunner`, which runs `DataGenerator.generatePoints` on a background thread one run at a time, skipping slider positions passed over while busy, and delivers the `Dataset`s on the JavaFX thread. A `Dataset` holds the temperature series plus the bee thresholds. `ui/processors/` turns those into histogram or cumulative-frequency chart data.
+**`ui/`: ScalaFX/JavaFX front end.** `BeeSimulatorApp` creates both simulations, loads `src/main/resources/beesimulator/ui/beecharts.fxml`, and passes the simulations to `MainController`. FXML injects JavaFX delegate fields, which are wrapped in `lazy` ScalaFX objects (the reasoning is documented at the top of `MainController`). When a slider changes, `MainController` submits the slider values to a `ConflatingRunner`, which runs `DataGenerator.generatePoints` on a background thread one run at a time, skipping slider positions passed over while busy, and delivers the `Dataset`s on the JavaFX thread. A `Dataset` holds the temperature series plus the bee thresholds. `ui/processors/` turns those into histogram or cumulative-frequency chart data.
 
 `src/main/scala/beesimulator/package.scala` contains a long package-level Scaladoc explaining the biological background and the design intent.
 
