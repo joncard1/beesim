@@ -1,0 +1,23 @@
+name: Feature request
+description: Suggest a new feature, simulation or population for the simulator.
+labels: [enhancement]
+body:
+  - type: textarea
+    id: idea
+    attributes:
+      label: What would you like?
+      description: Describe the feature, simulation or bee population you have in mind.
+    validations:
+      required: true
+  - type: textarea
+    id: why
+    attributes:
+      label: Why would it help?
+      description: What would it let you see, show or explore that you can't now? References to research are welcome.
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+      description: Other ways you've thought of to get the same result, if any.
