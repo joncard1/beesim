@@ -8,7 +8,7 @@ A ScalaFX desktop app that simulates honeybee "bearding" (hive temperature regul
 
 ## Commands
 
-Scala 3.3.4, sbt 1.12.9. CI (`.github/workflows/scala.yml`) runs `sbt test` on JDK 17.
+Scala 3.10.0, sbt 1.12.9 (pinned in `project/build.properties`). CI (`.github/workflows/scala.yml`) runs `sbt test` on JDK 25.
 
 ```sh
 sbt compile
@@ -19,7 +19,7 @@ sbt run        # launches the GUI (beesimulator.MainJFX)
 sbt "Test/runMain beesimulator.SimulationBenchmark"   # times a warmed-up run of each simulation
 ```
 
-Tests use ScalaTest `AnyWordSpec` with `Matchers`. UI tests run headlessly through Monocle (`org.testfx:openjfx-monocle`, test scope): `src/test/scala/beesimulator/ui/JavaFxToolkit.scala` starts JavaFX with the headless properties, and `onFxThread` runs code on the JavaFX thread. Monocle is published only up to 21.0.2 but works with JavaFX 25; if a JavaFX upgrade breaks it, the UI tests fail at startup. Known bugs are recorded as `pendingUntilFixed` tests; remove the wrapper when fixing one. The README says the JavaFX libraries may have to be provided externally (the author keeps them in an untracked `lib/` folder). `project/` is gitignored, so `build.properties` and the bloop plugin are local only.
+Tests use ScalaTest `AnyWordSpec` with `Matchers`. UI tests run headlessly through Monocle (`org.testfx:openjfx-monocle`, test scope): `src/test/scala/beesimulator/ui/JavaFxToolkit.scala` starts JavaFX with the headless properties, and `onFxThread` runs code on the JavaFX thread. Monocle is published only up to 21.0.2 but works with JavaFX 25; if a JavaFX upgrade breaks it, the UI tests fail at startup. Known bugs are recorded as `pendingUntilFixed` tests; remove the wrapper when fixing one. The README says the JavaFX libraries may have to be provided externally (the author keeps them in an untracked `lib/` folder). `project/build.properties` and plugin `.sbt` files in `project/` are tracked; Metals' generated `project/metals.sbt` and `project/project/` are ignored.
 
 ## Architecture
 
