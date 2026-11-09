@@ -158,4 +158,41 @@ class EquilibriumSpec extends AnyWordSpec with Matchers {
       }
     }
   }
+
+  val externalSimulation = ExternalSimulationInitializer.getSimulation(StartTemperature, TemperatureRange, Mass, SpecificHeat)
+
+  /**
+    * Every dataset from the external simulation for a grid of external
+    * temperatures and heat removed per bee.
+    */
+  lazy val externalRuns: Seq[(Double, Double, Dataset)] = for {
+    externalTemperature <- Seq(20.5, 21.5, 22.5)
+    heatPerBee <- heatPerBeeValues
+    dataset <- externalSimulation.generator.generatePoints(externalTemperature, heatPerBee)
+  } yield (externalTemperature, heatPerBee, dataset)
+
+  "The external simulation" when {
+    "bees compare the external temperature to their thresholds" should {
+      "activate the bees whose thresholds are below the external temperature" in {
+        for ((externalTemperature, heatPerBee, dataset) <- externalRuns) {
+          withClue(f"${dataset.name} at external=$externalTemperature heatPerBee=$heatPerBee: ") {
+            dataset.finalBeeCount shouldBe thresholds(dataset).count(_ < externalTemperature)
+            dataset.indicatorPosition shouldBe externalTemperature
+          }
+        }
+      }
+
+      "settle where the heat through the walls equals the heat the bees remove" in {
+        val settledRuns = externalRuns.filter((_, _, dataset) => isSettled(dataset))
+        settledRuns.size should be > externalRuns.size / 2
+        for ((externalTemperature, heatPerBee, dataset) <- settledRuns) {
+          val heatIn = ExternalSimulationInitializer.ThermalConductivity * (externalTemperature - dataset.temperatures.last)
+          val heatOut = dataset.finalBeeCount * heatPerBee
+          withClue(f"${dataset.name} at external=$externalTemperature heatPerBee=$heatPerBee: ") {
+            heatIn shouldBe heatOut +- 0.01
+          }
+        }
+      }
+    }
+  }
 }
