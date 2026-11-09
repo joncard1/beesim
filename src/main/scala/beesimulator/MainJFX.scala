@@ -5,9 +5,10 @@ import javafx.{fxml => jfxf, scene => jfxs}
 import scalafx.Includes._
 import scalafx.application.JFXApp3
 import scalafx.scene.Scene
+import scalafx.stage.Screen
 
 import beesimulator.controller._
-import beesimulator.ui.MainController
+import beesimulator.ui.{MainController, WindowSize}
 
 object MainJFX extends JFXApp3 {
   val StartTemperature = 20.0
@@ -29,7 +30,9 @@ object MainJFX extends JFXApp3 {
       controller.addSimulation(internalSimulation)
       controller.addSimulation(externalSimulation)
       controller.setData(StartTemperature - 0.2, StartTemperature, StartTemperature + TemperatureRange)
-      scene = new Scene(root)
+      val screen = Screen.primary.visualBounds
+      val (windowWidth, windowHeight) = WindowSize.forScreen(screen.width, screen.height)
+      scene = new Scene(root, windowWidth, windowHeight)
     }
   }
 
