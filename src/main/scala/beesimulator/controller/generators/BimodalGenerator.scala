@@ -1,6 +1,5 @@
 package beesimulator.controller.generators
 
-import math.BigDecimal.double2bigDecimal
 import beesimulator.bees._
 import beesimulator.ui._
 import beesimulator.controller._
@@ -44,34 +43,15 @@ class BimodalGenerator[T <: SimState](
     * reused by every run.
     */
   private lazy val bimodalBees: Seq[Bee[T]] = {
-    // Bimodal distribution
-    // Equation for the bell curve: y = (1 / (sigma*sqrt(2*pi))) * e ^((x - u)^2/(2 * sigma^2)
-    // Adapted for 2 bell curves at different centers, added together.
-    val bees = Vector.newBuilder[Bee[T]]
-    val numberOfBees = (numberOfFathers * numberOfDaughters).toDouble
-    val step = temperatureRange / (16 * 10)
+    // Two bell curves of equal size, a quarter and three quarters of the way
+    // across the temperature range, each placed by quantile so that every bee
+    // has a different threshold (see Quantiles).
+    val numberOfBees = numberOfFathers * numberOfDaughters
     val sigma = temperatureRange / 16
     val u1 = setPoint + temperatureRange / 4
     val u2 = setPoint + 3 * temperatureRange / 4
-    // The area under one of the distributions is 1, so the area under 2 is 2ish
-    // (the overlap is small). The number of bees joining at a particular
-    // temperature is the height, and so the total area under the curve is the
-    // total number of bees in all bins times the size of the temperature bins,
-    // and then by 2 (the number of curves that each add up to 1).
-    val scale = (numberOfBees * step / 2) / (sigma * math.sqrt(2 * math.Pi))
-    val denominator = 2 * math.pow(sigma, 2)
-
-    for (x <- 0 to temperatureRange by step) {
-      val firstNumerator = math.pow(setPoint + x.toDouble - u1, 2)
-      val secondNumerator = math.pow(setPoint + x.toDouble - u2, 2)
-      val exponent1 = -1 * (firstNumerator/denominator).doubleValue
-      val exponent2 = -1 * (secondNumerator/denominator).doubleValue
-      val numberOfBeesAtStep = scale * (math.exp(exponent1) + math.exp(exponent2))
-      for (i <- 0.asInstanceOf[Int] until math.round(numberOfBeesAtStep).toInt ) {
-        bees += constructor(setPoint + x.toDouble)
-      }
-    }
-    bees.result()
+    val firstCurve = numberOfBees / 2
+    (Quantiles.normal(firstCurve, u1, sigma) ++ Quantiles.normal(numberOfBees - firstCurve, u2, sigma)).map(constructor)
   }
 
   override def generatePoints(heatInflux: Double, heatPerBee: Double): List[Dataset] = {

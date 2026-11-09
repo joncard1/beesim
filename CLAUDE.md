@@ -39,4 +39,4 @@ Bee variants (`SimpleBee`, `DerivativeBee`, `IntegralBee`, `CombinedIntegralBee`
 
 `src/main/scala/beesimulator/package.scala` contains a long package-level Scaladoc explaining the biological background and the design intent.
 
-Outstanding work, open decisions, and things already tried are listed in `ROADMAP.md`.
+Work items are GitHub issues (`gh issue list`). Issues labelled `author-task` are reserved for the author: don't work on them. `ROADMAP.md` holds longer-term direction, open questions that aren't ready to be issues, and notes such as performance approaches already tried.

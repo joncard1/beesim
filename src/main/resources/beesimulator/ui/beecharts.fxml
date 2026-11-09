@@ -44,14 +44,16 @@
         </VBox>
       </top>
       <right>
+        <!-- The columns have a fixed width so that the value text changing width
+             as the sliders move doesn't resize the chart and shift the sliders. -->
         <HBox>
-          <VBox>
+          <VBox styleClass="slider-column" alignment="TOP_CENTER">
             <Slider fx:id="heatFlowSliderDelegate" orientation="VERTICAL" VBox.vgrow="ALWAYS" blockIncrement="0.1" />
-            <Text fx:id="heatFlowTextDelegate" />
+            <Text fx:id="heatFlowTextDelegate" styleClass="slider-value" />
           </VBox>
-          <VBox>
+          <VBox styleClass="slider-column" alignment="TOP_CENTER">
             <Slider fx:id="heatPerBeeSliderDelegate" orientation="VERTICAL" VBox.vgrow="ALWAYS" blockIncrement="0.0001" />
-            <Text fx:id="heatPerBeeTextDelegate" />
+            <Text fx:id="heatPerBeeTextDelegate" styleClass="slider-value" />
           </VBox>
         </HBox>
       </right>
@@ -65,6 +67,11 @@
           </yAxis>
         </LineChart>
       </center>
+      <bottom>
+        <!-- Shows why the charts stopped updating if a simulation run fails.
+             It takes no space while there is no error. -->
+        <Label fx:id="errorLabelDelegate" styleClass="error-message" wrapText="true" visible="false" managed="false" />
+      </bottom>
     </BorderPane>
   </children>
 </StackPane>
