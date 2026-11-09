@@ -109,7 +109,8 @@ class BeeChartControl() extends Initializable {
         simulatorData()
       )
     )
-    simulatorData.onChange((_, _, newData) =>
+    simulatorData.onChange((_, _, newData) => {
+      chart.title = newData.map(_.name).getOrElse("")
       regenerateCharts(
         minimumTemperature(),
         maximumTemperature(),
@@ -117,12 +118,7 @@ class BeeChartControl() extends Initializable {
         processor(),
         newData
       )
-      /*
-      if(newData.isDefined) {
-        view.indicatorPosition() = Option(newData.get.finalTemperature)
-      }
-      */
-    )
+    })
   }
 
   /**
