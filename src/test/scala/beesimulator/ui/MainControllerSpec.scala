@@ -5,6 +5,9 @@ import javafx.fxml.FXMLLoader
 import javafx.scene.{Parent, Scene}
 import javafx.scene.chart.{LineChart, XYChart}
 import javafx.scene.control.Slider
+import javafx.scene.layout.Region
+import javafx.scene.paint.Paint
+import javafx.scene.shape.Path
 import org.scalatest.concurrent.Eventually
 import org.scalatest.time.{Millis, Seconds, Span}
 import org.scalatest.wordspec.AnyWordSpec
@@ -62,6 +65,36 @@ class MainControllerSpec extends AnyWordSpec with Matchers with Eventually {
         Option(series.getNode).toSeq.flatMap(_.getStyleClass.asScala.filter(_.matches("series\\d+")))
       )
     }
+
+    /**
+      * The colour each series line is actually drawn in, in the order of the
+      * series, after styles have been applied.
+      */
+    def lineColours(chart: javafx.scene.Node): Seq[Paint] = {
+      chart.lookupAll(".chart-series-line").asScala.toSeq
+        .map(_.asInstanceOf[Path])
+        .sortBy(seriesIndex)
+        .map(_.getStroke)
+    }
+
+    /**
+      * The colour of each legend symbol, in the order of the series.
+      */
+    def legendColours(chart: javafx.scene.Node): Seq[Paint] = {
+      chart.lookupAll(".chart-legend-item-symbol").asScala.toSeq
+        .map(_.asInstanceOf[Region])
+        .sortBy(seriesIndex)
+        .map(_.getBackground.getFills.get(0).getFill)
+    }
+
+    private def seriesIndex(node: javafx.scene.Node): Int =
+      node.getStyleClass.asScala.collectFirst { case c if c.matches("series\\d+") => c.drop(6).toInt }.get
+
+    def styled[T](code: => T): T = JavaFxToolkit.onFxThread {
+      root.applyCss()
+      root.layout()
+      code
+    }
   }
 
   "The main view" when {
@@ -97,6 +130,35 @@ class MainControllerSpec extends AnyWordSpec with Matchers with Eventually {
           data = f.awaitNewData(data)
           withClue(s"after moving the heat slider to $heat: ") {
             f.colourClasses shouldBe data.asScala.indices.map(i => Seq(s"series$i"))
+          }
+        }
+      }
+    }
+
+    "showing the data" should {
+      "draw each legend symbol in the colour of its line" in {
+        assert(JavaFxToolkit.available, "JavaFX could not start; see JavaFxToolkit")
+        val f = new Fixture()
+        f.awaitNewData(null)
+        f.styled {
+          val lines = f.lineColours(f.temperatureChart)
+          lines.distinct.size shouldBe 8
+          f.legendColours(f.temperatureChart) shouldBe lines
+        }
+      }
+
+      "draw each bee chart's line and indicator in the colour of its temperature series" in {
+        assert(JavaFxToolkit.available, "JavaFX could not start; see JavaFxToolkit")
+        val f = new Fixture()
+        f.awaitNewData(null)
+        f.styled {
+          val lines = f.lineColours(f.temperatureChart)
+          for ((colour, i) <- lines.zipWithIndex) {
+            val beeChart = f.root.lookup(s"#beechart-$i")
+            withClue(s"bee chart $i: ") {
+              f.lineColours(beeChart) shouldBe Seq(colour)
+              beeChart.lookup(".temperature-indicator").asInstanceOf[Path].getStroke shouldBe colour
+            }
           }
         }
       }

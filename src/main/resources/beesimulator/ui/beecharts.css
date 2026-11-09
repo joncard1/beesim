@@ -1,6 +1,13 @@
 /**
  * The important thing here is that the colors match between seriesx in the
  * temperature chart and #beechart-x in the bee charts.
+ *
+ * JavaFX's default theme colours each chart series' line, symbols and legend
+ * entry from the looked-up colours CHART_COLOR_1 to CHART_COLOR_8, so the
+ * palette is defined by redefining those rather than by styling the lines
+ * directly, which would leave the legends in the default colours. Each bee
+ * chart has a single series, which uses CHART_COLOR_1, so each bee chart
+ * redefines CHART_COLOR_1 as the colour of its population.
  */
 #borderPane {
   -fx-background-color: linear-gradient(to left bottom, reflect, #cccccc, #aaaaaa);
@@ -33,103 +40,26 @@
 #temperatureChartDelegate {
   -fx-create-symbols: false
 }
-.chart-series-line.series0 {
-  -fx-stroke: #f9d900;
-  stroke: #f9d900;
+
+.root {
+  CHART_COLOR_1: #f9d900;
+  CHART_COLOR_2: #a9e200;
+  CHART_COLOR_3: #22bad9;
+  CHART_COLOR_4: #0181e2;
+  CHART_COLOR_5: #2f357f;
+  CHART_COLOR_6: #860061;
+  CHART_COLOR_7: #c62b00;
+  CHART_COLOR_8: #ff5700;
 }
-#beechart-0 .chart-series-line.series0 {
-  -fx-stroke: #f9d900;
-  stroke: #f9d900;
-}
-#beechart-0 .temperature-indicator {
-  -fx-stroke: #f9d900;
-  stroke: #f9d900;
-}
-.chart-series-line.series1 {
-  -fx-stroke: #a9e200;
-  stroke: #a9e200;
-}
-#beechart-1 .chart-series-line.series0 {
-  -fx-stroke: #a9e200;
-  stroke: #a9e200;
-}
-#beechart-1 .temperature-indicator {
-  -fx-stroke: #a9e200;
-  stroke: #a9e200;
-}
-.chart-series-line.series2 {
-  -fx-stroke: #22bad9;
-  stroke: #22bad9;
-}
-#beechart-2 .chart-series-line.series0 {
-  -fx-stroke: #22bad9;
-  stroke: #22bad9;
-}
-#beechart-2 .temperature-indicator {
-  -fx-stroke: #22bad9;
-  stroke: #22bad9;
-}
-.chart-series-line.series3 {
-  -fx-stroke: #0181e2;
-  stroke: #0181e2;
-}
-#beechart-3 .chart-series-line.series0 {
-  -fx-stroke: #0181e2;
-  stroke: #0181e2;
-}
-#beechart-3 .temperature-indicator {
-  -fx-stroke: #0181e2;
-  stroke: #0181e2;
-}
-.chart-series-line.series4 {
-  -fx-stroke: #2f357f;
-  stroke: #2f357f;
-}
-#beechart-4 .chart-series-line.series0 {
-  -fx-stroke: #2f357f;
-  stroke: #2f357f;
-}
-#beechart-4 .temperature-indicator {
-  -fx-stroke: #2f357f;
-  stroke: #2f357f;
-}
-.chart-series-line.series5 {
-  -fx-stroke: #860061;
-  stroke: #860061;
-}
-.chart-series-line.series0 #beechart-5 {
-  -fx-stroke: #860061;
-  stroke: #860061;
-}
-#beechart-5 .chart-series-line.series0 {
-  -fx-stroke: #860061;
-  stroke: #860061;
-}
-#beechart-5 .temperature-indicator {
-  -fx-stroke: #860061;
-  stroke: #860061;
-}
-.chart-series-line.series6 {
-  -fx-stroke: #c62b00;
-  stroke: #c62b00;
-}
-#beechart-6 .chart-series-line.series0 {
-  -fx-stroke: #c62b00;
-  stroke: #c62b00;
-}
-#beechart-6 .temperature-indicator {
-  -fx-stroke: #c62b00;
-  stroke: #c62b00;
-}
-.chart-series-line.series7 {
-  -fx-stroke: #ff5700;
-  stroke: #ff5700;
-}
-#beechart-7 .chart-series-line.series0 {
-  -fx-stroke: #ff5700;
-  stroke: #ff5700;
-}
-#beechart-7 .temperature-indicator {
-  -fx-stroke: #ff5700;
-  stroke: #ff5700;
+#beechart-0 { CHART_COLOR_1: #f9d900; }
+#beechart-1 { CHART_COLOR_1: #a9e200; }
+#beechart-2 { CHART_COLOR_1: #22bad9; }
+#beechart-3 { CHART_COLOR_1: #0181e2; }
+#beechart-4 { CHART_COLOR_1: #2f357f; }
+#beechart-5 { CHART_COLOR_1: #860061; }
+#beechart-6 { CHART_COLOR_1: #c62b00; }
+#beechart-7 { CHART_COLOR_1: #ff5700; }
+
+.temperature-indicator {
+  -fx-stroke: CHART_COLOR_1;
 }
