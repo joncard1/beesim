@@ -10,7 +10,10 @@ import scalafx.stage.Screen
 import beesimulator.controller._
 import beesimulator.ui.{MainController, WindowSize}
 
-object MainJFX extends JFXApp3 {
+/**
+  * The application: creates the simulations and opens the main window.
+  */
+object BeeSimulatorApp extends JFXApp3 {
   val StartTemperature = 20.0
   val TemperatureRange: Double = 3.0
   val Mass: Double = 5

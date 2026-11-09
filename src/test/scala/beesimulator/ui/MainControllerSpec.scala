@@ -17,7 +17,7 @@ import scala.jdk.CollectionConverters._
 
 /**
   * Loads the whole main view from beecharts.fxml with the internal simulation,
-  * the way MainJFX does, and checks how the charts respond to the sliders.
+  * the way BeeSimulatorApp does, and checks how the charts respond to the sliders.
   */
 class MainControllerSpec extends AnyWordSpec with Matchers with Eventually {
 
