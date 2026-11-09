@@ -67,6 +67,11 @@
           </yAxis>
         </LineChart>
       </center>
+      <bottom>
+        <!-- Shows why the charts stopped updating if a simulation run fails.
+             It takes no space while there is no error. -->
+        <Label fx:id="errorLabelDelegate" styleClass="error-message" wrapText="true" visible="false" managed="false" />
+      </bottom>
     </BorderPane>
   </children>
 </StackPane>

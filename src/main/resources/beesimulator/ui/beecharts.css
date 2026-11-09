@@ -13,6 +13,11 @@
   -fx-background-color: linear-gradient(to left bottom, reflect, #cccccc, #aaaaaa);
   background-color: linear-gradient(to left bottom, reflect, #cccccc, #aaaaaa);
 }
+
+.error-message {
+  -fx-text-fill: #b00020;
+  -fx-padding: 8 0 0 0;
+}
 /** TODO: This looks nice, but it seems to make mouse clicks stop working.
 .chart {
   -fx-effect: dropshadow(gaussian, #888888, 20, 0, 5, 5)
