@@ -124,18 +124,33 @@ class EquilibriumSpec extends AnyWordSpec with Matchers {
       }
     }
 
-    // Known issue: when many bees have exactly the same threshold, the bin
-    // containing it has a spike. In "Mixed Fathers," 41 bees share the
-    // threshold 21.5, making the middle bin 160 while its neighbours are about
-    // 115. The bell-curve generators have similar spikes from their thresholds
-    // being generated on a coarse grid.
+    "generating the populations" should {
+      "give every bee a different threshold" in {
+        for ((_, _, dataset) <- runs.distinctBy(_._3.name)) {
+          withClue(s"${dataset.name}: ") {
+            thresholds(dataset).distinct.size shouldBe dataset.bees.size
+          }
+        }
+      }
+
+      "make exactly the number of bees asked for" in {
+        val sizes = runs.map((_, _, dataset) => dataset.name -> dataset.bees.size).toMap
+        sizes("Mixed Fathers") shouldBe 41 * 81
+        sizes("Bimodal bee set") shouldBe 40 * 80
+        sizes("Multiple fathers that cluster") shouldBe 5 * 640
+      }
+    }
+
+    // When many bees shared a threshold, or thresholds were placed on a grid
+    // that didn't divide evenly into the chart's bins, some bins spiked. Bins
+    // with only a few bees are skipped, since one bee more or less is a large
+    // fraction of them.
     "the threshold distributions are drawn as histograms" should {
       "not have isolated spikes" in {
-        pendingUntilFixed {
-          val (_, _, mixedFathers) = runs.find((_, _, dataset) => dataset.name == "Mixed Fathers").get
-          val bins = HistogramDataProcessor.transform(StartTemperature, StartTemperature + TemperatureRange, 50, mixedFathers.bees)
-          for (i <- 1 until bins.length - 1) {
-            withClue(s"bin $i of ${bins.mkString(",")}: ") {
+        for ((_, _, dataset) <- runs.distinctBy(_._3.name)) {
+          val bins = HistogramDataProcessor.transform(StartTemperature, StartTemperature + TemperatureRange, 50, dataset.bees)
+          for (i <- 1 until bins.length - 1 if bins(i) >= 20) {
+            withClue(s"${dataset.name}, bin $i of ${bins.mkString(",")}: ") {
               bins(i).toDouble should be <= 1.25 * math.max(bins(i - 1), bins(i + 1))
             }
           }
