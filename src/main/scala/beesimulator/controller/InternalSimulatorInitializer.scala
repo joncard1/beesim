@@ -47,7 +47,7 @@ object InternalSimulationInitializer extends SimulationInitializer {
         numBees: Int,
         temperatures: List[Double],
         histogramData: Seq[BeeHistogramItem]
-    ) => Dataset(name, lastTemperature, numBees, temperatures, histogramData)
+    ) => Dataset(name, lastTemperature, numBees, temperatures, histogramData, Dataset.settlingBand(temperatures))
 
     val mixedFathersGenerator = new MixedFathersGenerator(
       "Mixed Fathers",
