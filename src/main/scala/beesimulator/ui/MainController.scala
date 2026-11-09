@@ -187,6 +187,12 @@ class MainController {
   var beeCharts = Array[BeeChartControl]()
 
   /**
+    * The largest value shown by any of the bee charts, so that they can all
+    * use the same y-axis and be compared with each other.
+    */
+  val beeChartMaximum = new DoubleProperty()
+
+  /**
    * The processor that gets substituted in the middle of the reactive chain
    * between the simulator data generators and the charts that summarize the bee
    * populations. I might wish that this could be a function type, but
@@ -309,6 +315,10 @@ class MainController {
         newBeeChartController.maximumTemperature <== maximumYBoundary
         newBeeChartController.numberOfBins() = NumberOfBins
         newBeeChartController.simulatorData() = None
+        newBeeChartController.sharedMaximum <== beeChartMaximum
+        newBeeChartController.maximumValue.onChange({
+          beeChartMaximum() = beeCharts.filter(_ != null).map(_.maximumValue()).maxOption.getOrElse(0.0)
+        })
 
         (simulatorDataSubscriptions.get)(i) = simulatorData.onChange((_, _, newDatasets) => {
           view.indicatorPosition() = Some(newDatasets.get(i).indicatorPosition)

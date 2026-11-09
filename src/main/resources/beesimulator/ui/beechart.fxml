@@ -6,6 +6,6 @@
     <NumberAxis fx:id="xAxisDelegate" side="BOTTOM" autoRanging="false" forceZeroInRange="false" />
   </xAxis>
   <yAxis>
-    <NumberAxis side="LEFT" />
+    <NumberAxis fx:id="yAxisDelegate" side="LEFT" />
   </yAxis>
 </LineChartWithIndicator>
