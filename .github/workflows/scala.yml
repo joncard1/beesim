@@ -14,7 +14,6 @@ on:
 
 permissions:
   contents: write
-  packages: write
 
 jobs:
   build:
@@ -64,6 +63,7 @@ jobs:
         if-no-files-found: ignore
       # Optional: This step uploads information to the GitHub dependency graph and unblocking Dependabot alerts for the repository
     - name: Upload dependency graph
+      if: github.event_name == 'push'
       uses: scalacenter/sbt-dependency-submission@v3
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
