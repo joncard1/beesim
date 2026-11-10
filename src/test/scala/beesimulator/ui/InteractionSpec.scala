@@ -90,7 +90,13 @@ class InteractionSpec extends AnyWordSpec with Matchers with Eventually {
         val f = new Fixture()
         try {
           eventually(f.finalTemperatures should have size 8)
-          for ((name, series) <- Seq(f.external.simulatorName -> 3, f.internal.simulatorName -> 8, f.external.simulatorName -> 3)) {
+          for (
+            (name, series) <- Seq(
+              f.external.simulatorName -> 3,
+              f.internal.simulatorName -> 8,
+              f.external.simulatorName -> 3
+            )
+          ) {
             f.robot.clickOn(f.simulationMenu)
             f.robot.clickOn(name)
             WaitForAsyncUtils.waitForFxEvents()

@@ -9,12 +9,18 @@ import beesimulator.ui._
  * distribution of the bee thresholds.
  */
 object HistogramDataProcessor extends DataProcessor {
+
   /**
     * Counts the bees in each bin. Bees outside the range from the minimum to
     * the maximum temperature are not counted; a bee exactly at the maximum is
     * counted in the last bin.
     */
-  override def transform(minimumTemperature: Double, maximumTemperature: Double, numberOfBins: Int, bees: Seq[HistogramItem]): Seq[Int] = {
+  override def transform(
+      minimumTemperature: Double,
+      maximumTemperature: Double,
+      numberOfBins: Int,
+      bees: Seq[HistogramItem]
+  ): Seq[Int] = {
     val binRange = (numberOfBins) / (maximumTemperature - minimumTemperature)
     val histogramData = new Array[Int](numberOfBins)
     bees.foreach(bee => {

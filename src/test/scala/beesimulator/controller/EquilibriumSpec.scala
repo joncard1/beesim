@@ -100,9 +100,11 @@ class EquilibriumSpec extends AnyWordSpec with Matchers {
       }
 
       "band a wide range when the simulation never settles" in {
-        val (_, _, bimodal) = runs.find((heatIn, heatPerBee, dataset) =>
-          heatIn == 1.0 && heatPerBee == 0.002 && dataset.name == "Bimodal bee set"
-        ).get
+        val (_, _, bimodal) = runs
+          .find((heatIn, heatPerBee, dataset) =>
+            heatIn == 1.0 && heatPerBee == 0.002 && dataset.name == "Bimodal bee set"
+          )
+          .get
         val (low, high) = bimodal.indicatorBand.get
         (high - low) should be > SettledRange
       }
@@ -148,7 +150,8 @@ class EquilibriumSpec extends AnyWordSpec with Matchers {
     "the threshold distributions are drawn as histograms" should {
       "not have isolated spikes" in {
         for ((_, _, dataset) <- runs.distinctBy(_._3.name)) {
-          val bins = HistogramDataProcessor.transform(StartTemperature, StartTemperature + TemperatureRange, 50, dataset.bees)
+          val bins =
+            HistogramDataProcessor.transform(StartTemperature, StartTemperature + TemperatureRange, 50, dataset.bees)
           for (i <- 1 until bins.length - 1 if bins(i) >= 20) {
             withClue(s"${dataset.name}, bin $i of ${bins.mkString(",")}: ") {
               bins(i).toDouble should be <= 1.25 * math.max(bins(i - 1), bins(i + 1))
@@ -159,7 +162,8 @@ class EquilibriumSpec extends AnyWordSpec with Matchers {
     }
   }
 
-  val externalSimulation = ExternalSimulationInitializer.getSimulation(StartTemperature, TemperatureRange, Mass, SpecificHeat)
+  val externalSimulation =
+    ExternalSimulationInitializer.getSimulation(StartTemperature, TemperatureRange, Mass, SpecificHeat)
 
   /**
     * Every dataset from the external simulation for a grid of external
@@ -186,7 +190,8 @@ class EquilibriumSpec extends AnyWordSpec with Matchers {
         val settledRuns = externalRuns.filter((_, _, dataset) => isSettled(dataset))
         settledRuns.size should be > externalRuns.size / 2
         for ((externalTemperature, heatPerBee, dataset) <- settledRuns) {
-          val heatIn = ExternalSimulationInitializer.ThermalConductivity * (externalTemperature - dataset.temperatures.last)
+          val heatIn =
+            ExternalSimulationInitializer.ThermalConductivity * (externalTemperature - dataset.temperatures.last)
           val heatOut = dataset.finalBeeCount * heatPerBee
           withClue(f"${dataset.name} at external=$externalTemperature heatPerBee=$heatPerBee: ") {
             heatIn shouldBe heatOut +- 0.01

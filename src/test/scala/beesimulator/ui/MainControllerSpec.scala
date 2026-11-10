@@ -71,7 +71,10 @@ class MainControllerSpec extends AnyWordSpec with Matchers with Eventually {
       * series, after styles have been applied.
       */
     def lineColours(chart: javafx.scene.Node): Seq[Paint] = {
-      chart.lookupAll(".chart-series-line").asScala.toSeq
+      chart
+        .lookupAll(".chart-series-line")
+        .asScala
+        .toSeq
         .map(_.asInstanceOf[Path])
         .sortBy(seriesIndex)
         .map(_.getStroke)
@@ -81,7 +84,10 @@ class MainControllerSpec extends AnyWordSpec with Matchers with Eventually {
       * The colour of each legend symbol, in the order of the series.
       */
     def legendColours(chart: javafx.scene.Node): Seq[Paint] = {
-      chart.lookupAll(".chart-legend-item-symbol").asScala.toSeq
+      chart
+        .lookupAll(".chart-legend-item-symbol")
+        .asScala
+        .toSeq
         .map(_.asInstanceOf[Region])
         .sortBy(seriesIndex)
         .map(_.getBackground.getFills.get(0).getFill)

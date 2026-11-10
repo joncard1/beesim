@@ -20,10 +20,12 @@ object BeeSimulatorApp extends JFXApp3 {
   val SpecificHeat: Double = 0.5
 
   override def start(): Unit = {
-    val internalSimulation = InternalSimulationInitializer.getSimulation(StartTemperature, TemperatureRange, Mass, SpecificHeat)
-    val externalSimulation = ExternalSimulationInitializer.getSimulation(StartTemperature, TemperatureRange, Mass, SpecificHeat)
+    val internalSimulation =
+      InternalSimulationInitializer.getSimulation(StartTemperature, TemperatureRange, Mass, SpecificHeat)
+    val externalSimulation =
+      ExternalSimulationInitializer.getSimulation(StartTemperature, TemperatureRange, Mass, SpecificHeat)
 
-    stage = new JFXApp3.PrimaryStage{
+    stage = new JFXApp3.PrimaryStage {
       title = "Bee Simulator"
 
       val viewClass = getClass.getResource("ui/beecharts.fxml")

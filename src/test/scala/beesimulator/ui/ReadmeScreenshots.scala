@@ -26,7 +26,13 @@ object ReadmeScreenshots {
   val Mass = 5.0
   val SpecificHeat = 0.5
 
-  final case class Shot(file: String, simulation: Int, summary: MainController.ComboSelections, heatIn: Double, heatPerBee: Double)
+  final case class Shot(
+      file: String,
+      simulation: Int,
+      summary: MainController.ComboSelections,
+      heatIn: Double,
+      heatPerBee: Double
+  )
 
   val shots = Seq(
     Shot("histogram.png", 0, MainController.ComboSelections.Histogram, 1.0, 0.001),
@@ -51,15 +57,26 @@ object ReadmeScreenshots {
       val loader = new FXMLLoader(classOf[MainController].getResource("beecharts.fxml"))
       val root: Parent = loader.load()
       val controller: MainController = loader.getController()
-      controller.addSimulation(InternalSimulationInitializer.getSimulation(StartTemperature, TemperatureRange, Mass, SpecificHeat))
-      controller.addSimulation(ExternalSimulationInitializer.getSimulation(StartTemperature, TemperatureRange, Mass, SpecificHeat))
+      controller.addSimulation(
+        InternalSimulationInitializer.getSimulation(StartTemperature, TemperatureRange, Mass, SpecificHeat)
+      )
+      controller.addSimulation(
+        ExternalSimulationInitializer.getSimulation(StartTemperature, TemperatureRange, Mass, SpecificHeat)
+      )
       new Scene(root, Width, Height)
       controller.setData(StartTemperature - 0.2, StartTemperature, StartTemperature + TemperatureRange)
       root
     }
     JavaFxToolkit.onFxThread {
-      root.lookup("#simulatorSelectionComboBoxDelegate").asInstanceOf[ComboBox[Simulation]].getSelectionModel.select(shot.simulation)
-      root.lookup("#processorSelectionComboBoxDelegate").asInstanceOf[ComboBox[MainController.ComboSelections]].setValue(shot.summary)
+      root
+        .lookup("#simulatorSelectionComboBoxDelegate")
+        .asInstanceOf[ComboBox[Simulation]]
+        .getSelectionModel
+        .select(shot.simulation)
+      root
+        .lookup("#processorSelectionComboBoxDelegate")
+        .asInstanceOf[ComboBox[MainController.ComboSelections]]
+        .setValue(shot.summary)
       root.lookup("#heatFlowSliderDelegate").asInstanceOf[Slider].setValue(shot.heatIn)
       root.lookup("#heatPerBeeSliderDelegate").asInstanceOf[Slider].setValue(shot.heatPerBee)
     }

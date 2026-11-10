@@ -13,6 +13,7 @@ Scala 3.10.0, sbt 1.12.9 (pinned in `project/build.properties`). CI (`.github/wo
 ```sh
 sbt compile
 sbt test
+sbt scalafmtAll   # format the code; CI fails if it isn't formatted (scalafmtCheckAll)
 sbt "testOnly beesimulator.bees.InternalBeeSimSpec"
 sbt "testOnly beesimulator.bees.InternalBeeSimSpec -- -z \"stabilize at 2 bees\""   # one test by name
 sbt run        # launches the GUI (beesimulator.BeeSimulatorApp)

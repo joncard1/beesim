@@ -28,7 +28,8 @@ class FocusedGenerator[T <: SimState](
     simAttributes: T,
     datasetCreator: (Double, Double, Double, String, Int, List[Double], Seq[BeeHistogramItem]) => Dataset,
     constructor: (threshold: Double) => Bee[T] = (SimpleBee.apply)
-  )(implicit provider: SimProvider[Double, T, Bee[T], BeeSim[T]]) extends AbstractDataGenerator(name, numberOfIterations, simAttributes) {
+)(implicit provider: SimProvider[Double, T, Bee[T], BeeSim[T]])
+    extends AbstractDataGenerator(name, numberOfIterations, simAttributes) {
   override def numberOfFamilies: Int = 1
 
   /**
@@ -41,9 +42,9 @@ class FocusedGenerator[T <: SimState](
     // quantile so that every bee has a different threshold (see Quantiles).
     val spacing = temperatureRange / (numberOfFathers + 1)
     val sigma = spacing / 4
-    (0 until numberOfFathers).flatMap(father =>
-      Quantiles.normal(numberOfDaughters, setPoint + (father + 1) * spacing, sigma)
-    ).map(constructor)
+    (0 until numberOfFathers)
+      .flatMap(father => Quantiles.normal(numberOfDaughters, setPoint + (father + 1) * spacing, sigma))
+      .map(constructor)
   }
 
   override def generatePoints(heatInflux: Double, heatPerBee: Double): List[Dataset] = {

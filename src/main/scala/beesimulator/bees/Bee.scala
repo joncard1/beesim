@@ -16,6 +16,7 @@ import beesimulator.simulator._
   * join).
   */
 trait Bee[-T] extends SimActor[T] {
+
   /**
     * The temperature above which the Bee will join and below which the Bee will
     * leave. The implementation doesn't have to be this straightforward, but all
@@ -31,7 +32,8 @@ trait Bee[-T] extends SimActor[T] {
     * @param state  The state to use to decide whether to join the bearding.
     * @return       Whether to add the Bee to the bearding.
     */
-  def join(state: T) : Boolean
+  def join(state: T): Boolean
+
   /**
     * Called when a Bee is a member of a bearding to determine if it wants to
     * leave.
@@ -39,13 +41,14 @@ trait Bee[-T] extends SimActor[T] {
     * @param state  The state to use to decide whether to leave the bearding.
     * @return       Whether to remove the Bee to the bearding.
     */
-  def leave(state: T) : Boolean
+  def leave(state: T): Boolean
 }
 
 /**
   * A companion object to the Bee trait.
   */
 object Bee {
+
   /**
     * The ordering algorithm used to sort Bee objects.
     *
@@ -60,7 +63,12 @@ object Bee {
     override def update(actor: Bee[InternalSimState], newState: InternalSimState) = {
       actor match {
         case CombinedIntegralBee(threshold, controlPoint, timeConstant, accumulatedError) =>
-          CombinedIntegralBee(threshold, controlPoint, timeConstant, accumulatedError + newState.currentTemperature - controlPoint)
+          CombinedIntegralBee(
+            threshold,
+            controlPoint,
+            timeConstant,
+            accumulatedError + newState.currentTemperature - controlPoint
+          )
         case DerivativeBee(threshold, priorTemperature, lookahead) =>
           DerivativeBee(threshold, newState.currentTemperature, lookahead)
         case IntegralBee(threshold, timeConstant, accumulator) =>

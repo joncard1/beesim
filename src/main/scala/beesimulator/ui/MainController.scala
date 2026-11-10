@@ -5,12 +5,7 @@ import javafx.fxml.Initializable
 import java.net.URL
 import java.{util => ju}
 import javafx.fxml.FXML
-import javafx.scene.{
-  control => jfxsc,
-  layout => jfxsl,
-  text => jfxst,
-  chart => jfxch
-}
+import javafx.scene.{control => jfxsc, layout => jfxsl, text => jfxst, chart => jfxch}
 import javafx.{scene => jfxs}
 import scalafx.scene.layout._
 import scalafx.scene.control._
@@ -87,6 +82,7 @@ class MainController {
 
   @FXML var simulatorSelectionComboBoxDelegate: jfxsc.ComboBox[Simulation] = uninitialized
   private lazy val simulatorSelectionComboBox: ComboBox[Simulation] = new ComboBox(simulatorSelectionComboBoxDelegate)
+
   /**
    * The combo box that allows users to select the style of summary used to
    * summarize the bee populations in the charts across the top. It uses the
@@ -258,7 +254,7 @@ class MainController {
     // Bind the state of the processor to the combo box and initialize it
     processorSelectionComboBox.value.onChange((_, _, newValue) => {
       newValue match {
-        case MainController.ComboSelections.Histogram => processor() = Some(HistogramDataProcessor)
+        case MainController.ComboSelections.Histogram  => processor() = Some(HistogramDataProcessor)
         case MainController.ComboSelections.Cumulative => processor() = Some(CumulativeFrequencyDataProcessor)
       }
     })
@@ -271,9 +267,7 @@ class MainController {
           XYChart.Series[Number, Number](
             dataset.name,
             ObservableBuffer.from(
-              dataset.temperatures.zipWithIndex.map(tuple =>
-                XYChart.Data(tuple._2, tuple._1)
-              )
+              dataset.temperatures.zipWithIndex.map(tuple => XYChart.Data(tuple._2, tuple._1))
             )
           )
         })

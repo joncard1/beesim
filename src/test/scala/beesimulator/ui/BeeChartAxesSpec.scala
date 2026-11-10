@@ -44,8 +44,10 @@ class BeeChartAxesSpec extends AnyWordSpec with Matchers with Eventually {
 
         for (summary <- Seq(MainController.ComboSelections.Cumulative, MainController.ComboSelections.Histogram)) {
           JavaFxToolkit.onFxThread {
-            root.lookup("#processorSelectionComboBoxDelegate")
-              .asInstanceOf[ComboBox[MainController.ComboSelections]].setValue(summary)
+            root
+              .lookup("#processorSelectionComboBoxDelegate")
+              .asInstanceOf[ComboBox[MainController.ComboSelections]]
+              .setValue(summary)
             root.applyCss()
             root.layout()
             val bounds = charts.map(_.getYAxis.asInstanceOf[NumberAxis].getUpperBound)

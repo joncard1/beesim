@@ -33,6 +33,10 @@ jobs:
     - name: Run tests with coverage
       # Coverage is reported, not enforced: low coverage doesn't fail the build.
       run: sbt "coverage ; test ; coverageReport ; shutdown"
+    - name: Check formatting
+      # Run `sbt scalafmtAll` to fix any formatting this reports. This runs
+      # before the dependency graph step, which writes a temporary .sbt file.
+      run: sbt "scalafmtCheckAll ; scalafmtSbtCheck ; shutdown"
     - name: Summarize coverage
       if: always()
       run: |

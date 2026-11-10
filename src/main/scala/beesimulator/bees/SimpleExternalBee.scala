@@ -8,8 +8,7 @@ package beesimulator.bees
   *
   * @param threshold
   */
-final case class SimpleExternalBee(threshold: Double)
-    extends Bee[ExternalSimState] {
+final case class SimpleExternalBee(threshold: Double) extends Bee[ExternalSimState] {
   override def join(state: ExternalSimState): Boolean = {
     (state.externalTemperature > threshold)
   }

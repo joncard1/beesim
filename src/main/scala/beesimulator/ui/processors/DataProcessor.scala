@@ -25,7 +25,12 @@ trait DataProcessor {
     *     summarizing the bee dataset. Each entry is expected to be the y-value
     *     at that x-value in a histogram-like dataset.
     */
-  def transform(minimumTemperature: Double, maximumTemperature: Double, numberOfBins: Int, bees: Seq[HistogramItem]): Seq[Int]
+  def transform(
+      minimumTemperature: Double,
+      maximumTemperature: Double,
+      numberOfBins: Int,
+      bees: Seq[HistogramItem]
+  ): Seq[Int]
 
   /**
     * The x-value at which to plot the value of a bin returned by

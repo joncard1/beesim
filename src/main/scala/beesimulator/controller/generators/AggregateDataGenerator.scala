@@ -36,7 +36,8 @@ class AggregateDataGenerator(executionContext: ExecutionContext = ExecutionConte
     *
     * @return
     */
-  override def numberOfFamilies: Int = dataGenerators.foldLeft(0)((total, generator) => total + generator.numberOfFamilies)
+  override def numberOfFamilies: Int =
+    dataGenerators.foldLeft(0)((total, generator) => total + generator.numberOfFamilies)
 
   /**
     * Generates the data from all contained generators. All of the data from
@@ -50,9 +51,8 @@ class AggregateDataGenerator(executionContext: ExecutionContext = ExecutionConte
     implicit val ec: ExecutionContext = executionContext
     // The generators are kept in reverse order of being added, and the data
     // series are returned in the order the generators were added.
-    val results = Future.traverse(dataGenerators.reverse)(generator =>
-      Future(generator.generatePoints(heatInFlux, heatPerBee))
-    )
+    val results =
+      Future.traverse(dataGenerators.reverse)(generator => Future(generator.generatePoints(heatInFlux, heatPerBee)))
     Await.result(results, Duration.Inf).flatten
   }
 

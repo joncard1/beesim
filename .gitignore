@@ -7,7 +7,6 @@
 project/project
 project/metals.sbt
 target
-.scalafmt.conf
 .DS_Store
 
 .claude-*

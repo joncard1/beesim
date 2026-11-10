@@ -45,7 +45,11 @@ class ErrorDisplaySpec extends AnyWordSpec with Matchers with Eventually {
           controller.addSimulation(failingSimulation)
           new Scene(root, 1200, 800)
           controller.setData(19.8, 20.0, 23.0)
-          (root, root.lookup("#errorLabelDelegate").asInstanceOf[Label], root.lookup("#heatFlowSliderDelegate").asInstanceOf[Slider])
+          (
+            root,
+            root.lookup("#errorLabelDelegate").asInstanceOf[Label],
+            root.lookup("#heatFlowSliderDelegate").asInstanceOf[Slider]
+          )
         }
 
         eventually {
