@@ -6,6 +6,18 @@ import beesimulator.controller._
 import beesimulator.simulator._
 
 class InternalBeeSimSpec extends AnyWordSpec with Matchers {
+  "An internal sim" when {
+    "converted to a string" should {
+      "report its current state and number of active bees" in {
+        val attributes = InternalSimState(1, 1, 20.5)
+        implicit val provider: SimProvider[Double, InternalSimState, Bee[InternalSimState], InternalBeeSim] =
+          new InternalBeeSimProvider(attributes)
+        val sim = InternalBeeSim(Seq(SimpleBee(21)), Seq(SimpleBee(20)), attributes)
+        sim.toString shouldBe "Current state InternalSimState(1.0,1.0,20.5); bees active 1"
+      }
+    }
+  }
+
   "Internal sim" when {
     "asked to run 2 steps" should {
       "stabilize at 2 bees and 1.5 degrees" in {

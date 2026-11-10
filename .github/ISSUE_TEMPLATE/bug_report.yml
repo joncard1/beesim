@@ -1,0 +1,42 @@
+name: Bug report
+description: Something in the simulator doesn't work or looks wrong.
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reporting a problem. A screenshot is often the quickest way to show what you're seeing.
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened?
+      description: What did you see, and what did you expect to see instead?
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: How can we reproduce it?
+      description: Which simulation and summary type were selected, where the sliders were, and what you did.
+      placeholder: |
+        1. Select "Internal temperature simulation"
+        2. Drag the heat in slider to the top
+        3. ...
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Version
+      description: The commit or release you're running, if you know it.
+  - type: input
+    id: environment
+    attributes:
+      label: Operating system and Java version
+      placeholder: macOS 26, OpenJDK 25
+  - type: textarea
+    id: logs
+    attributes:
+      label: Error messages
+      description: Any error shown below the charts or printed in the terminal.
+      render: text

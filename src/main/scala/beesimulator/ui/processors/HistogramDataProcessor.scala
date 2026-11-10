@@ -2,9 +2,6 @@ package beesimulator.ui.processors
 
 import beesimulator.ui._
 
-// TODO: The calculation of the histogram needs to be looked at. I'm not sure
-// where those peaks come from.
-
 /**
  * This processor summarizes the collection of bees provided into a histogram
  * where each bin is a temperature range and the value of each bin is the number

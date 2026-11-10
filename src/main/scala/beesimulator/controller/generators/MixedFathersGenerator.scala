@@ -46,9 +46,13 @@ class MixedFathersGenerator[T <: SimState](
     * reused by every run.
     */
   private lazy val mixedFatherBees: Seq[Bee[T]] = for {
-    i <- 0.asInstanceOf[Int] to numberOfFathers
-    j <- 0.asInstanceOf[Int] to numberOfDaughters
-  } yield constructor(setPoint + (fatherDifference / numberOfFathers) * i + (fatherWindow / numberOfDaughters) * j)
+    i <- 0 to numberOfFathers
+    // Each father's daughters are spread evenly across his window, at the
+    // middles of equal slices of it (see Quantiles), so that no two bees share
+    // a threshold, even with other fathers' daughters.
+    lowestThreshold = setPoint + (fatherDifference / numberOfFathers) * i
+    threshold <- Quantiles.uniform(numberOfDaughters + 1, lowestThreshold, lowestThreshold + fatherWindow)
+  } yield constructor(threshold)
 
   override def generatePoints(heatInflux: Double, heatPerBee: Double): List[Dataset] = {
     List(runSimulator(heatInflux, heatPerBee, mixedFatherBees, datasetCreator))

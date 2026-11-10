@@ -18,13 +18,17 @@ object SimulationBenchmark {
 
   def main(args: Array[String]): Unit = {
     val simulations = Seq(
-      InternalSimulationInitializer
-        .getSimulation(MainJFX.StartTemperature, MainJFX.TemperatureRange, MainJFX.Mass, MainJFX.SpecificHeat),
+      InternalSimulationInitializer.getSimulation(
+        BeeSimulatorApp.StartTemperature,
+        BeeSimulatorApp.TemperatureRange,
+        BeeSimulatorApp.Mass,
+        BeeSimulatorApp.SpecificHeat
+      ),
       ExternalSimulationInitializer.getSimulation(
-        MainJFX.StartTemperature,
-        MainJFX.TemperatureRange,
-        MainJFX.Mass,
-        MainJFX.SpecificHeat
+        BeeSimulatorApp.StartTemperature,
+        BeeSimulatorApp.TemperatureRange,
+        BeeSimulatorApp.Mass,
+        BeeSimulatorApp.SpecificHeat
       )
     )
     for (simulation <- simulations) {
