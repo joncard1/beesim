@@ -27,16 +27,16 @@ libraryDependencies += "org.testfx" % "testfx-core" % "4.0.18" % Test
 
 ThisBuild / assemblyMergeStrategy := {
   case x if x.contains("reflectionconfig") => MergeStrategy.first
-  case x if x.contains("jniconfig") => MergeStrategy.first
-  case x if x.contains("resourcebundles") => MergeStrategy.first
+  case x if x.contains("jniconfig")        => MergeStrategy.first
+  case x if x.contains("resourcebundles")  => MergeStrategy.first
 
   // Discard module-info.class files from modularized jars
-  case PathList("module-info.class") => MergeStrategy.discard
+  case PathList("module-info.class")                                 => MergeStrategy.discard
   case PathList("META-INF", "versions", xs @ _, "module-info.class") => MergeStrategy.discard
-  
+
   // Handle other common conflicts if needed (e.g., JavaFX native or properties)
   case PathList("META-INF", "io.netty.versions.properties") => MergeStrategy.concat
-  
+
   case x =>
     val oldStrategy = (ThisBuild / assemblyMergeStrategy).value
     oldStrategy(x)
