@@ -12,7 +12,7 @@ val jsoupVersion = "1.24.1" // Latest patch. They don't seem to have a LTS polic
 
 libraryDependencies += "org.scalatest" %% "scalatest" % "3.2.19" % Test
 libraryDependencies += "org.testfx" % "openjfx-monocle" % "21.0.2" % Test
-libraryDependencies += "org.assertj" % "assertj-core" % "3.27.7" % Test   // Updated from 3.13.2 in response to Dependabot alert #30
+libraryDependencies += "org.assertj" % "assertj-core" % "3.27.7" % Test // Updated from 3.13.2 in response to Dependabot alert #30
 libraryDependencies += "org.scalafx" %% "scalafx" % "25.0.2-R37"
 libraryDependencies += "com.fasterxml.jackson.core" % "jackson-core" % fasterxml2Version % Configurations.ScalaDocTool
 libraryDependencies += "com.fasterxml.jackson.core" % "jackson-databind" % fasterxml2Version % Configurations.ScalaDocTool
