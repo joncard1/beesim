@@ -14,7 +14,7 @@ This file holds the longer-term direction, open questions that need answering be
   - What should the top of each range show: every bee active (saturation), or the temperature running away once the bees can't keep up?
   - Should the ranges be derived from the populations instead of fixed? For example, all ~3,300 bees removing 0.002 each balance a heat in of about 6.6, versus the current maximum of 3.0.
   - The temperature axis is fixed at 19.8–23°, so runs beyond the populations' thresholds would leave the chart. Should the axis grow with the data?
-  - In theory the simulations respond to changing the constants in `MainJFX`, but that has never been tried. Is that an intended way to experiment, and should it be tested?
+  - In theory the simulations respond to changing the constants in `BeeSimulatorApp`, but that has never been tried. Is that an intended way to experiment, and should it be tested?
 - **Further static analysis in CI.** scalafmt and coverage are issues. Other candidates, in rough order of effort: compiler warnings as errors (`-Wunused:all`, `-Werror`), scalafix lint rules, WartRemover. Which, if any, are worth the noise for this project?
 
 ## Notes
