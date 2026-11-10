@@ -45,6 +45,23 @@ class BeeChartControl() extends Initializable {
     */
   lazy val xAxis: NumberAxis = new NumberAxis(xAxisDelegate)
 
+  @FXML
+  var yAxisDelegate: jfxch.NumberAxis = uninitialized
+  lazy val yAxis: NumberAxis = new NumberAxis(yAxisDelegate)
+
+  /**
+    * The largest value in the summary this chart is currently showing. The
+    * charts summarizing the different populations watch each other's maximums
+    * to share a y-axis, so that they can be compared.
+    */
+  val maximumValue = DoubleProperty(0.0)
+
+  /**
+    * The largest value the y-axis has to show, shared by all of the bee charts.
+    * When it is 0, the chart chooses its own y-axis range.
+    */
+  val sharedMaximum = DoubleProperty(0.0)
+
   /**
     * The minimum temperature to display. This is the lowest value on the X-axis.
     */
@@ -72,6 +89,7 @@ class BeeChartControl() extends Initializable {
     xAxis.lowerBound <== minimumTemperature
     xAxis.upperBound <== maximumTemperature
     chart.data() = FXCollections.observableArrayList()
+    sharedMaximum.onChange((_, _, newMaximum) => scaleYAxis(newMaximum.doubleValue()))
 
     minimumTemperature.onChange((_, _, newTemperature) =>
       regenerateCharts(
@@ -109,7 +127,8 @@ class BeeChartControl() extends Initializable {
         simulatorData()
       )
     )
-    simulatorData.onChange((_, _, newData) =>
+    simulatorData.onChange((_, _, newData) => {
+      chart.title = newData.map(_.name).getOrElse("")
       regenerateCharts(
         minimumTemperature(),
         maximumTemperature(),
@@ -117,12 +136,7 @@ class BeeChartControl() extends Initializable {
         processor(),
         newData
       )
-      /*
-      if(newData.isDefined) {
-        view.indicatorPosition() = Option(newData.get.finalTemperature)
-      }
-      */
-    )
+    })
   }
 
   /**
@@ -143,24 +157,42 @@ class BeeChartControl() extends Initializable {
   ) = {
     if (dataset.isDefined && processor.isDefined) {
       val binWidth = (maximumTemperature - minimumTemperature) / numberOfBins
+      val values = processor.get.transform(
+        minimumTemperature,
+        maximumTemperature,
+        numberOfBins,
+        dataset.get.bees
+      )
       chart.data() = ObservableBuffer(
         XYChart.Series[Number, Number](
           dataset.get.name,
           ObservableBuffer.from(
-            processor.get
-              .transform(
-                minimumTemperature,
-                maximumTemperature,
-                numberOfBins,
-                dataset.get.bees
-              )
-              .zipWithIndex
+            values.zipWithIndex
               .map((value, bin) => {
                 XYChart.Data[Number, Number](processor.get.binPosition(minimumTemperature, binWidth, bin), value)
               })
           )
         )
       )
+      maximumValue() = values.maxOption.getOrElse(0).toDouble
+    }
+  }
+
+  /**
+    * Fixes the y-axis to show from 0 to at least the given maximum, or lets it
+    * range automatically if the maximum is 0.
+    *
+    * @param maximum The largest value the y-axis has to show.
+    */
+  private def scaleYAxis(maximum: Double): Unit = {
+    if (maximum > 0) {
+      val (upperBound, tickUnit) = AxisScale.forMaximum(maximum)
+      yAxis.autoRanging = false
+      yAxis.lowerBound = 0
+      yAxis.upperBound = upperBound
+      yAxis.tickUnit = tickUnit
+    } else {
+      yAxis.autoRanging = true
     }
   }
 }

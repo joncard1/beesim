@@ -1,11 +1,11 @@
 <?import javafx.scene.chart.*?>
 <?import beesimulator.ui.LineChartWithIndicator?>
 
-<LineChartWithIndicator fx:controller="beesimulator.ui.BeeChartControl" fx:id="chartDelegate" xmlns:fx="http://javafx.com/fxml" xmlns="http://javafx.com/javafx/2.2" prefHeight="200" prefWidth="240" animated="false" style="-fx-create-symbols: false">
+<LineChartWithIndicator fx:controller="beesimulator.ui.BeeChartControl" fx:id="chartDelegate" xmlns:fx="http://javafx.com/fxml" xmlns="http://javafx.com/javafx/2.2" prefHeight="200" prefWidth="240" animated="false" legendVisible="false" stylesheets="@beechart.css" style="-fx-create-symbols: false">
   <xAxis>
     <NumberAxis fx:id="xAxisDelegate" side="BOTTOM" autoRanging="false" forceZeroInRange="false" />
   </xAxis>
   <yAxis>
-    <NumberAxis side="LEFT" />
+    <NumberAxis fx:id="yAxisDelegate" side="LEFT" />
   </yAxis>
 </LineChartWithIndicator>
