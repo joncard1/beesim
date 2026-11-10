@@ -21,10 +21,10 @@ The UI tests run JavaFX headlessly through Monocle, so `sbt test` doesn't open a
 ## Making a change
 
 1. For anything bigger than a small fix, open or comment on an issue first, so we can agree on the approach.
-2. Create a branch from `master` for the change. Keep each pull request to one change; separate improvements go in separate pull requests.
+2. Fork the repository and create a branch in your fork for the change. If you're a collaborator with write access to this repository, you can create the branch here instead. Either way, base the branch on `master` and keep each pull request to one change; separate improvements go in separate pull requests.
 3. Add or update tests. The simulation logic is tested directly, and the UI with headless tests in `src/test/scala/beesimulator/ui`.
 4. Run `sbt test` and make sure it passes.
-5. Open a pull request against `master`, fill in the template, and link the issue with "Fixes #N".
+5. Open a pull request against this repository's `master` branch, fill in the template, and link the issue with "Fixes #N".
 
 ### Conventions
 
@@ -37,4 +37,4 @@ The UI tests run JavaFX headlessly through Monocle, so `sbt test` doesn't open a
 
 ## License
 
-The project's license hasn't been chosen yet.
+This project is licensed under the [Apache License 2.0](LICENSE). Unless you say otherwise, any contribution you submit for inclusion is licensed under the same terms, as described in section 5 of the license.
