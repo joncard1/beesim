@@ -21,7 +21,10 @@ object JavaFxToolkit {
   val HeadlessProperties = Map(
     "glass.platform" -> "Monocle",
     "monocle.platform" -> "Headless",
-    "prism.order" -> "sw"
+    "prism.order" -> "sw",
+    // TestFX's robot drives the UI through Monocle's own robot.
+    "testfx.robot" -> "glass",
+    "testfx.headless" -> "true"
   )
 
   /**
@@ -35,6 +38,9 @@ object JavaFxToolkit {
     }
     val started = new CountDownLatch(1)
     Platform.startup(() => started.countDown())
+    // Tests open and close windows; without this, JavaFX shuts down when the
+    // first test closes its last window.
+    Platform.setImplicitExit(false)
     started.await(10, TimeUnit.SECONDS)
   }.recover { case _: IllegalStateException => true }.getOrElse(false)
 
