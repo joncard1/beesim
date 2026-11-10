@@ -1,0 +1,20 @@
+name: Create Dependabot Issue
+on:
+  pull_request:
+    types: [opened]
+
+jobs:
+  create_issue:
+    runs-on: ubuntu-latest
+    if: github.event.pull_request.user.login == 'dependabot[bot]'
+    steps:
+      - name: Open Issue for Dependabot PR
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_TITLE: ${{ github.event.pull_request.title }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          PR_URL: ${{ github.event.pull_request.html_url }}
+        run: |
+          TITLE="Review Dependabot Security Alert: $PR_TITLE"
+          BODY="Dependabot has opened PR #$PR_NUMBER to address a security vulnerability. Check the details here: $PR_URL"
+          gh issue create --title "$TITLE" --body "$BODY" --label "security,dependencies"
