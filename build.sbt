@@ -9,13 +9,8 @@ val fasterxml3Version = "3.2.4"   // Scaladoc 3.10.0 apparently has dependencies
 val fasterxml2Version = "2.21.8"  // Latest patch of the most recent LTS.
 val jsoupVersion = "1.24.1"       // Latest patch. They don't seem to have a LTS policy, according to Google
 
-libraryDependencies += "org.scala-lang.modules" %% "scala-parser-combinators" % "2.1.1"
-libraryDependencies += "org.scala-lang.modules" %% "scala-swing" % "3.0.0"
-libraryDependencies += "org.scalatest" %% "scalatest" % "3.2.11" % Test
+libraryDependencies += "org.scalatest" %% "scalatest" % "3.2.19" % Test
 libraryDependencies += "org.testfx" % "openjfx-monocle" % "21.0.2" % Test
-libraryDependencies += "org.scalamock" % "scalamock_2.13" % "5.1.0" % Test
-libraryDependencies += "org.scalatestplus" %% "scalacheck-1-16" % "3.2.13.0" % Test
-libraryDependencies += "io.reactivex" % "rxscala_2.13" % "0.27.0"
 libraryDependencies += "org.scalafx" %% "scalafx" % "25.0.2-R37"
 libraryDependencies += "com.fasterxml.jackson.core" % "jackson-core" % fasterxml2Version % Configurations.ScalaDocTool
 libraryDependencies += "com.fasterxml.jackson.core" % "jackson-databind" % fasterxml2Version % Configurations.ScalaDocTool

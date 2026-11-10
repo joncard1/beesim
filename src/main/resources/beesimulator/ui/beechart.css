@@ -1,0 +1,11 @@
+/**
+ * Each bee chart shows the name of its population as its title. A chart's
+ * legend is hidden by JavaFX when it doesn't fit, which long population names
+ * don't, so the title wraps instead, and the single-series legend is turned
+ * off in beechart.fxml.
+ */
+.chart-title {
+  -fx-wrap-text: true;
+  -fx-text-alignment: center;
+  -fx-font-size: 1.1em;
+}
