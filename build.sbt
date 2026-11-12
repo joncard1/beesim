@@ -22,3 +22,22 @@ libraryDependencies += "tools.jackson.core" % "jackson-databind" % fasterxml3Ver
 
 // Drives the UI in tests the way a user does (dragging, clicking).
 libraryDependencies += "org.testfx" % "testfx-core" % "4.0.18" % Test
+
+ThisBuild / assemblyMergeStrategy := {
+  // Discard module-info.class files from modularized jars
+  case PathList("module-info.class")                                 => MergeStrategy.discard
+  case PathList("META-INF", "versions", xs @ _, "module-info.class") => MergeStrategy.discard
+
+  case PathList("META-INF", "MANIFEST.MF") => MergeStrategy.discard
+  case PathList("META-INF", xs @ _*)
+      if xs.lastOption.exists(s => s.endsWith(".SF") || s.endsWith(".DSA") || s.endsWith(".RSA")) =>
+    MergeStrategy.discard
+  case PathList("META-INF", "services", xs @ _*) => MergeStrategy.filterDistinctLines
+  case PathList("META-INF", xs @ _*)             => MergeStrategy.discard
+  case x if x.contains("jniconfig")              => MergeStrategy.first
+  case x if x.contains("resourcebundles")        => MergeStrategy.first
+
+  case x =>
+    val oldStrategy = (ThisBuild / assemblyMergeStrategy).value
+    oldStrategy(x)
+}
