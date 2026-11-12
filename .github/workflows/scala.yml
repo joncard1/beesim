@@ -69,7 +69,7 @@ jobs:
       uses: actions/upload-artifact@v7
       with:
         name: executable
-        path: target/**/sim-assembly-1.0.jar  # TODO: Don't like "-assembly", don't like "sim", can I make the version configurable?
+        path: target/**/beesim-assembly-1.0.jar  # TODO: Don't like "-assembly", don't like "sim", can I make the version configurable?
         if-no-files-found: ignore
 
       # Optional: This step uploads information to the GitHub dependency graph and unblocking Dependabot alerts for the repository
