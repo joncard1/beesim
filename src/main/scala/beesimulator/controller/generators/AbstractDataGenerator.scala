@@ -61,7 +61,7 @@ abstract class AbstractDataGenerator[T <: SimState](name: String, numberOfIterat
       forcing2Value,
       lastTemperature,
       name,
-      finalSim.activeBees.length,
+      finalSim.activeActors.length,
       reverseTemperatures,
       bees.map(bee => BeeHistogramItem(bee))
     )

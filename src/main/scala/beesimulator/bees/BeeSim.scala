@@ -15,8 +15,8 @@ import beesimulator.simulator._
   *   in a method in the simulator class when the class is genericized.
   */
 abstract class BeeSim[T <: SimState](
-    val inactiveBees: Seq[Bee[T]],
-    val activeBees: Seq[Bee[T]],
-    val state: T
+    override val inactiveActors: Seq[Bee[T]],
+    override val activeActors: Seq[Bee[T]],
+    override val currentState: T
 )(implicit x: SimActorProvider[T, Bee[T]])
-    extends Sim[Double, T, Bee[T]](inactiveBees, activeBees, state) {}
+    extends Sim[Double, T, Bee[T]](inactiveActors, activeActors, currentState) {}

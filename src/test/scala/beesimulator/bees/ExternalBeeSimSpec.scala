@@ -38,11 +38,11 @@ class ExternalBeeSimSpec extends AnyWordSpec with Matchers {
         import f.provider
 
         val sim2 = f.sim.step(22, 0.5)
-        sim2.activeBees.length shouldBe 1
+        sim2.activeActors.length shouldBe 1
         sim2.currentState.currentTemperature shouldBe 20.5
         // Heat in: 0.5 * (22 - 20.5) = 0.75. Heat out: 0.5.
         val sim3 = sim2.step(22, 0.5)
-        sim3.activeBees.length shouldBe 1
+        sim3.activeActors.length shouldBe 1
         sim3.currentState.currentTemperature shouldBe 20.75
       }
     }
