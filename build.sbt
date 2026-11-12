@@ -34,8 +34,6 @@ ThisBuild / assemblyMergeStrategy := {
     MergeStrategy.discard
   case PathList("META-INF", "services", xs @ _*) => MergeStrategy.filterDistinctLines
   case PathList("META-INF", xs @ _*)             => MergeStrategy.discard
-  case x if x.contains("jniconfig")              => MergeStrategy.first
-  case x if x.contains("resourcebundles")        => MergeStrategy.first
 
   case x =>
     val oldStrategy = (ThisBuild / assemblyMergeStrategy).value
