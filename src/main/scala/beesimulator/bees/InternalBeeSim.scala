@@ -35,13 +35,13 @@ class InternalBeeSimProvider(attributes: InternalSimState)
  * @param x             The provider used to create new instances of the simulator.
  */
 final case class InternalBeeSim(
-    override val inactiveBees: Seq[Bee[InternalSimState]],
-    override val activeBees: Seq[Bee[InternalSimState]],
+    override val inactiveActors: Seq[Bee[InternalSimState]],
+    override val activeActors: Seq[Bee[InternalSimState]],
     override val currentState: InternalSimState
 )(implicit x: SimActorProvider[InternalSimState, Bee[InternalSimState]])
     extends BeeSim[InternalSimState](
-      inactiveBees: Seq[Bee[InternalSimState]],
-      activeBees: Seq[Bee[InternalSimState]],
+      inactiveActors: Seq[Bee[InternalSimState]],
+      activeActors: Seq[Bee[InternalSimState]],
       currentState: InternalSimState
     ) {
 

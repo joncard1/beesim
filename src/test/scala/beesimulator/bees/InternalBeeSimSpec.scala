@@ -33,10 +33,10 @@ class InternalBeeSimSpec extends AnyWordSpec with Matchers {
         import sim1._
 
         val sim2 = sim1.step(1.0, 0.5)
-        sim2.activeBees.length should be(1)
+        sim2.activeActors.length should be(1)
         sim2.currentState.currentTemperature should be(1.5)
         val sim3 = sim2.step(1, 0.5)
-        sim3.activeBees.length should be(2)
+        sim3.activeActors.length should be(2)
         sim3.currentState.currentTemperature shouldBe (1.5)
       }
     }
@@ -55,10 +55,10 @@ class InternalBeeSimSpec extends AnyWordSpec with Matchers {
         import sim1._
 
         val sim2 = sim1.step(1, 0.5)
-        sim2.activeBees.length should be(1)
+        sim2.activeActors.length should be(1)
         sim2.currentState.currentTemperature should be(1.25)
         val sim3 = sim2.step(1, 0.5)
-        sim3.activeBees.length should be(2)
+        sim3.activeActors.length should be(2)
         sim3.currentState.currentTemperature should be(1.25)
       }
     }
@@ -77,10 +77,10 @@ class InternalBeeSimSpec extends AnyWordSpec with Matchers {
         import sim1._
 
         val sim2 = sim1.step(1, 0.5)
-        sim2.activeBees.length should be(1)
+        sim2.activeActors.length should be(1)
         sim2.currentState.currentTemperature should be(1.25)
         val sim3 = sim2.step(1, 0.5)
-        sim3.activeBees.length should be(2)
+        sim3.activeActors.length should be(2)
         sim3.currentState.currentTemperature should be(1.25)
       }
     }
@@ -99,10 +99,10 @@ class InternalBeeSimSpec extends AnyWordSpec with Matchers {
         import sim1._
 
         val sim2 = sim1.step(1, 0.5)
-        sim2.activeBees.length should be(2)
+        sim2.activeActors.length should be(2)
         sim2.currentState.currentTemperature should be(2)
         val sim3 = sim2.step(1, 0.5)
-        sim3.activeBees.length should be(2)
+        sim3.activeActors.length should be(2)
         sim3.currentState.currentTemperature should be(2)
       }
     }
@@ -121,13 +121,13 @@ class InternalBeeSimSpec extends AnyWordSpec with Matchers {
         import sim1._
 
         val sim2 = sim1.step(1, 0.5)
-        sim2.activeBees.length should be(3)
+        sim2.activeActors.length should be(3)
         sim2.currentState.currentTemperature should be(2.5)
         val sim3 = sim2.step(1, 0.5)
-        sim3.activeBees.length should be(3)
+        sim3.activeActors.length should be(3)
         sim3.currentState.currentTemperature should be(2)
         val sim4 = sim3.step(1, 0.5)
-        sim4.activeBees.length should be(2)
+        sim4.activeActors.length should be(2)
         sim4.currentState.currentTemperature should be(2)
       }
     }
@@ -146,16 +146,16 @@ class InternalBeeSimSpec extends AnyWordSpec with Matchers {
         import sim1._
 
         val sim2 = sim1.step(1, 0.5)
-        sim2.activeBees.length should be(4)
+        sim2.activeActors.length should be(4)
         sim2.currentState.currentTemperature should be(3)
         val sim3 = sim2.step(1, 0.5)
-        sim3.activeBees.length should be(3)
+        sim3.activeActors.length should be(3)
         sim3.currentState.currentTemperature should be(2.5)
         val sim4 = sim3.step(1, 0.5)
-        sim4.activeBees.length should be(3)
+        sim4.activeActors.length should be(3)
         sim4.currentState.currentTemperature should be(2)
         val sim5 = sim4.step(1, 0.5)
-        sim5.activeBees.length should be(2)
+        sim5.activeActors.length should be(2)
         sim5.currentState.currentTemperature should be(2)
       }
     }
@@ -174,16 +174,16 @@ class InternalBeeSimSpec extends AnyWordSpec with Matchers {
         import sim1._
 
         val sim2 = sim1.step(2, 0.5)
-        sim2.activeBees.length should be(1)
+        sim2.activeActors.length should be(1)
         sim2.currentState.currentTemperature should be(2.5)
         val sim3 = sim2.step(2, 0.5)
-        sim3.activeBees.length should be(3)
+        sim3.activeActors.length should be(3)
         sim3.currentState.currentTemperature should be(3.0)
         val sim4 = sim3.step(2, 0.5)
-        sim4.activeBees.length should be(3)
+        sim4.activeActors.length should be(3)
         sim4.currentState.currentTemperature should be(3.5)
         val sim5 = sim4.step(2, 0.5)
-        sim5.activeBees.length should be(4)
+        sim5.activeActors.length should be(4)
         sim5.currentState.currentTemperature should be(3.5)
       }
     }
@@ -222,10 +222,10 @@ class InternalBeeSimSpec extends AnyWordSpec with Matchers {
         import sim1._
 
         val sim2 = sim1.step(2, 0.5)
-        sim2.activeBees.length should be(2)
+        sim2.activeActors.length should be(2)
         sim2.currentState.currentTemperature should be(2)
         val sim3 = sim2.step(2, 0.5)
-        sim3.activeBees.length should be(4)
+        sim3.activeActors.length should be(4)
         sim3.currentState.currentTemperature should be(2)
       }
     }
@@ -298,16 +298,16 @@ class InternalBeeSimSpec extends AnyWordSpec with Matchers {
         import sim1._
 
         val sim2 = sim1.step(3, 0.5)
-        sim2.activeBees.length should be(4)
+        sim2.activeActors.length should be(4)
         sim2.currentState.currentTemperature should be(2)
         val sim3 = sim2.step(3, 0.5)
-        sim3.activeBees.length should be(8)
+        sim3.activeActors.length should be(8)
         sim3.currentState.currentTemperature should be(1)
         val sim4 = sim3.step(3, 0.5)
-        sim4.activeBees.length should be(4)
+        sim4.activeActors.length should be(4)
         sim4.currentState.currentTemperature should be(2)
         val sim5 = sim4.step(3, 0.5)
-        sim5.activeBees.length should be(8)
+        sim5.activeActors.length should be(8)
         sim5.currentState.currentTemperature should be(1)
       }
     }
@@ -380,40 +380,40 @@ class InternalBeeSimSpec extends AnyWordSpec with Matchers {
         import sim1._
 
         val sim2 = sim1.step(2.9, 0.5)
-        sim2.activeBees.length should be(4)
+        sim2.activeActors.length should be(4)
         sim2.currentState.currentTemperature should be(1.9 +- 0.01)
         val sim3 = sim2.step(2.9, 0.5)
-        sim3.activeBees.length should be(8)
+        sim3.activeActors.length should be(8)
         sim3.currentState.currentTemperature should be(0.8 +- 0.01)
         val sim4 = sim3.step(2.9, 0.5)
-        sim4.activeBees.length should be(4)
+        sim4.activeActors.length should be(4)
         sim4.currentState.currentTemperature should be(1.7 +- 0.01)
         val sim5 = sim4.step(2.9, 0.5)
-        sim5.activeBees.length should be(7)
+        sim5.activeActors.length should be(7)
         sim5.currentState.currentTemperature should be(1.1 +- 0.01)
         val sim6 = sim5.step(2.9, 0.5)
-        sim6.activeBees.length should be(5)
+        sim6.activeActors.length should be(5)
         sim6.currentState.currentTemperature should be(1.5 +- 0.01)
         val sim7 = sim6.step(2.9, 0.5)
-        sim7.activeBees.length should be(6)
+        sim7.activeActors.length should be(6)
         sim7.currentState.currentTemperature should be(1.4 +- 0.01)
         val sim8 = sim7.step(2.9, 0.5)
-        sim8.activeBees.length should be(6)
+        sim8.activeActors.length should be(6)
         sim8.currentState.currentTemperature should be(1.3 +- 0.01)
         val sim9 = sim8.step(2.9, 0.5)
-        sim9.activeBees.length should be(6)
+        sim9.activeActors.length should be(6)
         sim9.currentState.currentTemperature should be(1.2 +- 0.01)
         val sim10 = sim9.step(2.9, 0.5)
-        sim10.activeBees.length should be(5)
+        sim10.activeActors.length should be(5)
         sim10.currentState.currentTemperature should be(1.6 +- 0.01)
         val sim11 = sim10.step(2.9, 0.5)
-        sim11.activeBees.length should be(7)
+        sim11.activeActors.length should be(7)
         sim11.currentState.currentTemperature should be(1.0 +- 0.01)
         val sim12 = sim11.step(2.9, 0.5)
-        sim12.activeBees.length should be(4) // floating point math
+        sim12.activeActors.length should be(4) // floating point math
         sim12.currentState.currentTemperature should be(1.9 +- 0.01)
         val sim13 = sim12.step(2.9, 0.5)
-        sim13.activeBees.length should be(8)
+        sim13.activeActors.length should be(8)
         sim13.currentState.currentTemperature should be(0.8 +- 0.01)
       }
     }
