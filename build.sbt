@@ -1,7 +1,7 @@
 scalaVersion := "3.10.0"
 
-name := "sim"
-organization := "com.jackflashtech"
+name := "beesim"
+organization := "jackflashtech"
 version := "1.0"
 
 // Forced version upgrades in response to Dependabot alerts
