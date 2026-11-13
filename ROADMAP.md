@@ -8,6 +8,18 @@ This file holds the longer-term direction, open questions that need answering be
 
 - **Show the equilibrium on the cumulative chart.** For simple bees, the settled state is where the cumulative distribution reaches heat in ÷ heat per bee, so a horizontal line at that height would show the indicator crossing it, which is the core idea of the book. With many populations on screen this would be cluttered; it becomes useful if the UI evolves to let the reader limit which populations are shown.
 
+- **There should be a population that is just a normal distribution** This is the most likely actual shape for a population of bees, based on my limited knowledge of genetics. It would be good to have it as a comparison.
+
+- **There should be a population with the improved integrals, but with half of the population holding a different "correct" temperature** I wonder what the fight would look like.
+
+- **You should be able to select which populations are shown** The chart is cluttered in some places.
+
+- **Reorder the populations** This is probably dumb, but drag-and-drop the charts around.
+
+- **Make the number of steps adjustable** There is stuff happening with regard to derivatives (for instance) that are being obscured by how many steps are being calculated and shown.
+
+- **Label the axes on the population summary charts** Probably a label on the whole section. Also, not sure if the labels on the population charts work as well as showing the legend would be. Not sure all of the charts need to have the axes labelled, but something needs to indicate what those numbers mean.
+
 ## Open questions
 
 - **Slider ranges.** At the top of its range, the heat in slider doesn't reach the extreme behaviour of most populations. Questions to answer before this becomes an issue:

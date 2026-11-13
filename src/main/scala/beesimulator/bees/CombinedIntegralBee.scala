@@ -2,8 +2,8 @@ package beesimulator.bees
 
 /** This bee is capable of eliminating steady state error, but it assumes that
   * there is a shared knowledge across the hive of the "correct" temperature.
-  * This is still consistent with LOOKUP AND LOOKUP's paper, which discusses the
-  * phenomenon that the daughters' <i>task switching</i> thresholds are
+  * This is still consistent with the Jones et al paper (2004), which discusses
+  * the phenomenon that the daughters' <i>task switching</i> thresholds are
   * different, and that evolution has created a mechanism selecting for wide
   * distributions of thresholds in the hive rather than specific temperature
   * preferences, and does not preclude the possibility that there is an
@@ -11,9 +11,6 @@ package beesimulator.bees
   * was disappointing to find that a distributed system cannot seem to eliminate
   * steady state error. It may even be provable, though I don't think I've done
   * that strictly.
-  *
-  * TODO: It might be cool to see what happens if half the population has one
-  * control point and half has another.
   *
   * @param threshold
   *   The task switching threshold
