@@ -2,7 +2,7 @@ package beesimulator
 
 import javafx.fxml.FXMLLoader
 import javafx.{fxml => jfxf, scene => jfxs}
-import scalafx.Includes._
+import scalafx.scene.SceneIncludes._
 import scalafx.application.JFXApp3
 import scalafx.scene.Scene
 import scalafx.stage.Screen
