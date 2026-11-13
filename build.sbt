@@ -18,10 +18,11 @@ libraryDependencies += "org.testfx" % "testfx-core" % "4.0.18" % Test
 
 // Dependency overrides to address security issues raised by Dependabot.
 // Scaladoc 3.10.0 apparently has dependencies on both fasterxml jackson-core 3 and 2, which seems unwise, but the dependency on 3 is on 3.2.1 and the last LTS version of 3 is 3.1, so this is the latest release.
-val fasterxml3Version = "3.2.4" 
+val fasterxml3Version = "3.2.4"
 val fasterxml2Version = "2.21.8" // Latest patch of the most recent LTS.
 val jsoupVersion = "1.24.1" // Latest patch. They don't seem to have a LTS policy, according to Google
-val assertjVersion = "3.27.7" // Latest patch. They don't seem to have an LTS policy, so this is the latest patch in the same release version.
+// Latest patch. They don't seem to have an LTS policy, so this is the latest patch in the same release version.
+val assertjVersion = "3.27.7"
 libraryDependencies += "com.fasterxml.jackson.core" % "jackson-core" % fasterxml2Version % Configurations.ScalaDocTool
 libraryDependencies += "com.fasterxml.jackson.core" % "jackson-databind" % fasterxml2Version % Configurations.ScalaDocTool
 libraryDependencies += "org.jsoup" % "jsoup" % jsoupVersion % Configurations.ScalaDocTool

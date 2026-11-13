@@ -63,9 +63,11 @@ jobs:
         if-no-files-found: ignore
     - name: Build jar file
       # if: github.event_name == 'push'
+      if: always()
       run: sbt "assembly ; shutdown"
     - name: Upload Jar file
       # if: github.event_name == 'push'
+      if: always()
       uses: actions/upload-artifact@v7
       with:
         name: executable
