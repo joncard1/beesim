@@ -4,29 +4,34 @@ name := "beesim"
 organization := "jackflashtech"
 version := "1.0"
 
-// Forced version upgrades in response to Dependabot alerts
-val fasterxml3Version =
-  "3.2.4" // Scaladoc 3.10.0 apparently has dependencies on both fasterxml jackson-core 3 and 2, which seems unwise, but the dependency on 3 is on 3.2.1 and the last LTS version of 3 is 3.1, so this is the latest release.
-val fasterxml2Version = "2.21.8" // Latest patch of the most recent LTS.
-val jsoupVersion = "1.24.1" // Latest patch. They don't seem to have a LTS policy, according to Google
-val assertjVersion = "3.27.7"
 val javafxVersion = "25.0.2"
 
+// Compile-time dependencies
+// Would like to also remove media, I suspect, but can't because combo boxes use a class from that package.
+libraryDependencies += "org.scalafx" %% "scalafx" % s"$javafxVersion-R37" exclude ("org.openjfx", "javafx-web")
+
+// Test dependencies
 libraryDependencies += "org.scalatest" %% "scalatest" % "3.2.19" % Test
 libraryDependencies += "org.testfx" % "openjfx-monocle" % "21.0.2" % Test
-libraryDependencies += "org.assertj" % "assertj-core" % assertjVersion % Test // Updated from 3.13.2 in response to Dependabot alert #30
-// Would like to also remove media, I suspect, but can't because combo boxes use a class from that package.
-libraryDependencies += "org.scalafx" %% "scalafx" % "25.0.2-R37" exclude ("org.openjfx", "javafx-web")
+// Drives the UI in tests the way a user does (dragging, clicking).
+libraryDependencies += "org.testfx" % "testfx-core" % "4.0.18" % Test
+
+// Dependency overrides to address security issues raised by Dependabot.
+// Scaladoc 3.10.0 apparently has dependencies on both fasterxml jackson-core 3 and 2, which seems unwise, but the dependency on 3 is on 3.2.1 and the last LTS version of 3 is 3.1, so this is the latest release.
+val fasterxml3Version = "3.2.4" 
+val fasterxml2Version = "2.21.8" // Latest patch of the most recent LTS.
+val jsoupVersion = "1.24.1" // Latest patch. They don't seem to have a LTS policy, according to Google
+val assertjVersion = "3.27.7" // Latest patch. They don't seem to have an LTS policy, so this is the latest patch in the same release version.
 libraryDependencies += "com.fasterxml.jackson.core" % "jackson-core" % fasterxml2Version % Configurations.ScalaDocTool
 libraryDependencies += "com.fasterxml.jackson.core" % "jackson-databind" % fasterxml2Version % Configurations.ScalaDocTool
 libraryDependencies += "org.jsoup" % "jsoup" % jsoupVersion % Configurations.ScalaDocTool
 libraryDependencies += "tools.jackson.core" % "jackson-core" % fasterxml3Version % Configurations.ScalaDocTool
 libraryDependencies += "tools.jackson.core" % "jackson-databind" % fasterxml3Version % Configurations.ScalaDocTool
+libraryDependencies += "org.assertj" % "assertj-core" % assertjVersion % Test // Updated from 3.13.2 in response to Dependabot alert #30
 
-// Drives the UI in tests the way a user does (dragging, clicking).
-libraryDependencies += "org.testfx" % "testfx-core" % "4.0.18" % Test
+// Assembly configuration
 
-// Adding all of the platforms into the classpath to create the assembly package. Not sure if this could be done only for packaging, rather than testing, but I'd prefer to do it after testing in case this disrupts the load order on different platforms or just bloats the dependencies on developer computers. Better to let the classifier system just resolve everything in those cases.
+// Adding all of the platforms into the dependency list to create the assembly package. Added to the Runtime configuration to avoid polluting the developer environments with extra dependencies they don't need, and which could confuse their local tests.
 val javafxModules = Seq(
   "base",
   "controls",
@@ -39,7 +44,7 @@ val javafxPlatforms = Seq("mac-aarch64", "mac", "linux", "win") // "mac" = Intel
 libraryDependencies ++= (for {
   m <- javafxModules
   p <- javafxPlatforms
-} yield "org.openjfx" % s"javafx-$m" % javafxVersion classifier p)
+} yield ("org.openjfx" % s"javafx-$m" % javafxVersion classifier p) % Configurations.Runtime)
 
 // This merge strategy was basically cut-and-paste from Google Search AI. It is to address issues of deduplication found when creating an fat assembly with JavaFX jars.
 ThisBuild / assemblyMergeStrategy := {
