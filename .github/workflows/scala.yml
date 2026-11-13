@@ -62,12 +62,10 @@ jobs:
         path: target/**/scoverage-report/
         if-no-files-found: ignore
     - name: Build jar file
-      # if: github.event_name == 'push'
-      if: always()
+      if: github.event_name == 'push'
       run: sbt "assembly ; shutdown"
     - name: Upload Jar file
-      # if: github.event_name == 'push'
-      if: always()
+      if: github.event_name == 'push'
       uses: actions/upload-artifact@v7
       with:
         name: executable
