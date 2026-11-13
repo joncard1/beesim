@@ -16,7 +16,7 @@ libraryDependencies += "org.scalatest" %% "scalatest" % "3.2.19" % Test
 libraryDependencies += "org.testfx" % "openjfx-monocle" % "21.0.2" % Test
 libraryDependencies += "org.assertj" % "assertj-core" % assertjVersion % Test // Updated from 3.13.2 in response to Dependabot alert #30
 // Would like to also remove media, I suspect, but can't because combo boxes use a class from that package.
-libraryDependencies += "org.scalafx" %% "scalafx" % "25.0.2-R37" exclude("org.openjfx", "javafx-web")
+libraryDependencies += "org.scalafx" %% "scalafx" % "25.0.2-R37" exclude ("org.openjfx", "javafx-web")
 libraryDependencies += "com.fasterxml.jackson.core" % "jackson-core" % fasterxml2Version % Configurations.ScalaDocTool
 libraryDependencies += "com.fasterxml.jackson.core" % "jackson-databind" % fasterxml2Version % Configurations.ScalaDocTool
 libraryDependencies += "org.jsoup" % "jsoup" % jsoupVersion % Configurations.ScalaDocTool
@@ -27,7 +27,14 @@ libraryDependencies += "tools.jackson.core" % "jackson-databind" % fasterxml3Ver
 libraryDependencies += "org.testfx" % "testfx-core" % "4.0.18" % Test
 
 // Adding all of the platforms into the classpath to create the assembly package. Not sure if this could be done only for packaging, rather than testing, but I'd prefer to do it after testing in case this disrupts the load order on different platforms or just bloats the dependencies on developer computers. Better to let the classifier system just resolve everything in those cases.
-val javafxModules = Seq("base", "controls", "fxml", "graphics", "media", "swing") // Removed "web" to avoid bloat. Would like to remove "media" as well, but comboboxes seem to need it.
+val javafxModules = Seq(
+  "base",
+  "controls",
+  "fxml",
+  "graphics",
+  "media",
+  "swing"
+) // Removed "web" to avoid bloat. Would like to remove "media" as well, but comboboxes seem to need it.
 val javafxPlatforms = Seq("mac-aarch64", "mac", "linux", "win") // "mac" = Intel Mac
 libraryDependencies ++= (for {
   m <- javafxModules
@@ -47,10 +54,11 @@ ThisBuild / assemblyMergeStrategy := {
   case PathList("META-INF", "services", xs @ _*) => MergeStrategy.filterDistinctLines
   case PathList("META-INF", xs @ _*)             => MergeStrategy.discard
 
-  case x if x.endsWith(".bss") => MergeStrategy.first
-  case x if x.endsWith(".dylib") => MergeStrategy.first
+  case x if x.endsWith(".bss")              => MergeStrategy.first
+  case x if x.endsWith(".dylib")            => MergeStrategy.first
   case x if x.endsWith("VersionInfo.class") => MergeStrategy.first
-  case "javafx-swt.jar" => MergeStrategy.first
+  case "javafx-swt.jar"                     => MergeStrategy.first
+
   case x =>
     val oldStrategy = (ThisBuild / assemblyMergeStrategy).value
     oldStrategy(x)
