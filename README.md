@@ -48,7 +48,7 @@ One approach did eliminate steady-state error, but it relied on the bees respond
 
 ## Running the simulator
 
-There is no packaged download yet, so the simulator is run from its source code:
+There is no formally packaged download yet, so the simulator is run from its source code (you may be able to get jar file from the most recent merge into master):
 
 1. Install a recent Java Development Kit (JDK 25 is used for development), for example from [Adoptium](https://adoptium.net/).
 2. Install [sbt](https://www.scala-sbt.org/download/), the Scala build tool.
@@ -65,7 +65,7 @@ There is no packaged download yet, so the simulator is run from its source code:
 - **The numbers are illustrative, not measurements.** The constants are chosen to give realistic-looking temperatures in degrees Celsius from realistic-looking heat inputs, but the population size was chosen to be a round number, and values such as the hive's specific heat and each bee's cooling ability were chosen to fit. The simulator shows that emergent behavior *can* regulate temperature this way; it doesn't model a particular real hive.
 - **The populations are built in.** New populations can be added by a programmer (see [CONTRIBUTING.md](CONTRIBUTING.md)), but not from within the application.
 - **The slider ranges don't reach every population's extremes.** At the top of the heat slider, most populations still haven't reached their limits, and the temperature chart's scale is fixed.
-- **It has to be built from source** and needs a recent JDK.
+- **It has to be built from source** and needs a recent JDK. (A packaged jar file may be found in the most recent merge to master, but we don't have formal releases with fixed milestones and guaranteed stability)
 
 ## For developers
 
