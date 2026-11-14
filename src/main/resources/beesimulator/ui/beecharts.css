@@ -8,6 +8,11 @@
  * directly, which would leave the legends in the default colours. Each bee
  * chart has a single series, which uses CHART_COLOR_1, so each bee chart
  * redefines CHART_COLOR_1 as the colour of its population.
+ *
+ * The default theme only has eight colours and starts again at CHART_COLOR_1
+ * for the ninth series, so the series after the eighth are given the extra
+ * colours CHART_COLOR_9 onwards by their "seriesN" style class, on both the
+ * line and the legend symbol.
  */
 #borderPane {
   -fx-background-color: linear-gradient(to left bottom, reflect, #cccccc, #aaaaaa);
@@ -59,7 +64,19 @@
   CHART_COLOR_6: #860061;
   CHART_COLOR_7: #c62b00;
   CHART_COLOR_8: #ff5700;
+  CHART_COLOR_9: #007a5e;
+  CHART_COLOR_10: #e377c2;
+  CHART_COLOR_11: #8c564b;
+  CHART_COLOR_12: #555555;
 }
+.chart-series-line.series8 { -fx-stroke: CHART_COLOR_9; }
+.chart-series-line.series9 { -fx-stroke: CHART_COLOR_10; }
+.chart-series-line.series10 { -fx-stroke: CHART_COLOR_11; }
+.chart-series-line.series11 { -fx-stroke: CHART_COLOR_12; }
+.chart-line-symbol.series8 { -fx-background-color: CHART_COLOR_9, white; }
+.chart-line-symbol.series9 { -fx-background-color: CHART_COLOR_10, white; }
+.chart-line-symbol.series10 { -fx-background-color: CHART_COLOR_11, white; }
+.chart-line-symbol.series11 { -fx-background-color: CHART_COLOR_12, white; }
 #beechart-0 { CHART_COLOR_1: #f9d900; }
 #beechart-1 { CHART_COLOR_1: #a9e200; }
 #beechart-2 { CHART_COLOR_1: #22bad9; }
@@ -68,6 +85,10 @@
 #beechart-5 { CHART_COLOR_1: #860061; }
 #beechart-6 { CHART_COLOR_1: #c62b00; }
 #beechart-7 { CHART_COLOR_1: #ff5700; }
+#beechart-8 { CHART_COLOR_1: #007a5e; }
+#beechart-9 { CHART_COLOR_1: #e377c2; }
+#beechart-10 { CHART_COLOR_1: #8c564b; }
+#beechart-11 { CHART_COLOR_1: #555555; }
 
 .temperature-indicator {
   -fx-stroke: CHART_COLOR_1;
