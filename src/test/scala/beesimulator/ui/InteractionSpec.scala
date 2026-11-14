@@ -64,7 +64,7 @@ class InteractionSpec extends AnyWordSpec with Matchers with Eventually {
         assert(JavaFxToolkit.available, "JavaFX could not start; see JavaFxToolkit")
         val f = new Fixture()
         try {
-          eventually(f.finalTemperatures should have size 8)
+          eventually(f.finalTemperatures should have size f.internal.generator.numberOfFamilies)
           val startValue = JavaFxToolkit.onFxThread(f.heatFlowSlider.getValue)
           val thumb: Node = JavaFxToolkit.onFxThread(f.heatFlowSlider.lookup(".thumb"))
           // Drag upwards in small steps, as a user would, which sends many
@@ -89,12 +89,12 @@ class InteractionSpec extends AnyWordSpec with Matchers with Eventually {
         assert(JavaFxToolkit.available, "JavaFX could not start; see JavaFxToolkit")
         val f = new Fixture()
         try {
-          eventually(f.finalTemperatures should have size 8)
+          eventually(f.finalTemperatures should have size f.internal.generator.numberOfFamilies)
           for (
             (name, series) <- Seq(
-              f.external.simulatorName -> 3,
-              f.internal.simulatorName -> 8,
-              f.external.simulatorName -> 3
+              f.external.simulatorName -> f.external.generator.numberOfFamilies,
+              f.internal.simulatorName -> f.internal.generator.numberOfFamilies,
+              f.external.simulatorName -> f.external.generator.numberOfFamilies
             )
           ) {
             f.robot.clickOn(f.simulationMenu)

@@ -138,6 +138,26 @@ object InternalSimulationInitializer extends SimulationInitializer {
     )
     aggregateGenerator.addDataGenerator(improvedIntegralGenerator)
 
+    // Normally distributed populations, the same size as the bimodal one.
+    for (
+      (name, mean, standardDeviation) <- Seq(
+        ("Normal distribution, wide", 21.5, 0.75),
+        ("Normal distribution, narrow", 21.5, 0.25),
+        ("Normal distribution, low", 20.75, 0.75)
+      )
+    ) {
+      aggregateGenerator.addDataGenerator(
+        new NormalGenerator(
+          name,
+          numberOfFathers * numberOfDaughters,
+          mean,
+          standardDeviation,
+          internalInitialState,
+          datasetCreator
+        )
+      )
+    }
+
     new Simulation() {
       val forcingVariable1Name = "Heat In"
       val forcingVariable2Name = "Heat Flow per Bee"

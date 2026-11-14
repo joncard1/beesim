@@ -18,7 +18,7 @@ The simulator models exactly that:
 - Each active bee removes a little heat; heat also flows into the hive.
 - Step by step, the temperature changes with the balance between the two, and each bee decides again.
 
-Different populations of bees are built in, with their thresholds spread in different ways: daughters of many fathers mixed together, a single father, two or several clusters, and bees that also react to how fast the temperature is changing or to how long it has been too warm.
+Different populations of bees are built in, with their thresholds spread in different ways: daughters of many fathers mixed together, a single father, two or several clusters, normal distributions, and bees that also react to how fast the temperature is changing or to how long it has been too warm.
 There are some assumptions that don't necessarily match reality; my interest is in examining the algorithm, not actual bees. The most important possibly-silly assumption is that the daughters of a particular father will have temperature thresholds linearly centered around the father's threshold. Like I said, this may be silly, but even in this case the more fathers there are the more the distribution of the entire hive will become normally distributed. You can start to see that in the populations labelled "Multiple Fathers"; these are multiple linear distributions layered on top of each other, and the populations are starting to look more bell-shaped already. Some of the population shapes are basically chosen creatively; there's every chance that such populations can't exist in reality.
 
 There are two simulations:

@@ -185,7 +185,7 @@ class MainControllerSpec extends AnyWordSpec with Matchers with Eventually {
         f.awaitNewData(null)
         f.styled {
           val lines = f.lineColours(f.temperatureChart)
-          lines.distinct.size shouldBe 8
+          lines.distinct.size shouldBe lines.size
           f.legendColours(f.temperatureChart) shouldBe lines
         }
       }
