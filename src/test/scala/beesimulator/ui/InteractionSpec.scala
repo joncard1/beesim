@@ -30,13 +30,11 @@ class InteractionSpec extends AnyWordSpec with Matchers with Eventually {
 
     val (stage, root) = JavaFxToolkit.onFxThread {
       val loader = new FXMLLoader(classOf[MainController].getResource("beecharts.fxml"))
+      val controller = MainController(19.8, 20.0, 23.0, Seq(internal, external))
+      loader.setController(controller)
       val root: Parent = loader.load()
-      val controller: MainController = loader.getController()
-      controller.addSimulation(internal)
-      controller.addSimulation(external)
       val stage = new Stage()
       stage.setScene(new Scene(root, 1200, 800))
-      controller.setData(19.8, 20.0, 23.0)
       stage.show()
       (stage, root)
     }

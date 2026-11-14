@@ -30,11 +30,14 @@ object BeeSimulatorApp extends JFXApp3 {
 
       val viewClass = getClass.getResource("ui/beecharts.fxml")
       val loader = new FXMLLoader(viewClass)
+      val controller = new MainController(
+        StartTemperature - 0.2,
+        StartTemperature,
+        StartTemperature + TemperatureRange,
+        Seq(internalSimulation, externalSimulation)
+      )
+      loader.setController(controller)
       val root: jfxs.Parent = loader.load()
-      val controller = loader.getController[MainController]()
-      controller.addSimulation(internalSimulation)
-      controller.addSimulation(externalSimulation)
-      controller.setData(StartTemperature - 0.2, StartTemperature, StartTemperature + TemperatureRange)
       val screen = Screen.primary.visualBounds
       val (windowWidth, windowHeight) = WindowSize.forScreen(screen.width, screen.height)
       scene = new Scene(root, windowWidth, windowHeight)
