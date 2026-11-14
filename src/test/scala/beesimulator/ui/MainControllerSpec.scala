@@ -151,6 +151,33 @@ class MainControllerSpec extends AnyWordSpec with Matchers with Eventually {
       }
     }
 
+    "the steps slider is moved" should {
+      "re-run the simulations for the chosen whole number of steps" in {
+        assert(JavaFxToolkit.available, "JavaFX could not start; see JavaFxToolkit")
+        val f = new Fixture()
+        val stepsSlider = JavaFxToolkit.onFxThread(f.root.lookup("#stepsSliderDelegate").asInstanceOf[Slider])
+        def seriesLengths(data: SeriesList): Seq[Int] =
+          JavaFxToolkit.onFxThread(data.asScala.toSeq.map(_.getData.size))
+        var data = f.awaitNewData(null)
+        all(seriesLengths(data)) shouldBe MainController.DefaultSteps
+        JavaFxToolkit.onFxThread {
+          stepsSlider.getMin shouldBe MainController.MinSteps.toDouble
+          stepsSlider.getMax shouldBe MainController.MaxSteps.toDouble
+          stepsSlider.getTooltip.getText shouldBe "Steps"
+        }
+        for ((position, expected) <- Seq(40.4 -> 40, MainController.MinSteps.toDouble -> MainController.MinSteps)) {
+          JavaFxToolkit.onFxThread(stepsSlider.setValue(position))
+          data = f.awaitNewData(data)
+          withClue(s"after moving the steps slider to $position: ") {
+            all(seriesLengths(data)) shouldBe expected
+            JavaFxToolkit.onFxThread(
+              f.root.lookup("#stepsTextDelegate").asInstanceOf[javafx.scene.text.Text].getText
+            ) shouldBe expected.toString
+          }
+        }
+      }
+    }
+
     "showing the data" should {
       "draw each legend symbol in the colour of its line" in {
         assert(JavaFxToolkit.available, "JavaFX could not start; see JavaFxToolkit")

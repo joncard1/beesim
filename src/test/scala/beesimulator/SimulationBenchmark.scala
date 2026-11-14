@@ -1,7 +1,7 @@
 package beesimulator
 
 import beesimulator.controller._
-import beesimulator.ui.Simulation
+import beesimulator.ui.{MainController, Simulation}
 
 /**
   * Times how long each simulation takes to generate its data, which is how
@@ -43,7 +43,7 @@ object SimulationBenchmark {
     // between runs that a real drag couldn't reuse.
     def run(i: Int): Unit = {
       val forcing1 = low1 + (high1 - low1) * (i % 10) / 10
-      simulation.generator.generatePoints(forcing1, forcing2)
+      simulation.generator.generatePoints(forcing1, forcing2, MainController.DefaultSteps)
     }
     (0 until WarmupRuns).foreach(run)
     val times = (0 until MeasuredRuns)

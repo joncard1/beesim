@@ -27,7 +27,7 @@ class ErrorDisplaySpec extends AnyWordSpec with Matchers with Eventually {
     val simulatorName = "Sometimes fails"
     val generator = new DataGenerator {
       def numberOfFamilies = 1
-      def generatePoints(forcingVariable1: Double, forcingVariable2: Double): List[Dataset] = {
+      def generatePoints(forcingVariable1: Double, forcingVariable2: Double, numberOfSteps: Int): List[Dataset] = {
         if (forcingVariable1 < 1) throw new IllegalStateException("heat in is too low")
         List(Dataset("works", 20.5, 0, Seq(20.0, 20.5), Seq()))
       }

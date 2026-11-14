@@ -15,9 +15,11 @@ trait DataGenerator {
     *
     * @param forcingVariable1 The first value that is forcing change.
     * @param forcingVariable2 The second value that is forcing change.
+    * @param numberOfSteps    The number of steps to run the simulation for,
+    *                         which is the length of each temperature series.
     * @return                 The list of data series to display.
     */
-  def generatePoints(forcingVariable1: Double, forcingVariable2: Double): List[Dataset]
+  def generatePoints(forcingVariable1: Double, forcingVariable2: Double, numberOfSteps: Int): List[Dataset]
 
   /**
     * The number of different families expected to be returned by the data

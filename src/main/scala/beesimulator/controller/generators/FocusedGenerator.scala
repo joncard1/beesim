@@ -12,7 +12,6 @@ import beesimulator.simulator._
   *
   * @param name
   * @param setPoint
-  * @param numberOfIterations
   * @param numberOfFathers
   * @param numberOfDaughters
   * @param temperatureRange
@@ -21,7 +20,6 @@ import beesimulator.simulator._
 class FocusedGenerator[T <: SimState](
     name: String,
     setPoint: Double,
-    numberOfIterations: Int,
     numberOfFathers: Int,
     numberOfDaughters: Int,
     temperatureRange: Double,
@@ -29,7 +27,7 @@ class FocusedGenerator[T <: SimState](
     datasetCreator: (Double, Double, Double, String, Int, List[Double], Seq[BeeHistogramItem]) => Dataset,
     constructor: (threshold: Double) => Bee[T] = (SimpleBee.apply)
 )(implicit provider: SimProvider[Double, T, Bee[T], BeeSim[T]])
-    extends AbstractDataGenerator(name, numberOfIterations, simAttributes) {
+    extends AbstractDataGenerator(name, simAttributes) {
   override def numberOfFamilies: Int = 1
 
   /**
@@ -47,7 +45,7 @@ class FocusedGenerator[T <: SimState](
       .map(constructor)
   }
 
-  override def generatePoints(heatInflux: Double, heatPerBee: Double): List[Dataset] = {
-    List(runSimulator(heatInflux, heatPerBee, bees, datasetCreator))
+  override def generatePoints(heatInflux: Double, heatPerBee: Double, numberOfSteps: Int): List[Dataset] = {
+    List(runSimulator(heatInflux, heatPerBee, numberOfSteps, bees, datasetCreator))
   }
 }

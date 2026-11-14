@@ -44,15 +44,19 @@ class AggregateDataGenerator(executionContext: ExecutionContext = ExecutionConte
     * each generator will get added to the collection of data series returned by
     * this generator.
     *
-    * @param heatInFlux The heat being added to the hive at each step
+    * @param heatInFlux    The heat being added to the hive at each step
+    * @param heatPerBee    The heat each active bee removes at each step
+    * @param numberOfSteps The number of steps to run each simulation for
     * @return           The data series the UI should display
     */
-  override def generatePoints(heatInFlux: Double, heatPerBee: Double): List[Dataset] = {
+  override def generatePoints(heatInFlux: Double, heatPerBee: Double, numberOfSteps: Int): List[Dataset] = {
     implicit val ec: ExecutionContext = executionContext
     // The generators are kept in reverse order of being added, and the data
     // series are returned in the order the generators were added.
     val results =
-      Future.traverse(dataGenerators.reverse)(generator => Future(generator.generatePoints(heatInFlux, heatPerBee)))
+      Future.traverse(dataGenerators.reverse)(generator =>
+        Future(generator.generatePoints(heatInFlux, heatPerBee, numberOfSteps))
+      )
     Await.result(results, Duration.Inf).flatten
   }
 

@@ -23,6 +23,12 @@ class EquilibriumSpec extends AnyWordSpec with Matchers {
   val SpecificHeat = 0.5
 
   /**
+    * The number of steps each simulation runs for, long enough for the
+    * populations that settle to do so.
+    */
+  val Steps = 250
+
+  /**
     * The largest change in temperature over the last [[SettlingWindow]] steps
     * for the simulation to be considered settled.
     */
@@ -41,7 +47,7 @@ class EquilibriumSpec extends AnyWordSpec with Matchers {
   lazy val runs: Seq[(Double, Double, Dataset)] = for {
     heatIn <- heatInValues
     heatPerBee <- heatPerBeeValues
-    dataset <- simulation.generator.generatePoints(heatIn, heatPerBee)
+    dataset <- simulation.generator.generatePoints(heatIn, heatPerBee, Steps)
   } yield (heatIn, heatPerBee, dataset)
 
   def thresholds(dataset: Dataset): Seq[Double] = dataset.bees.map(_.value())
@@ -172,7 +178,7 @@ class EquilibriumSpec extends AnyWordSpec with Matchers {
   lazy val externalRuns: Seq[(Double, Double, Dataset)] = for {
     externalTemperature <- Seq(20.5, 21.5, 22.5)
     heatPerBee <- heatPerBeeValues
-    dataset <- externalSimulation.generator.generatePoints(externalTemperature, heatPerBee)
+    dataset <- externalSimulation.generator.generatePoints(externalTemperature, heatPerBee, Steps)
   } yield (externalTemperature, heatPerBee, dataset)
 
   "The external simulation" when {
