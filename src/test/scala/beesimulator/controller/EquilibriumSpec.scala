@@ -81,14 +81,19 @@ class EquilibriumSpec extends AnyWordSpec with Matchers {
     }
 
     "bees share a control point" should {
-      "settle at the control point when it is settled" in {
+      // A population can be split between several control points, and then
+      // it settles at one of them.
+      "settle at one of its control points when it is settled" in {
         val integralRuns = runs.filter((_, _, dataset) => beeOf(dataset).isInstanceOf[CombinedIntegralBee])
         val settledRuns = integralRuns.filter((_, _, dataset) => isSettled(dataset))
         settledRuns should not be empty
         for ((heatIn, heatPerBee, dataset) <- settledRuns) {
-          val controlPoint = beeOf(dataset).asInstanceOf[CombinedIntegralBee].controlPoint
+          val controlPoints = dataset.bees
+            .map(_.asInstanceOf[BeeHistogramItem].bee.asInstanceOf[CombinedIntegralBee].controlPoint)
+            .distinct
           withClue(f"${dataset.name} at heatIn=$heatIn heatPerBee=$heatPerBee: ") {
-            dataset.indicatorPosition shouldBe controlPoint +- SettledRange
+            controlPoints.map(controlPoint => math.abs(dataset.indicatorPosition - controlPoint)).min should be <=
+              SettledRange
           }
         }
       }
@@ -133,10 +138,13 @@ class EquilibriumSpec extends AnyWordSpec with Matchers {
     }
 
     "generating the populations" should {
-      "give every bee a different threshold" in {
+      // Bees can only share a threshold if they differ in some other way, such
+      // as the two halves of a population with two control points. In a
+      // population of one kind of bee, that means every threshold is different.
+      "give every bee of the same kind a different threshold" in {
         for ((_, _, dataset) <- runs.distinctBy(_._3.name)) {
           withClue(s"${dataset.name}: ") {
-            thresholds(dataset).distinct.size shouldBe dataset.bees.size
+            dataset.bees.map(_.asInstanceOf[BeeHistogramItem].bee).distinct.size shouldBe dataset.bees.size
           }
         }
       }

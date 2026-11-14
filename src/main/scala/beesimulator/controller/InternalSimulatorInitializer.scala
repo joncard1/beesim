@@ -71,12 +71,29 @@ object InternalSimulationInitializer extends SimulationInitializer {
       DerivativeBee.apply(_, startTemperature, derivativeLookAhead)
     )
     aggregateGenerator.addDataGenerator(mixedFathersDerivativeGenerator)
-    val bimodalGenerator = new BimodalGenerator(
+    // Two bell curves of equal size, a quarter and three quarters of the way
+    // across the temperature range. This was done to see what would happen. On
+    // observing the data in the paper Jones et al. (2004), it appeared that
+    // there were bee families that stopped participating in the bearding when
+    // the temperature got too high. I may have interpreted the data wrongly
+    // when drawing that conclusion as the y-axis was in percentages not
+    // quantity of bees, so I wanted to see what would happen. It appears this
+    // configuration wouldn't produce that result, however; the maintain the
+    // lower threshold until some singularity is crossed by a rising Heat In
+    // value and then the temperature switches to the higher set point.
+    val bimodalBees = numberOfFathers * numberOfDaughters
+    val bimodalSigma = temperatureRange / 16
+    val bimodalGenerator = new NormalGenerator(
       "Bimodal bee set",
-      startTemperature,
-      numberOfFathers,
-      numberOfDaughters,
-      temperatureRange,
+      Seq(
+        NormalGenerator.Group(bimodalBees / 2, startTemperature + temperatureRange / 4, bimodalSigma, SimpleBee.apply),
+        NormalGenerator.Group(
+          bimodalBees - bimodalBees / 2,
+          startTemperature + 3 * temperatureRange / 4,
+          bimodalSigma,
+          SimpleBee.apply
+        )
+      ),
       internalInitialState,
       datasetCreator
     )
@@ -149,14 +166,31 @@ object InternalSimulationInitializer extends SimulationInitializer {
       aggregateGenerator.addDataGenerator(
         new NormalGenerator(
           name,
-          numberOfFathers * numberOfDaughters,
-          mean,
-          standardDeviation,
+          Seq(NormalGenerator.Group(numberOfFathers * numberOfDaughters, mean, standardDeviation, SimpleBee.apply)),
           internalInitialState,
           datasetCreator
         )
       )
     }
+
+    // Like the improved integrals, but half of the bees hold a different
+    // "correct" temperature. Both halves have the same, wide, normal
+    // distribution of thresholds, so the only difference between them is the
+    // temperature each half is trying to reach.
+    val twoSetPointsGenerator = new NormalGenerator(
+      "Normal improved integrals with two set points",
+      Seq(21.0, 22.0).map(controlPoint =>
+        NormalGenerator.Group(
+          numberOfFathers * numberOfDaughters / 2,
+          21.5,
+          0.75,
+          CombinedIntegralBee(_, controlPoint, integralLookAhead)
+        )
+      ),
+      internalInitialState,
+      datasetCreator
+    )
+    aggregateGenerator.addDataGenerator(twoSetPointsGenerator)
 
     new Simulation() {
       val forcingVariable1Name = "Heat In"

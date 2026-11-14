@@ -7,7 +7,7 @@ import beesimulator.simulator._
 
 /**
   * This generator creates multiple bell-curves, one for each father, in an even
-  * spacing across the temperature range. It is similar to [[BimodalGenerator]],
+  * spacing across the temperature range. It is similar to the bimodal population built with [[NormalGenerator]],
   * but more evenly spaced and flexible with respect to the number of fathers.
   *
   * @param name
