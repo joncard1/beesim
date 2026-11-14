@@ -26,7 +26,8 @@ class BeeChartAxesSpec extends AnyWordSpec with Matchers with Eventually {
         assert(JavaFxToolkit.available, "JavaFX could not start; see JavaFxToolkit")
         val root = JavaFxToolkit.onFxThread {
           val loader = new FXMLLoader(classOf[MainController].getResource("beecharts.fxml"))
-          val controller = MainController(19.8, 20.0, 23.0, Seq(InternalSimulationInitializer.getSimulation(20.0, 3.0, 5, 0.5)))
+          val controller =
+            MainController(19.8, 20.0, 23.0, Seq(InternalSimulationInitializer.getSimulation(20.0, 3.0, 5, 0.5)))
           loader.setController(controller)
           val root: Parent = loader.load()
           new Scene(root, 1200, 800)

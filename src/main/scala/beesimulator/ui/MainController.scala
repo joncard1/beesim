@@ -66,6 +66,10 @@ class MainController(
     simulations: Seq[Simulation]
 ) {
 
+  if (simulations.isEmpty) {
+    throw new IllegalArgumentException("The main controller must be provided at least one simulation to run.")
+  }
+
   /**
    * The simple, default way to launching background threads.
    */
@@ -251,14 +255,16 @@ class MainController(
 
     // Subscribes the temperature chart to the simulatorData
     temperatureChart.data <== simulatorData.map(
-      new ObservableBuffer(_).map(dataset =>
-        XYChart.Series[Number, Number](
-          dataset.name,
-          ObservableBuffer.from(
-            dataset.temperatures.zipWithIndex.map(tuple => XYChart.Data(tuple._2, tuple._1))
+      new ObservableBuffer(_)
+        .map(dataset =>
+          XYChart.Series[Number, Number](
+            dataset.name,
+            ObservableBuffer.from(
+              dataset.temperatures.zipWithIndex.map(tuple => XYChart.Data(tuple._2, tuple._1))
+            )
           )
         )
-      ).delegate
+        .delegate
     )
 
     simulatorSelectionComboBox.setConverter(new StringConverter[Simulation] {
