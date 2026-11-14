@@ -73,11 +73,14 @@ object InternalSimulationInitializer extends SimulationInitializer {
     aggregateGenerator.addDataGenerator(mixedFathersDerivativeGenerator)
     // Two bell curves of equal size, a quarter and three quarters of the way
     // across the temperature range. This was done to see what would happen. On
-    // observing the data in the paper TODO: LOOK UP REFERENCE, it appeared that
+    // observing the data in the paper Jones et al. (2004), it appeared that
     // there were bee families that stopped participating in the bearding when
-    // the temperature got too high. That may not be a correct interpretation of
-    // the data, as the y-axis was in percentages not quantity of bees, but I
-    // wanted to see what would happen.
+    // the temperature got too high. I may have interpreted the data wrongly
+    // when drawing that conclusion as the y-axis was in percentages not
+    // quantity of bees, so I wanted to see what would happen. It appears this
+    // configuration wouldn't produce that result, however; the maintain the
+    // lower threshold until some singularity is crossed by a rising Heat In
+    // value and then the temperature switches to the higher set point.
     val bimodalBees = numberOfFathers * numberOfDaughters
     val bimodalSigma = temperatureRange / 16
     val bimodalGenerator = new NormalGenerator(
