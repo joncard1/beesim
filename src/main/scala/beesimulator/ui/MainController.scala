@@ -237,6 +237,8 @@ class MainController(
   def initialize() = {
     import scala.jdk.CollectionConverters.SeqHasAsJava
     simulatorSelectionComboBox.items().addAll(simulations.asJava)
+    simulatorSelectionComboBox.setConverter(SimulatorStringConverter)
+
     // Inialize the various properties with either a default value or the provided values.
     temperatureChart.data() = FXCollections.observableArrayList()
 
@@ -247,11 +249,11 @@ class MainController(
     yAxis.upperBound <== maximumYBoundary
 
     // Bind the state of the processor to the combo box and initialize it
+    processorSelectionComboBox.value() = InitialProcessorSelection
     processor <== processorSelectionComboBox.value.map {
       case MainController.ComboSelections.Histogram  => Some(HistogramDataProcessor)
       case MainController.ComboSelections.Cumulative => Some(CumulativeFrequencyDataProcessor)
     }
-    processorSelectionComboBox.value() = InitialProcessorSelection
 
     // Subscribes the temperature chart to the simulatorData
     temperatureChart.data <== simulatorData.map(
@@ -266,26 +268,6 @@ class MainController(
         )
         .delegate
     )
-
-    simulatorSelectionComboBox.setConverter(new StringConverter[Simulation] {
-
-      override def fromString(string: String): Simulation = {
-        val simulations = simulatorSelectionComboBox.items().filtered(sim => sim.simulatorName.equals(string))
-        if (simulations.size() > 0) {
-          simulations.get(0)
-        } else {
-          throw new Exception("No valid simulation found")
-        }
-      }
-
-      override def toString(t: Simulation): String = {
-        if (t != null) {
-          t.simulatorName
-        } else {
-          ""
-        }
-      }
-    })
 
     var simulatorDataSubscriptions: Option[Array[Subscription]] = None
     var heatFlowSliderSubscription: Option[Subscription] = None
@@ -395,11 +377,31 @@ class MainController(
       })
     })
 
-    // This statement is guarded, but it is what sets everything else in motion.
-    // So, if the simulator combo box isn't initialized yet, it won't work well.
-    if (simulatorSelectionComboBox.items().size() > 0) {
-      simulatorSelectionComboBox.value() = simulatorSelectionComboBox.items().get(0)
-    }
+    simulatorSelectionComboBox.value() = simulatorSelectionComboBox.items().get(0)
   }
 
+  /**
+   * Utility class to enable a Simulation to be stored in a ComboBox. This is
+   * used to convert a string on the FXML page to a simulation object, and to
+   * display the selected simulation as a string on-screen.
+   */
+  object SimulatorStringConverter extends StringConverter[Simulation] {
+
+    override def fromString(string: String): Simulation = {
+      val simulations = simulatorSelectionComboBox.items().filtered(sim => sim.simulatorName.equals(string))
+      if (simulations.size() > 0) {
+        simulations.get(0)
+      } else {
+        throw new Exception("No valid simulation found")
+      }
+    }
+
+    override def toString(t: Simulation): String = {
+      if (t != null) {
+        t.simulatorName
+      } else {
+        ""
+      }
+    }
+  }
 }
