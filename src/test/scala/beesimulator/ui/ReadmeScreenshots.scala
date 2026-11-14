@@ -55,16 +55,18 @@ object ReadmeScreenshots {
   private def render(shot: Shot): BufferedImage = {
     val root = JavaFxToolkit.onFxThread {
       val loader = new FXMLLoader(classOf[MainController].getResource("beecharts.fxml"))
+      val controller = MainController(
+        StartTemperature - 0.2,
+        StartTemperature,
+        StartTemperature + TemperatureRange,
+        Seq(
+          InternalSimulationInitializer.getSimulation(StartTemperature, TemperatureRange, Mass, SpecificHeat),
+          ExternalSimulationInitializer.getSimulation(StartTemperature, TemperatureRange, Mass, SpecificHeat)
+        )
+      )
+      loader.setController(controller)
       val root: Parent = loader.load()
-      val controller: MainController = loader.getController()
-      controller.addSimulation(
-        InternalSimulationInitializer.getSimulation(StartTemperature, TemperatureRange, Mass, SpecificHeat)
-      )
-      controller.addSimulation(
-        ExternalSimulationInitializer.getSimulation(StartTemperature, TemperatureRange, Mass, SpecificHeat)
-      )
       new Scene(root, Width, Height)
-      controller.setData(StartTemperature - 0.2, StartTemperature, StartTemperature + TemperatureRange)
       root
     }
     JavaFxToolkit.onFxThread {

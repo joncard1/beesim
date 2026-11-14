@@ -11,7 +11,7 @@
 <?import beesimulator.ui.MainController.ComboSelections?>
 <?import beesimulator.ui.MainController.ComboSelections.*?>
 
-<StackPane fx:controller="beesimulator.ui.MainController" xmlns:fx="http://javafx.com/fxml" xmlns="http://javafx.com/javafx/2.2" prefHeight="500.0" prefWidth="400.0" stylesheets="beesimulator/ui/beecharts.css" >
+<StackPane xmlns:fx="http://javafx.com/fxml" xmlns="http://javafx.com/javafx/2.2" prefHeight="500.0" prefWidth="400.0" stylesheets="beesimulator/ui/beecharts.css" >
   <children>
     <BorderPane fx:id="borderPaneDelegate">
       <padding><Insets top="20" bottom="20" right="20" left="20" /></padding>

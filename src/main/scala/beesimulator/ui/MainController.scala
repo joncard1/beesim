@@ -59,7 +59,16 @@ object MainController {
  * classes as "lazy", they aren't instantiated until something uses them, and by
  * that time the JavaFX system has populated the delegates.
  */
-class MainController {
+class MainController(
+    initialMinimumYValue: Double,
+    initialMinimumYBoundary: Double,
+    initialMaximumYBoundary: Double,
+    simulations: Seq[Simulation]
+) {
+
+  if (simulations.isEmpty) {
+    throw new IllegalArgumentException("The main controller must be provided at least one simulation to run.")
+  }
 
   /**
    * The simple, default way to launching background threads.
@@ -166,7 +175,7 @@ class MainController {
   /**
    * The minimum Y value to display on the temperature chart.
    */
-  val minimumYValue = new DoubleProperty()
+  val minimumYValue = DoubleProperty(initialMinimumYValue)
 
   /**
    * The minimum of the range of thresholds that were generated. This is used to
@@ -174,7 +183,7 @@ class MainController {
    * previous version, had an indicator on the temperature chart, but that
    * wasn't implemented here.
    */
-  val minimumYBoundary = new DoubleProperty()
+  val minimumYBoundary = DoubleProperty(initialMinimumYBoundary)
 
   /**
    * The maximum of the range of thresholds that were generated. This is used to
@@ -182,7 +191,7 @@ class MainController {
    * previous version, had an indicator on the temperature chart, but that
    * wasn't implemented here.
    */
-  val maximumYBoundary = new DoubleProperty()
+  val maximumYBoundary = DoubleProperty(initialMaximumYBoundary)
 
   /**
    * The data from the simulator. When the data is refreshed, this object issues
@@ -224,26 +233,12 @@ class MainController {
    */
   private var simulationRunner: Option[ConflatingRunner[(Double, Double), List[Dataset]]] = None
 
-  /**
-    *
-    * @param newSimulation
-    * @return
-    */
-  // If this is to be called after setData, this needs to be more complex.
-  def addSimulation(newSimulation: Simulation) = {
-    simulatorSelectionComboBox.items().add(newSimulation)
-  }
-
-  def setData(
-      newMinimumYValue: Double,
-      newMinimumYBoundary: Double,
-      newMaximumYBoundary: Double
-  ) = {
+  @FXML
+  def initialize() = {
+    import scala.jdk.CollectionConverters.SeqHasAsJava
+    simulatorSelectionComboBox.items().addAll(simulations.asJava)
     // Inialize the various properties with either a default value or the provided values.
     temperatureChart.data() = FXCollections.observableArrayList()
-    minimumYValue() = newMinimumYValue
-    minimumYBoundary() = newMinimumYBoundary
-    maximumYBoundary() = newMaximumYBoundary
 
     // Initialize the simple bindings
     heatFlowText.text <== heatFlowSlider.value.asString("%#1.2f")
@@ -252,26 +247,25 @@ class MainController {
     yAxis.upperBound <== maximumYBoundary
 
     // Bind the state of the processor to the combo box and initialize it
-    processorSelectionComboBox.value.onChange((_, _, newValue) => {
-      newValue match {
-        case MainController.ComboSelections.Histogram  => processor() = Some(HistogramDataProcessor)
-        case MainController.ComboSelections.Cumulative => processor() = Some(CumulativeFrequencyDataProcessor)
-      }
-    })
+    processor <== processorSelectionComboBox.value.map {
+      case MainController.ComboSelections.Histogram  => Some(HistogramDataProcessor)
+      case MainController.ComboSelections.Cumulative => Some(CumulativeFrequencyDataProcessor)
+    }
     processorSelectionComboBox.value() = InitialProcessorSelection
 
     // Subscribes the temperature chart to the simulatorData
-    simulatorData.onChange((_, _, newValue) => {
-      temperatureChart.data() = simulatorData()
-        .map[jfxch.XYChart.Series[Number, Number]](dataset => {
+    temperatureChart.data <== simulatorData.map(
+      new ObservableBuffer(_)
+        .map(dataset =>
           XYChart.Series[Number, Number](
             dataset.name,
             ObservableBuffer.from(
               dataset.temperatures.zipWithIndex.map(tuple => XYChart.Data(tuple._2, tuple._1))
             )
           )
-        })
-    })
+        )
+        .delegate
+    )
 
     simulatorSelectionComboBox.setConverter(new StringConverter[Simulation] {
 
