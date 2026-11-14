@@ -76,7 +76,9 @@ class InteractionSpec extends AnyWordSpec with Matchers with Eventually {
 
           val (heatIn, heatPerBee) = JavaFxToolkit.onFxThread((f.heatFlowSlider.getValue, f.heatPerBeeSlider.getValue))
           heatIn should be > startValue
-          val expected = f.internal.generator.generatePoints(heatIn, heatPerBee).map(_.temperatures.last)
+          val expected = f.internal.generator
+            .generatePoints(heatIn, heatPerBee, MainController.DefaultSteps)
+            .map(_.temperatures.last)
           eventually(f.finalTemperatures shouldBe expected)
         } finally f.close()
       }

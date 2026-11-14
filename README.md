@@ -44,6 +44,7 @@ The simulation named "External Temperature Simulation" relies on the bees respon
 - **Band:** when a simulation never settles and keeps swinging up and down, a shaded band around the indicator shows the range of temperatures it was still swinging over at the end.
 - **Temperature chart (bottom):** the hive temperature over time for every population.
 - **Sliders (right):** the heat flowing in (or, in the external simulation, the outside temperature) and the heat each bearding bee removes. Drag them and watch the charts follow.
+- **Steps slider (under the temperature chart):** how many steps each simulation runs, from 10 to 250. Fewer steps stretch the start of each run across the chart, which shows how the populations first respond.
 - **Simulation and Summary type (top left):** switch between the two simulations and between histogram and cumulative charts.
 
 ![Cumulative charts for the internal simulation, where one population never settles: its temperature keeps swinging, and the band on its chart shows the range](docs/images/cumulative.png)

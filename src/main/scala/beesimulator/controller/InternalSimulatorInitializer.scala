@@ -16,7 +16,6 @@ object InternalSimulationInitializer extends SimulationInitializer {
       mass: Double,
       specificHeat: Double
   ): Simulation = {
-    val numberOfIterations = 250
     val heatFlowPerBeeLow = 0.001
     val heatFlowPerBeeHigh = 0.002
 
@@ -52,7 +51,6 @@ object InternalSimulationInitializer extends SimulationInitializer {
     val mixedFathersGenerator = new MixedFathersGenerator(
       "Mixed Fathers",
       startTemperature,
-      numberOfIterations,
       numberOfFathers,
       numberOfDaughters,
       fatherDifference,
@@ -64,7 +62,6 @@ object InternalSimulationInitializer extends SimulationInitializer {
     val mixedFathersDerivativeGenerator = new MixedFathersGenerator(
       "Mixed Fathers with derivative",
       startTemperature,
-      numberOfIterations,
       numberOfFathers,
       numberOfDaughters,
       fatherDifference,
@@ -77,7 +74,6 @@ object InternalSimulationInitializer extends SimulationInitializer {
     val bimodalGenerator = new BimodalGenerator(
       "Bimodal bee set",
       startTemperature,
-      numberOfIterations,
       numberOfFathers,
       numberOfDaughters,
       temperatureRange,
@@ -88,7 +84,6 @@ object InternalSimulationInitializer extends SimulationInitializer {
     val singleFatherInMiddleGenerator = new SingleFatherGenerator(
       "Single Father with medium thresholds",
       startTemperature,
-      numberOfIterations,
       numberOfFathers,
       numberOfDaughters,
       fatherWindow,
@@ -100,7 +95,6 @@ object InternalSimulationInitializer extends SimulationInitializer {
     val singleFatherAtBottomGenerator = new SingleFatherGenerator(
       "Single Father with low thresholds",
       startTemperature,
-      numberOfIterations,
       numberOfFathers,
       numberOfDaughters,
       fatherWindow,
@@ -112,7 +106,6 @@ object InternalSimulationInitializer extends SimulationInitializer {
     val focusedGroups = new FocusedGenerator(
       "Multiple fathers that cluster",
       startTemperature,
-      numberOfIterations,
       5,
       640,
       temperatureRange,
@@ -123,7 +116,6 @@ object InternalSimulationInitializer extends SimulationInitializer {
     val mixedFathersIntegralGenerator = new MixedFathersGenerator(
       "Mixed Fathers with integrals",
       startTemperature,
-      numberOfIterations,
       numberOfFathers,
       numberOfDaughters,
       fatherDifference,
@@ -136,7 +128,6 @@ object InternalSimulationInitializer extends SimulationInitializer {
     val improvedIntegralGenerator = new MixedFathersGenerator(
       "Mixed fathers with improved integrals",
       startTemperature,
-      numberOfIterations,
       numberOfFathers,
       numberOfDaughters,
       fatherDifference,

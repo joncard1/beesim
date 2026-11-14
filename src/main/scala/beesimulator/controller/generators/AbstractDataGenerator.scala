@@ -13,18 +13,18 @@ import beesimulator.simulator._
   * the creation of the bees and their distributions.
   *
   * @param name
-  * @param numberOfIterations
   * @param currentState
   */
-abstract class AbstractDataGenerator[T <: SimState](name: String, numberOfIterations: Int, currentState: T)(implicit
+abstract class AbstractDataGenerator[T <: SimState](name: String, currentState: T)(implicit
     provider: SimProvider[Double, T, Bee[T], BeeSim[T]]
 ) extends DataGenerator {
 
   /**
-   * This method iterates the simulation through [[numberOfInterations]], applying [[forcing1Value]] and [[forcing2Value]] at each step.
+   * This method iterates the simulation through numberOfSteps steps, applying forcing1Value and forcing2Value at each step.
    *
     * @param forcing1Value  The first forcing value
     * @param forcing2Value  The second forcing value
+    * @param numberOfSteps  The number of steps to run, which is the length of the temperature series
     * @param bees           The collection of bees used by the simulator
     * @param datasetCreator A factory method to create the [[Dataset]].
     * @return               The dataset that resulted from the simulation.
@@ -32,6 +32,7 @@ abstract class AbstractDataGenerator[T <: SimState](name: String, numberOfIterat
   protected def runSimulator(
       forcing1Value: Double,
       forcing2Value: Double,
+      numberOfSteps: Int,
       bees: Seq[Bee[T]],
       datasetCreator: (Double, Double, Double, String, Int, List[Double], Seq[BeeHistogramItem]) => Dataset
   ): Dataset = {
@@ -40,7 +41,7 @@ abstract class AbstractDataGenerator[T <: SimState](name: String, numberOfIterat
 
     @tailrec
     def iterate(iteration: Int, sim: BeeSim[T], temperatures: List[Double]): (BeeSim[T], List[Double]) = {
-      if (iteration == numberOfIterations) {
+      if (iteration == numberOfSteps) {
         (sim, temperatures)
       } else {
         iterate(

@@ -42,6 +42,10 @@
 .slider-value {
   -fx-font-family: "Monospaced";
 }
+.steps-value {
+  -fx-wrapping-width: 40px;
+  -fx-text-alignment: right;
+}
 #temperatureChartDelegate {
   -fx-create-symbols: false
 }

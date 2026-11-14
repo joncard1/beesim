@@ -38,6 +38,15 @@ object MainController {
     case Histogram extends ComboSelections("Histogram")
     case Cumulative extends ComboSelections("Cumulative")
   }
+
+  /**
+   * The number of steps each simulation runs for when the application starts,
+   * and the range the steps slider can choose from. Fewer steps show the
+   * start of a run in more detail, such as how the derivative bees respond.
+   */
+  val DefaultSteps = 250
+  val MinSteps = 10
+  val MaxSteps = 250
 }
 
 /**
@@ -124,6 +133,26 @@ class MainController(
   @FXML
   private var heatPerBeeSliderDelegate: jfxsc.Slider = uninitialized
   private lazy val heatPerBeeSlider: Slider = new Slider(heatPerBeeSliderDelegate)
+
+  /**
+   * The slider that sets the number of steps each simulation runs for, which
+   * is the length of the time axis of the temperature chart.
+   */
+  @FXML
+  private var stepsSliderDelegate: jfxsc.Slider = uninitialized
+  private lazy val stepsSlider: Slider = new Slider(stepsSliderDelegate)
+
+  @FXML
+  private var stepsTextDelegate: jfxst.Text = uninitialized
+  private lazy val stepsText: Text = new Text(stepsTextDelegate)
+
+  /**
+   * The number of steps chosen with [[stepsSlider]], rounded to a whole
+   * number. The slider's own value moves continuously while it is dragged, so
+   * the simulations are re-run when this changes rather than when the slider
+   * does, which would re-run them with the same number of steps.
+   */
+  val steps = IntegerProperty(MainController.DefaultSteps)
 
   /**
    * The chart used to display the temperature data over time as a result of
@@ -231,7 +260,7 @@ class MainController(
    * Runs the currently selected simulation in the background as the sliders
    * move. It is replaced when a different simulation is selected.
    */
-  private var simulationRunner: Option[ConflatingRunner[(Double, Double), List[Dataset]]] = None
+  private var simulationRunner: Option[ConflatingRunner[(Double, Double, Int), List[Dataset]]] = None
 
   @FXML
   def initialize() = {
@@ -245,6 +274,7 @@ class MainController(
     // Initialize the simple bindings
     heatFlowText.text <== heatFlowSlider.value.asString("%#1.2f")
     heatPerBeeText.text <== heatPerBeeSlider.value.asString("%#1.4f")
+    stepsText.text <== steps.asString()
     yAxis.lowerBound <== minimumYValue
     yAxis.upperBound <== maximumYBoundary
 
@@ -272,6 +302,14 @@ class MainController(
     var simulatorDataSubscriptions: Option[Array[Subscription]] = None
     var heatFlowSliderSubscription: Option[Subscription] = None
     var heatPerBeeSliderSubscription: Option[Subscription] = None
+    // The steps slider is the same for every simulation, so it is set up once.
+    stepsSlider.min() = MainController.MinSteps
+    stepsSlider.max() = MainController.MaxSteps
+    stepsSlider.value() = MainController.DefaultSteps
+    stepsSlider.tooltip = new Tooltip("Steps")
+    steps <== stepsSlider.value.map(value => Integer.valueOf(math.round(value.doubleValue()).toInt))
+    var stepsSubscription: Option[Subscription] = None
+
     simulatorSelectionComboBox.value.onChange((_, _, newSimulation) => {
       // Disconnect that previous simulation from the UI elements.
       if (simulatorDataSubscriptions.isDefined) {
@@ -283,6 +321,7 @@ class MainController(
       if (heatPerBeeSliderSubscription.isDefined) {
         heatPerBeeSliderSubscription.get.cancel()
       }
+      stepsSubscription.foreach(_.cancel())
 
       // For each of the families in the generator, creat a chart to summarize the
       // bee population and subscribe it to the processor property, to recalculate
@@ -334,8 +373,8 @@ class MainController(
       // the simulations can be run, and they always end up showing the final
       // slider position.
       simulationRunner.foreach(_.close())
-      val runner = new ConflatingRunner[(Double, Double), List[Dataset]](
-        (forcingValues) => newSimulation.generator.generatePoints(forcingValues._1, forcingValues._2),
+      val runner = new ConflatingRunner[(Double, Double, Int), List[Dataset]](
+        (inputs) => newSimulation.generator.generatePoints(inputs._1, inputs._2, inputs._3),
         (datasets) => {
           showError(None)
           simulatorData() = ObservableBuffer.from(datasets)
@@ -357,12 +396,13 @@ class MainController(
       heatPerBeeSlider.max() = newSimulation.forcingVariable2Range._2
       def updateData(): Unit = {
         borderPane.parent().setCursor(jfxs.Cursor.WAIT)
-        runner.submit((heatFlowSlider.value().doubleValue(), heatPerBeeSlider.value().doubleValue()))
+        runner.submit((heatFlowSlider.value().doubleValue(), heatPerBeeSlider.value().doubleValue(), steps()))
       }
       heatFlowSlider.value() = newSimulation.forcingVariable1InitialValue
       heatPerBeeSlider.value() = newSimulation.forcingVariable2InitialValue
       heatFlowSliderSubscription = Some(heatFlowSlider.value.onChange(updateData()))
       heatPerBeeSliderSubscription = Some(heatPerBeeSlider.value.onChange(updateData()))
+      stepsSubscription = Some(steps.onChange(updateData()))
 
       // This triggers the data creation. It can't be left to the slider change
       // events, because a slider that is already at its initial value, as the

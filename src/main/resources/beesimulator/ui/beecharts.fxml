@@ -58,14 +58,22 @@
         </HBox>
       </right>
       <center>
-        <LineChart fx:id="temperatureChartDelegate" layoutX="-2.0" prefHeight="500.0" prefWidth="500.0" animated="false">
-          <xAxis>
-            <NumberAxis label="Time" side="BOTTOM" />
-          </xAxis>
-          <yAxis>
-            <NumberAxis fx:id="yAxisDelegate" label="Temperature" side="LEFT" tickUnit="0.1" animated="false" autoRanging="false" forceZeroInRange="false" />
-          </yAxis>
-        </LineChart>
+        <VBox>
+          <LineChart fx:id="temperatureChartDelegate" layoutX="-2.0" prefHeight="500.0" prefWidth="500.0" animated="false" VBox.vgrow="ALWAYS">
+            <xAxis>
+              <NumberAxis label="Time" side="BOTTOM" />
+            </xAxis>
+            <yAxis>
+              <NumberAxis fx:id="yAxisDelegate" label="Temperature" side="LEFT" tickUnit="0.1" animated="false" autoRanging="false" forceZeroInRange="false" />
+            </yAxis>
+          </LineChart>
+          <!-- The number of steps to simulate. The value text has a fixed
+               width for the same reason as the slider columns. -->
+          <HBox alignment="CENTER_LEFT">
+            <Slider fx:id="stepsSliderDelegate" HBox.hgrow="ALWAYS" blockIncrement="1" majorTickUnit="10" minorTickCount="9" snapToTicks="true" />
+            <Text fx:id="stepsTextDelegate" styleClass="slider-value, steps-value" />
+          </HBox>
+        </VBox>
       </center>
       <bottom>
         <!-- Shows why the charts stopped updating if a simulation run fails.

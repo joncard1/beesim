@@ -30,7 +30,6 @@ object ExternalSimulationInitializer extends SimulationInitializer {
         InitialExternalTemperature,
         ThermalConductivity
       )
-    val numberOfIterations = 250
     val fatherDifference: Double = 1.5
     val numberOfFathers = 40
     val fatherWindow: Double = 1.5
@@ -53,7 +52,6 @@ object ExternalSimulationInitializer extends SimulationInitializer {
     val focusedGroups = new FocusedGenerator(
       "Multiple fathers that cluster",
       startTemperature,
-      numberOfIterations,
       5,
       640,
       temperatureRange,
@@ -66,7 +64,6 @@ object ExternalSimulationInitializer extends SimulationInitializer {
     val mixedFathersGenerator = new MixedFathersGenerator(
       "Mixed Fathers",
       startTemperature,
-      numberOfIterations,
       numberOfFathers,
       numberOfDaughters,
       fatherDifference,
@@ -80,7 +77,6 @@ object ExternalSimulationInitializer extends SimulationInitializer {
     val singleFatherInMiddleGenerator = new SingleFatherGenerator(
       "Single Father with medium thresholds",
       startTemperature,
-      numberOfIterations,
       numberOfFathers,
       numberOfDaughters,
       fatherWindow,
