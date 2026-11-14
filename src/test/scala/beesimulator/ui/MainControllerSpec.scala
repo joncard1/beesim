@@ -29,11 +29,10 @@ class MainControllerSpec extends AnyWordSpec with Matchers with Eventually {
   class Fixture {
     val (root, temperatureChart, heatFlowSlider) = JavaFxToolkit.onFxThread {
       val loader = new FXMLLoader(classOf[MainController].getResource("beecharts.fxml"))
+      val controller = MainController(19.8, 20.0, 23.0, Seq(InternalSimulationInitializer.getSimulation(20.0, 3.0, 5, 0.5)))
+      loader.setController(controller)
       val root: Parent = loader.load()
-      val controller: MainController = loader.getController()
-      controller.addSimulation(InternalSimulationInitializer.getSimulation(20.0, 3.0, 5, 0.5))
       new Scene(root, 1200, 800)
-      controller.setData(19.8, 20.0, 23.0)
       (
         root,
         root.lookup("#temperatureChartDelegate").asInstanceOf[LineChart[Number, Number]],

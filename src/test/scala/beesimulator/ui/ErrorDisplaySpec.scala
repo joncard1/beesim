@@ -40,11 +40,10 @@ class ErrorDisplaySpec extends AnyWordSpec with Matchers with Eventually {
         assert(JavaFxToolkit.available, "JavaFX could not start; see JavaFxToolkit")
         val (root, errorLabel, heatFlowSlider) = JavaFxToolkit.onFxThread {
           val loader = new FXMLLoader(classOf[MainController].getResource("beecharts.fxml"))
+          val controller = MainController(19.8, 20.0, 23.0, Seq(failingSimulation))
+          loader.setController(controller)
           val root: Parent = loader.load()
-          val controller: MainController = loader.getController()
-          controller.addSimulation(failingSimulation)
           new Scene(root, 1200, 800)
-          controller.setData(19.8, 20.0, 23.0)
           (
             root,
             root.lookup("#errorLabelDelegate").asInstanceOf[Label],
